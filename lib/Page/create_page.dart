@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/Page/bottomappbar.dart';
@@ -26,6 +28,7 @@ class _LoginState extends State<Login> {
     Imageurl: '',
   );
 
+  // ignore: non_constant_identifier_names
   File? _Image;
   final picker = ImagePicker();
 

@@ -151,7 +151,7 @@ class _Page2State extends State<Page2> {
                               errorText: 'Please enter password'),
                           onSaved: (String? password) {
                             profile.password = password!;
-                          },
+                          }, //add comment
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Myconstant.gray,

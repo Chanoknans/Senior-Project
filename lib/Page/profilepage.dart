@@ -1,11 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/Myconstant.dart';
 import 'package:hearing_aid/Page/Page2.dart';
+import 'package:hearing_aid/Page/Profile.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Profile.dart';
 
 class MyProfile extends StatefulWidget {
   MyProfile({Key? key}) : super(key: key);
@@ -27,7 +27,6 @@ class _MyProfileState extends State<MyProfile> {
   String? _uid;
   String? _userimage;
   List<String>? date;
-
   void initState() {
     getdata();
     super.initState();
@@ -47,6 +46,7 @@ class _MyProfileState extends State<MyProfile> {
       profile.gen = userDoc.get('gen');
       profile.date = userDoc.get('date');
       _userimage = userDoc.get('image');
+      date = profile.date.split("");
     });
   }
 
@@ -65,34 +65,24 @@ class _MyProfileState extends State<MyProfile> {
             padding: EdgeInsets.only(left: 28, top: 100),
             child: CircleAvatar(
               backgroundImage: NetworkImage(_userimage ??
-                  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
-              //'https://i.ytimg.com/vi/LLYKlQ2nwqQ/maxresdefault.jpg'),
+                  'https://i.ytimg.com/vi/LLYKlQ2nwqQ/maxresdefault.jpg'),
               radius: 70,
             ),
           ),
         ),
         Padding(
-          //alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.only(left: 10, top: 250),
+          padding: EdgeInsets.only(left: 60, top: 250),
           child: Column(
             children: [
-              Container(
-                height: 25,
-                width: 180,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(245, 245, 245, 1),
-                ),
-                child: Text(
-                  profile.name,
-                  //"Mr.Perry",
-                  style: TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Myconstant.blackground),
-                  textAlign: TextAlign.center,
-                ),
-              )
+              Text(
+                profile.name,
+                style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Myconstant.blackground),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),
@@ -105,7 +95,7 @@ class _MyProfileState extends State<MyProfile> {
                 Icon(LineIcons.calendar, color: Myconstant.blue),
                 SizedBox(width: 4),
                 Text(
-                  "${profile.date.split(" ")[0]}",
+                  profile.date.split(" ")[0],
                   style: TextStyle(color: Myconstant.blackground),
                 )
               ],
@@ -119,7 +109,6 @@ class _MyProfileState extends State<MyProfile> {
                 SizedBox(width: 4),
                 Text(
                   profile.gen,
-                  //"Male (he/him)",
                   style: TextStyle(color: Myconstant.blackground),
                 )
               ],
@@ -148,9 +137,13 @@ class _MyProfileState extends State<MyProfile> {
                       borderRadius: BorderRadius.circular(10)),
                   child: RaisedButton(
                     color: Myconstant.som,
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Page2()));
+                    onPressed: () async {
+                      await auth.signOut().then((value) {
+                        Navigator.pushReplacement(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Page2();
+                        }));
+                      });
                     },
                     child: Text(
                       "Logout",

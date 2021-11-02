@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:hearing_aid/Page/Profile.dart';
+import 'package:hearing_aid/Page/bottomappbar.dart';
 import 'package:hearing_aid/Page/homepage.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -70,6 +71,7 @@ class _LoginState extends State<Login> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: AppBar(
                 title: Text('Error'),
               ),
@@ -84,7 +86,7 @@ class _LoginState extends State<Login> {
               child: Scaffold(
                 backgroundColor: const Color.fromRGBO(0, 50, 70, 1),
                 body: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 140, 0, 0),
                   child: SingleChildScrollView(
                     child: Column(children: [
                       Stack(
@@ -92,7 +94,7 @@ class _LoginState extends State<Login> {
                         children: [
                           Container(
                             margin: const EdgeInsets.only(top: 470),
-                            child: Image.asset('assets/image/Vector1.png'),
+                            child: Image.asset('assets/image/vector2.png'),
                           ),
                           Column(
                             children: [
@@ -105,7 +107,7 @@ class _LoginState extends State<Login> {
                                       color: Color.fromRGBO(245, 240, 246, 1),
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
-                                      fontFamily: 'Promt'),
+                                      fontFamily: 'Nunito'),
                                 ),
                               ),
                               Container(
@@ -116,7 +118,7 @@ class _LoginState extends State<Login> {
                                       color: Color.fromRGBO(245, 240, 246, 1),
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
-                                      fontFamily: 'Promt'),
+                                      fontFamily: 'Nunito'),
                                 ),
                               )
                             ],
@@ -223,20 +225,20 @@ class _LoginState extends State<Login> {
                                   style: const TextStyle(
                                       color: Color.fromRGBO(245, 240, 246, 1),
                                       fontSize: 15,
-                                      fontFamily: 'Promt'),
+                                      fontFamily: 'Nunito'),
                                   decoration: const InputDecoration(
                                       labelText: 'Username',
                                       labelStyle: TextStyle(
                                           color:
                                               Color.fromRGBO(245, 240, 246, 1),
                                           fontSize: 15,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       hintText: 'username',
                                       hintStyle: TextStyle(
                                           color: Color.fromRGBO(
                                               245, 240, 246, 0.5),
                                           fontSize: 12,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Color.fromRGBO(
@@ -257,20 +259,20 @@ class _LoginState extends State<Login> {
                                   style: const TextStyle(
                                       color: Color.fromRGBO(245, 240, 246, 1),
                                       fontSize: 15,
-                                      fontFamily: 'Promt'),
+                                      fontFamily: 'Nunito'),
                                   decoration: const InputDecoration(
                                       labelText: 'Date of birth',
                                       labelStyle: TextStyle(
                                           color:
                                               Color.fromRGBO(245, 240, 246, 1),
                                           fontSize: 15,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       hintText: 'date of birth',
                                       hintStyle: TextStyle(
                                           color: Color.fromRGBO(
                                               245, 240, 246, 0.5),
                                           fontSize: 12,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Color.fromRGBO(
@@ -291,20 +293,20 @@ class _LoginState extends State<Login> {
                                   style: const TextStyle(
                                       color: Color.fromRGBO(245, 240, 246, 1),
                                       fontSize: 15,
-                                      fontFamily: 'Promt'),
+                                      fontFamily: 'Nunito'),
                                   decoration: const InputDecoration(
                                       labelText: 'Gender',
                                       labelStyle: TextStyle(
                                           color:
                                               Color.fromRGBO(245, 240, 246, 1),
                                           fontSize: 15,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       hintText: 'gender',
                                       hintStyle: TextStyle(
                                           color: Color.fromRGBO(
                                               245, 240, 246, 0.5),
                                           fontSize: 12,
-                                          fontFamily: 'Promt'),
+                                          fontFamily: 'Nunito'),
                                       enabledBorder: UnderlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Color.fromRGBO(
@@ -358,7 +360,7 @@ class _LoginState extends State<Login> {
                                   formKey.currentState!.reset();
                                   Navigator.pushReplacement(this.context,
                                       MaterialPageRoute(builder: (context) {
-                                    return Homepage();
+                                    return BottomAppBarbar();
                                   }));
                                 }
                               },
@@ -366,7 +368,7 @@ class _LoginState extends State<Login> {
                                   style: TextStyle(
                                       fontSize: 16,
                                       color: Color.fromRGBO(245, 240, 246, 1),
-                                      fontFamily: 'Promt')),
+                                      fontFamily: 'Nunito')),
                             ),
                           ),
                         ],

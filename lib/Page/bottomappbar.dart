@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/Myconstant.dart';
-import 'package:hearing_aid/Page/audiogrampage.dart';
+import 'package:hearing_aid/Page/aids_home.dart';
 import 'package:hearing_aid/Page/historypage.dart';
 import 'package:hearing_aid/Page/homepage.dart';
 import 'package:hearing_aid/Page/modepage.dart';
@@ -55,6 +55,15 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     });
   }
 
+  final navigatorKey = GlobalKey<NavigatorState>();
+  Widget _buildBody() => MaterialApp(
+      navigatorKey: navigatorKey,
+      onGenerateRoute: (settings) {
+        Widget pages = Homepage();
+        if (settings.name == 'Page 2') pages = HearingAidss();
+        return MaterialPageRoute(builder: (_) => pages);
+      });
+
   // ignore: non_constant_identifier_names
   Widget _BottomAppBarBarBar(int selectedIndex) => BottomNavigationBar(
         items: <BottomNavigationBarItem>[
@@ -77,15 +86,31 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
+        body: //_buildBody(),
+            PageStorage(
+          bucket: bucket,
+          child: pages[_selectedIndex],
+        ));
+    /*  Navigator(onGenerateRoute: (settings) {
+          PageStorage(
+            bucket: bucket,
+            child: pages[_selectedIndex],
+          );
+          Widget page1 = Homepage();
+          if (settings.name == 'Page 2') page1 = HearingAidss();
+          return MaterialPageRoute(builder: (_) => page1);
+        }));*/
+    /*Scaffold(
       bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
       body: PageStorage(
         bucket: bucket,
         child: pages[_selectedIndex],
       ),
-    );
+    );*/
   }
 }
-  /*@override
+/*@override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
@@ -133,3 +158,11 @@ class _CircleButtonState extends State<CircleButton> {
     );
   }
 }*/
+/*Scaffold(
+      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
+      body: Navigator(onGenerateRoute: (settings) {
+        
+        Widget pages = Homepage();
+        if (settings.name == 'HearingAidss') pages = HearingAidss();
+        return MaterialPageRoute(builder: (_) => pages);
+      }*/

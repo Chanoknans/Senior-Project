@@ -71,18 +71,27 @@ class _MyProfileState extends State<MyProfile> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 60, top: 250),
+          padding: EdgeInsets.only(left: 15, top: 250),
           child: Column(
             children: [
-              Text(
-                profile.name,
-                style: TextStyle(
-                    fontFamily: 'Nunito',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Myconstant.blackground),
-                textAlign: TextAlign.center,
-              ),
+              Container(
+                  width: 170,
+                  height: 30,
+                  decoration:
+                      BoxDecoration(color: Color.fromRGBO(245, 245, 245, 1)),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2, left: 5),
+                    child: Text(
+                      //"meen chanoknan",
+                      profile.name,
+                      style: TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Myconstant.blackground),
+                      textAlign: TextAlign.center,
+                    ),
+                  ))
             ],
           ),
         ),

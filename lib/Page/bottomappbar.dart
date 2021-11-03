@@ -23,30 +23,30 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     HistoryPage(
       key: PageStorageKey('Page1'),
     ),
-    AudiogramPage(
+    /*AudiogramPage(
+      key: PageStorageKey('Page2'),
+    ),*/
+    Homepage(
       key: PageStorageKey('Page2'),
     ),
-    Homepage(
+    ModePage(
       key: PageStorageKey('Page3'),
     ),
-    ModePage(
-      key: PageStorageKey('Page4'),
-    ),
     RecordingPage(
-      key: PageStorageKey('Page5'),
+      key: PageStorageKey('Page4'),
     )
   ];
   final PageStorageBucket bucket = PageStorageBucket();
-  int _selectedIndex = 2;
+  int _selectedIndex = 1;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 25, fontWeight: FontWeight.bold);
   // ignore: unused_field
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Index 0: History', style: optionStyle),
-    Text('Index 1: Audiogram', style: optionStyle),
-    Text('Index 2: Home', style: optionStyle),
-    Text('Index 3: Mode', style: optionStyle),
-    Text('Index 4: Recording', style: optionStyle),
+    //Text('Index 1: Audiogram', style: optionStyle),
+    Text('Index 1: Home', style: optionStyle),
+    Text('Index 2: Mode', style: optionStyle),
+    Text('Index 3: Recording', style: optionStyle),
   ];
 
   void _onItemTapped(int index) {
@@ -60,8 +60,8 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(LineIcons.history), label: 'History'),
-          BottomNavigationBarItem(
-              icon: Icon(LineIcons.areaChart), label: 'Audiogram'),
+          /*BottomNavigationBarItem(
+              icon: Icon(LineIcons.areaChart), label: 'Audiogram'),*/
           BottomNavigationBarItem(icon: Icon(LineIcons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(LineIcons.headset), label: 'Mode'),
           BottomNavigationBarItem(

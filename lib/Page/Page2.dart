@@ -109,6 +109,7 @@ class _Page2State extends State<Page2> {
                         height: 40,
                         child: TextFormField(
                           focusNode: myFocusNode,
+                          style: TextStyle(fontSize: 15),
                           //controller: _controller,
                           validator: MultiValidator([
                             RequiredValidator(errorText: 'Please Enter Email'),
@@ -122,7 +123,7 @@ class _Page2State extends State<Page2> {
                           },
                           decoration: InputDecoration(
                             errorStyle: TextStyle(
-                                height: 0.2, wordSpacing: 1.0, fontSize: 11),
+                                height: 0.2, wordSpacing: 0.1, fontSize: 11),
                             filled: true,
                             fillColor: Myconstant.gray,
                             /*labelText: "Email :",
@@ -167,6 +168,7 @@ class _Page2State extends State<Page2> {
                         height: 40,
                         child: TextFormField(
                           focusNode: myFocusNode2,
+                          style: TextStyle(fontSize: 15),
                           //controller: _controller,
                           obscureText: statusEye, //พาสเวิสดอกจัน
                           validator: RequiredValidator(

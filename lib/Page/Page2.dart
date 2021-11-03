@@ -19,6 +19,9 @@ class Page2 extends StatefulWidget {
 }
 
 class _Page2State extends State<Page2> {
+  final _controller = TextEditingController();
+  FocusNode myFocusNode = new FocusNode();
+  FocusNode myFocusNode2 = new FocusNode();
   final formKey = GlobalKey<FormState>();
   bool statusEye = true;
   Profile profile = Profile(
@@ -32,6 +35,11 @@ class _Page2State extends State<Page2> {
   );
   final FirebaseAuth auth = FirebaseAuth.instance;
   Future<FirebaseApp> firebase = Firebase.initializeApp();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +108,10 @@ class _Page2State extends State<Page2> {
                         width: 260,
                         height: 40,
                         child: TextFormField(
+                          focusNode: myFocusNode,
+                          //controller: _controller,
                           validator: MultiValidator([
-                            RequiredValidator(errorText: 'Please Enter email'),
+                            RequiredValidator(errorText: 'Please Enter Email'),
                             EmailValidator(
                                 errorText:
                                     'Please enter a valid email address'),
@@ -111,11 +121,19 @@ class _Page2State extends State<Page2> {
                             profile.email = email!;
                           },
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                                height: 0.2, wordSpacing: 1.0, fontSize: 11),
                             filled: true,
                             fillColor: Myconstant.gray,
+                            /*labelText: "Email :",
                             labelStyle: TextStyle(
-                                fontSize: 15, color: Myconstant.blackground),
-                            labelText: "Email :",
+                                fontSize: 14,
+                                letterSpacing: 1,
+                                color: myFocusNode.hasFocus
+                                    ? Color.fromRGBO(255, 0, 0, 0)
+                                    : Myconstant.grayy),*/
+                            hintText: "Email : ",
+                            hintStyle: TextStyle(fontSize: 12),
                             prefixIcon: Icon(Icons.lock_outline,
                                 color: Myconstant.blackground),
                             enabledBorder: OutlineInputBorder(
@@ -148,13 +166,17 @@ class _Page2State extends State<Page2> {
                         width: 260,
                         height: 40,
                         child: TextFormField(
+                          focusNode: myFocusNode2,
+                          //controller: _controller,
                           obscureText: statusEye, //พาสเวิสดอกจัน
                           validator: RequiredValidator(
-                              errorText: 'Please enter password'),
+                              errorText: 'Please Enter Password'),
                           onSaved: (String? password) {
                             profile.password = password!;
                           }, //add comment meenfonpluem
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                                height: 0.2, wordSpacing: 1.0, fontSize: 11),
                             filled: true,
                             fillColor: Myconstant.gray,
                             suffixIcon: IconButton(
@@ -172,9 +194,15 @@ class _Page2State extends State<Page2> {
                                         Icons.remove_red_eye_outlined,
                                         color: Myconstant.blackground,
                                       )),
+                            hintText: "Password :",
+                            hintStyle: TextStyle(fontSize: 12),
+                            /*labelText: "Password :",
                             labelStyle: TextStyle(
-                                fontSize: 15, color: Myconstant.blackground),
-                            labelText: "Password :",
+                                fontSize: 14,
+                                letterSpacing: 1,
+                                color: myFocusNode2.hasFocus
+                                    ? Color.fromRGBO(255, 0, 0, 0)
+                                    : Myconstant.grayy),*/
                             prefixIcon: Icon(Icons.vpn_key_outlined,
                                 color: Myconstant.blackground),
                             enabledBorder: OutlineInputBorder(

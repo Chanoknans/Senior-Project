@@ -54,7 +54,7 @@ class _SignupState extends State<Signup> {
               body: Form(
                 key: formKey,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
                   child: SingleChildScrollView(
                     child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -105,7 +105,10 @@ class _SignupState extends State<Signup> {
                                             fontSize: 15,
                                             fontFamily: 'Nunito'),
                                         decoration: const InputDecoration(
-                                            errorStyle: TextStyle(height: 0.8),
+                                            errorStyle: TextStyle(
+                                              height: 0.8,
+                                              wordSpacing: 1.0,
+                                            ),
                                             labelText: 'E-mail',
                                             labelStyle: TextStyle(
                                                 color: Color.fromRGBO(
@@ -144,7 +147,10 @@ class _SignupState extends State<Signup> {
                                             fontSize: 15,
                                             fontFamily: 'Nunito'),
                                         decoration: InputDecoration(
-                                            errorStyle: TextStyle(height: 0.8),
+                                            errorStyle: TextStyle(
+                                              height: 0.8,
+                                              wordSpacing: 1.0,
+                                            ),
                                             suffixIcon: Padding(
                                               padding: const EdgeInsets.only(
                                                   left: 0),
@@ -210,7 +216,10 @@ class _SignupState extends State<Signup> {
                                             fontSize: 15,
                                             fontFamily: 'Nunito'),
                                         decoration: InputDecoration(
-                                            errorStyle: TextStyle(height: 0.8),
+                                            errorStyle: TextStyle(
+                                              height: 0.8,
+                                              wordSpacing: 1.0,
+                                            ),
                                             suffixIcon: Padding(
                                               padding: const EdgeInsets.only(
                                                   left: 0),
@@ -305,7 +314,7 @@ class _SignupState extends State<Signup> {
                                             } on FirebaseAuthException catch (e) {
                                               print(e.message);
                                               Fluttertoast.showToast(
-                                                msg: 'Email already in use.',
+                                                msg: 'Wrong Email/Password',
                                                 gravity: ToastGravity.CENTER,
                                               );
                                             }

@@ -1,3 +1,5 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe, unused_import, unnecessary_brace_in_string_interps
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

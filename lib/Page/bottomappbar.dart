@@ -110,6 +110,41 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     );*/
   }
 }
+
+class CircleButton extends StatefulWidget {
+  CircleButton({Key? key}) : super(key: key);
+
+  @override
+  _CircleButtonState createState() => _CircleButtonState();
+}
+
+class _CircleButtonState extends State<CircleButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 60,
+      padding: EdgeInsets.only(top: 5),
+      child: FloatingActionButton(
+          elevation: 5,
+          backgroundColor: Myconstant.dgreen,
+          child: Icon(
+            LineIcons.plus,
+            color: Myconstant.light,
+            size: 30,
+          ),
+          onPressed: () {}),
+    );
+  }
+}
+/*Scaffold(
+      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
+      body: Navigator(onGenerateRoute: (settings) {
+        
+        Widget pages = Homepage();
+        if (settings.name == 'HearingAidss') pages = HearingAidss();
+        return MaterialPageRoute(builder: (_) => pages);
+      }*/
 /*@override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -130,39 +165,4 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
       onTap: _onItemTapped,
     );
   }
-}*/
-
-/*class CircleButton extends StatefulWidget {
-  CircleButton({Key? key}) : super(key: key);
-
-  @override
-  _CircleButtonState createState() => _CircleButtonState();
-}
-
-class _CircleButtonState extends State<CircleButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 75,
-      height: 75,
-      padding: EdgeInsets.only(top: 5),
-      child: FloatingActionButton(
-          elevation: 0,
-          backgroundColor: Myconstant.white,
-          child: Icon(
-            LineIcons.home,
-            color: Myconstant.som,
-            size: 55,
-          ),
-          onPressed: null),
-    );
-  }
-}*/
-/*Scaffold(
-      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
-      body: Navigator(onGenerateRoute: (settings) {
-        
-        Widget pages = Homepage();
-        if (settings.name == 'HearingAidss') pages = HearingAidss();
-        return MaterialPageRoute(builder: (_) => pages);
-      }*/
+}*/      

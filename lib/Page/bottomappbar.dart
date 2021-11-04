@@ -121,12 +121,13 @@ class CircleButton extends StatefulWidget {
 class _CircleButtonState extends State<CircleButton> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return new Container(
       width: 60,
       height: 60,
       padding: EdgeInsets.only(top: 5),
       child: FloatingActionButton(
           elevation: 5,
+          heroTag: "btn1",
           backgroundColor: Myconstant.dgreen,
           child: Icon(
             LineIcons.plus,
@@ -137,6 +138,8 @@ class _CircleButtonState extends State<CircleButton> {
     );
   }
 }
+
+
 /*Scaffold(
       bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
       body: Navigator(onGenerateRoute: (settings) {

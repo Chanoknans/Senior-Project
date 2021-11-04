@@ -61,7 +61,7 @@ class CustomAppBar1 extends StatelessWidget {
     return Container(
       height: 120,
       width: MediaQuery.of(context).size.width,
-      color: Myconstant.blue,
+      color: Myconstant.blackground,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -78,7 +78,7 @@ class CustomAppBar1 extends StatelessWidget {
                 )),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 60, left: 90),
+            padding: EdgeInsets.only(top: 60 /*, left: 80*/),
             child: Text(
               "Hearing Aids",
               style: TextStyle(
@@ -90,7 +90,7 @@ class CustomAppBar1 extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 60, left: 80),
+            padding: EdgeInsets.only(top: 60, left: 158),
             child: IconButton(
                 onPressed: () {},
                 icon: Icon(

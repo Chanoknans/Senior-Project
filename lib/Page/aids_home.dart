@@ -4,7 +4,9 @@ import 'package:flutter/painting.dart';
 import 'package:hearing_aid/Faderoute.dart';
 import 'package:hearing_aid/Myconstant.dart';
 import 'package:hearing_aid/Page/bottomappbar.dart';
+import 'package:hearing_aid/Page/hearingtest_home.dart';
 import 'package:hearing_aid/Page/homepage.dart';
+import 'package:hearing_aid/Page/signup_page.dart';
 import 'package:line_icons/line_icons.dart';
 
 class HearingAidss extends StatefulWidget {
@@ -21,9 +23,7 @@ class _HearingAidssState extends State<HearingAidss> {
         backgroundColor: Myconstant.blackground,
         body: Stack(
           children: [
-            Expanded(
-              child: CustomAppBar1(),
-            ),
+            new CustomAppBar1(),
             Padding(
               padding: EdgeInsets.only(top: 145, left: 18),
               child: Container(
@@ -42,7 +42,7 @@ class _HearingAidssState extends State<HearingAidss> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 130, left: 320),
-              child: CircleButton(),
+              child: new CircleButton(),
             ),
             Padding(
               padding: EdgeInsets.only(top: 200, left: 18),
@@ -64,15 +64,43 @@ class _HearingAidssState extends State<HearingAidss> {
                           style: TextStyle(fontSize: 14)),
                     ],
                   ),
-                ) /*Text(
-                "การทดสอบวันที่ 2-11-2021\n" "00:36:21224236",
-                style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Prompt',
-                    fontWeight: FontWeight.bold,
-                    color: Myconstant.light),
-              ),*/
-                )
+                )),
+            Padding(
+              padding: EdgeInsets.only(top: 280),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  "Before you begin, put on your headphones.",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w600,
+                      color: Myconstant.green),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 320),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  padding: EdgeInsets.only(top: 5),
+                  child: new FloatingActionButton(
+                      elevation: 5,
+                      backgroundColor: Myconstant.green,
+                      child: Icon(
+                        LineIcons.plus,
+                        color: Myconstant.light,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        Navigator.push(context, FadeRoute(page: Page5()));
+                      }),
+                ),
+              ),
+            )
           ],
         ));
   }

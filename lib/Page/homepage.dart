@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:hearing_aid/Faderoute.dart';
 import 'package:hearing_aid/Myconstant.dart'; // ignore: unused_import
 import 'package:hearing_aid/Page/Page2.dart'; // ignore: unused_import
 import 'package:hearing_aid/Page/aids_home.dart';
@@ -66,9 +67,7 @@ class _HomepageState extends State<Homepage> {
                   borderRadius: BorderRadius.circular(6)),
               child: FlatButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return HearingAidss();
-                  }));
+                  Navigator.push(context, FadeRoute(page: HearingAidss()));
                 },
                 child: Text("pressed"),
               ),

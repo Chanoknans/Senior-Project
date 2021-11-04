@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/Faderoute.dart';
 import 'package:hearing_aid/Page/bottomappbar.dart';
+import 'package:hearing_aid/Page/hearingtest_home.dart';
 import 'package:line_icons/line_icons.dart';
 
 class Myconstant {
@@ -92,7 +93,11 @@ class CustomAppBar1 extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 60, left: 158),
             child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Page5();
+                  }));
+                },
                 icon: Icon(
                   Icons.info_outline_rounded,
                   color: Myconstant.light,

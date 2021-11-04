@@ -17,7 +17,7 @@ class Page5 extends StatefulWidget {
 }
 
 class _Page5State extends State<Page5> {
-  final controller = PageController(viewportFraction: 0.8, keepPage: true);
+  //final controller = ScrollController(initialScrollOffset: 50.0);
   final FirebaseAuth auth = FirebaseAuth.instance;
   int i = 0;
   String _uid = '';
@@ -25,9 +25,12 @@ class _Page5State extends State<Page5> {
   List<int> history = [];
   List<int> history2 = [];
   String? meen;
+  //ScrollController? _scrollController;
   void initState() {
     getdata();
     super.initState();
+    //_scrollController = ScrollController(initialScrollOffset: 50.0);
+    //todaySlider(context);
   }
 
   void getdata() async {
@@ -61,7 +64,7 @@ class _Page5State extends State<Page5> {
   }
 
   Future getdata3(int value) async {
-    for (i; i < value; i++) {
+    for (var i; i < value; i++) {
       User? user = auth.currentUser;
       _uid = user!.uid;
       final DocumentReference<Map<String, dynamic>> userDoc3 =
@@ -109,15 +112,20 @@ class _Page5State extends State<Page5> {
             ),
           ],
         ),
-        body: Container(
-          constraints: BoxConstraints.expand(height: 150),
-          child: todaySlider(context),
+        body: SingleChildScrollView(
+          reverse: true,
+          child: Container(
+            constraints: BoxConstraints.expand(height: 150),
+            child: todaySlider(context),
+          ),
         ));
   }
 
   Swiper todaySlider(context) {
     return new Swiper(
       autoplay: true,
+      key: UniqueKey(),
+      loop: true,
       itemBuilder: (BuildContext context, int index) {
         return Align(
             alignment: Alignment.center,
@@ -148,6 +156,8 @@ class _Page5State extends State<Page5> {
       itemCount: today.length,
       viewportFraction: 0.8,
       scale: 0.9,
+      scrollDirection: Axis.horizontal,
+      //control: new SwiperControl(),
     );
   }
 }

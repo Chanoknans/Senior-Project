@@ -10,6 +10,7 @@ import 'package:hearing_aid/Page/hearingtest_home.dart';
 import 'package:hearing_aid/Page/homepage.dart';
 import 'package:hearing_aid/Page/signup_page.dart';
 import 'package:line_icons/line_icons.dart';
+//import 'package:linked_scroll_controller/linked_scroll_controller.dart';
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
@@ -97,9 +98,7 @@ class _HearingAidssState extends State<HearingAidss> {
                         color: Myconstant.light,
                         size: 30,
                       ),
-                      onPressed: () {
-                        Navigator.push(context, FadeRoute(page: Page5()));
-                      }),
+                      onPressed: () {}),
                 ),
               ),
             )

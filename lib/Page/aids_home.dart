@@ -187,7 +187,7 @@ class _HearingAidssState extends State<HearingAidss> {
                               Padding(
                                 padding: EdgeInsets.only(left: 28),
                                 child: Text(
-                                  "Setting",
+                                  "Settings",
                                   style: TextStyle(
                                     color: Myconstant.blackground,
                                     fontWeight: FontWeight.w600,
@@ -203,7 +203,7 @@ class _HearingAidssState extends State<HearingAidss> {
                             elevation: 2,
                             fixedSize: const Size(180, 35),
                             textStyle: TextStyle(),
-                            primary: Color.fromRGBO(126, 143, 132, 1),
+                            primary: Color.fromRGBO(240, 238, 233, 0.95),
                           ),
                           onPressed: () {}),
                     )

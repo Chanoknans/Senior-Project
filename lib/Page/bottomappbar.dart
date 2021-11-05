@@ -119,6 +119,8 @@ class CircleButton extends StatefulWidget {
 }
 
 class _CircleButtonState extends State<CircleButton> {
+  List<String> text = [];
+  bool distext = false;
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -126,15 +128,17 @@ class _CircleButtonState extends State<CircleButton> {
       height: 60,
       padding: EdgeInsets.only(top: 5),
       child: FloatingActionButton(
-          elevation: 5,
-          heroTag: "btn1",
-          backgroundColor: Myconstant.dgreen,
-          child: Icon(
-            LineIcons.plus,
-            color: Myconstant.white,
-            size: 30,
-          ),
-          onPressed: () {}),
+        elevation: 5,
+        heroTag: "btn1",
+        backgroundColor: Myconstant.dgreen,
+        child: Icon(
+          LineIcons.plus,
+          color: Myconstant.white,
+          size: 30,
+        ),
+        onPressed: () {},
+      ),
+      // ignore: dead_code
     );
   }
 }

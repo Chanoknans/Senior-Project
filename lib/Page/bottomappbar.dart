@@ -131,7 +131,7 @@ class _CircleButtonState extends State<CircleButton> {
           backgroundColor: Myconstant.dgreen,
           child: Icon(
             LineIcons.plus,
-            color: Myconstant.light,
+            color: Myconstant.white,
             size: 30,
           ),
           onPressed: () {}),

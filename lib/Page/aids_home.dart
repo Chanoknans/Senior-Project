@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hearing_aid/Faderoute.dart';
 import 'package:hearing_aid/Myconstant.dart';
 import 'package:hearing_aid/Page/bottomappbar.dart';
@@ -20,6 +21,11 @@ class HearingAidss extends StatefulWidget {
 }
 
 class _HearingAidssState extends State<HearingAidss> {
+  bool started = false;
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +55,7 @@ class _HearingAidssState extends State<HearingAidss> {
             ),
             Padding(
               padding: EdgeInsets.only(top: 200, left: 18),
-              child: Container(width: 2, height: 54, color: Myconstant.light),
+              child: Container(width: 2, height: 54, color: Myconstant.white),
             ),
             Padding(
                 padding: EdgeInsets.only(top: 200, left: 30),
@@ -78,7 +84,7 @@ class _HearingAidssState extends State<HearingAidss> {
                       fontSize: 16,
                       fontFamily: 'Nunito',
                       fontWeight: FontWeight.w600,
-                      color: Myconstant.green),
+                      color: started ? Myconstant.green : Myconstant.redtext),
                 ),
               ),
             ),
@@ -87,21 +93,122 @@ class _HearingAidssState extends State<HearingAidss> {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: Container(
-                  width: 180,
-                  height: 180,
-                  padding: EdgeInsets.only(top: 5),
+                  width: 185,
+                  height: 185,
+                  padding: EdgeInsets.only(top: 2),
                   child: new FloatingActionButton(
                       elevation: 5,
-                      backgroundColor: Myconstant.green,
-                      child: Icon(
-                        LineIcons.plus,
-                        color: Myconstant.light,
-                        size: 30,
+                      backgroundColor:
+                          started ? Myconstant.green : Myconstant.redtext,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 15),
+                            child: Text(
+                              started ? "START" : "STOP",
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.bold,
+                                  color: Myconstant.white),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Image.asset(
+                            "assets/image/headphones.png",
+                            scale: 2.05,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Text(
+                              "pressed here",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.w600,
+                                  color: Myconstant.white),
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: () {}),
+                      onPressed: () => setState(() {
+                            started = !started;
+                          })),
                 ),
               ),
-            )
+            ),
+            Positioned(
+                top: 530,
+                left: 105,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      //alignment: Alignment.center,
+                      child: ElevatedButton(
+                          child: Row(
+                            children: [
+                              Icon(
+                                LineIcons.microphone,
+                                color: Myconstant.redtext,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 22),
+                                child: Text(
+                                  "Recording",
+                                  style: TextStyle(
+                                    color: Myconstant.blackground,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Nunito',
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            ],
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2,
+                            fixedSize: const Size(180, 35),
+                            textStyle: TextStyle(),
+                            primary: Color.fromRGBO(240, 238, 233, 0.95),
+                          ),
+                          onPressed: () {}),
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                          child: Row(
+                            children: [
+                              Icon(
+                                LineIcons.cog,
+                                color: Myconstant.grayy,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 28),
+                                child: Text(
+                                  "Setting",
+                                  style: TextStyle(
+                                    color: Myconstant.blackground,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Nunito',
+                                    fontSize: 16,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            ],
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2,
+                            fixedSize: const Size(180, 35),
+                            textStyle: TextStyle(),
+                            primary: Color.fromRGBO(126, 143, 132, 1),
+                          ),
+                          onPressed: () {}),
+                    )
+                  ],
+                ))
           ],
         ));
   }

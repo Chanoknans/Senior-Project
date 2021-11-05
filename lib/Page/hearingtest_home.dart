@@ -129,34 +129,44 @@ class _Page5State extends State<Page5> {
       itemBuilder: (BuildContext context, int index) {
         return Align(
             alignment: Alignment.center,
-            child: RichText(
-              text: TextSpan(
-                text: 'การทดสอบวันที่ \n' '${today[index].split(" ")[0]}\n',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Prompt',
-                    fontWeight: FontWeight.bold,
-                    color: Myconstant.gray),
-                children: <TextSpan>[
-                  TextSpan(
-                      text: '${today[index].split(" ")[1]}',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                ],
-              ),
-              /*Text(
-            'การทดสอบวันที่ ${today[index].split(" ")[0]}\n'
-            '${today[index].split(" ")[1]}',
-            style: TextStyle(
-                color: Myconstant.white, fontFamily: 'Prompt', fontSize: 15),
-            //textAlign: TextAlign.start,
-          ),*/
-            ));
+            child: Container(
+                width: 140,
+                height: 110,
+                decoration: BoxDecoration(
+                    color: Myconstant.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'การทดสอบวันที่ \n'
+                            '${today[index].split(" ")[0]}\n',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Prompt',
+                            fontWeight: FontWeight.bold,
+                            color: Myconstant.blackground),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: '${today[index].split(" ")[1]}',
+                              style: TextStyle(
+                                  fontSize: 13.5, fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                    ),
+                  ),
+                )));
       },
       itemCount: today.length,
-      viewportFraction: 0.8,
-      scale: 0.9,
+      viewportFraction: 0.4,
+      scale: 0.4,
       scrollDirection: Axis.horizontal,
+      pagination: new SwiperPagination(
+          margin: new EdgeInsets.only(top: 10),
+          builder: DotSwiperPaginationBuilder(
+              color: Myconstant.white, activeColor: Myconstant.yellow)),
       //control: new SwiperControl(),
     );
   }

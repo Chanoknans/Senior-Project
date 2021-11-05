@@ -14,6 +14,7 @@ class Myconstant {
   static Color light = Color.fromRGBO(245, 240, 246, 1);
   static Color white = Color.fromRGBO(245, 245, 245, 1);
   static Color gray = Color.fromRGBO(229, 229, 229, 1);
+  static Color lightgray = Color.fromRGBO(229, 229, 229, 0.8);
   static Color darkgray = Color.fromRGBO(196, 196, 196, 1);
   static Color transgray = Color.fromRGBO(196, 196, 196, 0.8);
   static Color blackground = Color.fromRGBO(0, 50, 70, 1);
@@ -22,6 +23,7 @@ class Myconstant {
   static Color grayy = Color.fromRGBO(57, 57, 57, 1);
   static Color grayy2 = Color.fromRGBO(57, 57, 57, 0.65);
   static Color som = Color.fromRGBO(228, 73, 28, 1);
+  static Color redtext = Color.fromRGBO(206, 43, 55, 1);
   static Color bluee = Color.fromRGBO(66, 103, 178, 1);
   static Color yellow = Color.fromRGBO(252, 245, 148, 1);
   static Color dark = const Color.fromRGBO(43, 65, 98, 1);
@@ -75,7 +77,7 @@ class CustomAppBar1 extends StatelessWidget {
                 },
                 icon: Icon(
                   LineIcons.times,
-                  color: Myconstant.light,
+                  color: Myconstant.white,
                 )),
           ),
           Padding(
@@ -83,7 +85,7 @@ class CustomAppBar1 extends StatelessWidget {
             child: Text(
               "Hearing Aids",
               style: TextStyle(
-                  color: Myconstant.light,
+                  color: Myconstant.white,
                   fontSize: 20,
                   fontFamily: 'Nunito',
                   fontWeight: FontWeight.bold),
@@ -100,7 +102,7 @@ class CustomAppBar1 extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.info_outline_rounded,
-                  color: Myconstant.light,
+                  color: Myconstant.white,
                 )),
           ),
         ],

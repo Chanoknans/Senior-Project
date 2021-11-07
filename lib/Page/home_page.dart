@@ -117,7 +117,7 @@ class _HomepageState extends State<Homepage> {
             reverse: true,
             child: Stack(children: [
               Padding(
-                padding: const EdgeInsets.only(top: 35, left: 20),
+                padding: const EdgeInsets.only(top: 40, left: 20),
                 child: Container(
                   height: 40,
                   width: 320,
@@ -152,231 +152,279 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 90, left: 80),
+                padding: EdgeInsets.only(top: 80, left: 80),
                 child: Container(
                   width: 240,
-                  height: 40,
+                  height: 150,
                   child: Visibility(
                     visible: _showtext,
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          text = value;
-                        });
-                      },
-                      style: TextStyle(color: white, height: 1, fontSize: 14),
-                      maxLength: 30,
-                      cursorColor: white,
-                      decoration: InputDecoration(
-                        focusColor: white,
-                        counterStyle: TextStyle(color: white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: white),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 0),
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                text = value;
+                              });
+                            },
+                            style: TextStyle(
+                                color: white, height: 1, fontSize: 14),
+                            maxLength: 30,
+                            cursorColor: white,
+                            decoration: InputDecoration(
+                              focusColor: white,
+                              counterStyle: TextStyle(color: white),
+                              enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: white),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        // ignore: sort_child_properties_last
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50, left: 40),
+                          child: TextButton(
+                            onPressed: () {},
+                            // ignore: sort_child_properties_last
+                            child: Text("OK"),
+                            style: TextButton.styleFrom(
+                                backgroundColor: redtext, primary: white),
+                          ),
+                        ),
+                        // ignore: sort_child_properties_last
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50, left: 130),
+                          child: TextButton(
+                            onPressed: () {},
+                            // ignore: sort_child_properties_last
+                            child: Text("Cancel"),
+                            style: TextButton.styleFrom(
+                                backgroundColor: blue, primary: white),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 120),
+                padding: EdgeInsets.only(top: 150),
                 child: Container(
                   constraints: BoxConstraints.expand(height: 200),
                   child: todaySlider(context),
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 300, left: 50),
+                  padding: EdgeInsets.only(top: 330, left: 0),
                   child: Container(
                       child: Visibility(
-                          visible: _audiogram,
-                          child: Column(children: [
-                            SizedBox(
-                              height: 25,
-                            ),
-                            Column(
+                    visible: _audiogram,
+                    child: Column(children: [
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            height: 290,
+                            width: 290,
+                            decoration: BoxDecoration(
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                                borderRadius: BorderRadius.circular(15)),
+                            child: Column(
                               children: [
-                                Container(
-                                  height: 290,
-                                  width: 290,
-                                  decoration: BoxDecoration(
-                                      color: Color.fromRGBO(0, 0, 0, 0.3),
-                                      borderRadius: BorderRadius.circular(15)),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 15, left: 150, right: 1),
                                   child: Column(
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 15, left: 150, right: 1),
-                                        child: Column(
+                                      Container(
+                                        height: 30,
+                                        width: 130,
+                                        decoration: BoxDecoration(
+                                            color: green,
+                                            borderRadius:
+                                                BorderRadius.circular(11)),
+                                        child: Row(
                                           children: [
-                                            Container(
-                                              height: 30,
-                                              width: 130,
-                                              decoration: BoxDecoration(
-                                                  color: green,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          11)),
-                                              child: Row(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 2,
-                                                            left: 12,
-                                                            right: 2),
-                                                  ),
-                                                  Text(
-                                                    "Audiogram",
-                                                    style: TextStyle(
-                                                        color: light,
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                    textAlign: TextAlign.center,
-                                                  )
-                                                ],
-                                              ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 2, left: 12, right: 2),
+                                            ),
+                                            Text(
+                                              "Audiogram",
+                                              style: TextStyle(
+                                                  color: light,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500),
+                                              textAlign: TextAlign.center,
                                             )
                                           ],
                                         ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 12, left: 9, right: 12),
+                                  child: Container(
+                                    height: 230,
+                                    width: 300,
+                                    decoration: BoxDecoration(
+                                        color: Color.fromRGBO(0, 0, 0, 0.1),
+                                        borderRadius:
+                                            BorderRadius.circular(11)),
+                                    child: SfCartesianChart(
+                                      /*legend: Legend(isVisible: true),*/
+                                      tooltipBehavior: _tooltipBehavior,
+                                      plotAreaBorderWidth: 0,
+                                      primaryXAxis: CategoryAxis(
+                                        labelStyle: TextStyle(color: light),
+                                        title: AxisTitle(
+                                            text: 'Frequency (Hz)',
+                                            textStyle: TextStyle(
+                                                color: light,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        majorGridLines:
+                                            MajorGridLines(width: 0),
+                                        axisLine:
+                                            AxisLine(width: 3, color: light),
                                       ),
-                                      SizedBox(
-                                        height: 2,
+                                      primaryYAxis: NumericAxis(
+                                        labelStyle: TextStyle(color: light),
+                                        isInversed: true,
+                                        title: AxisTitle(
+                                            text: 'Hearing Level (dB HL)',
+                                            textStyle: TextStyle(
+                                                color: light,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold)),
+                                        majorGridLines: MajorGridLines(
+                                            width: 0.5,
+                                            color: light.withOpacity(0.5)),
+                                        axisLine:
+                                            AxisLine(width: 3, color: light),
+                                        minimum: -10,
+                                        maximum: 100,
+                                        interval: 10,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 12, left: 12, right: 12),
-                                        child: Container(
-                                          height: 230,
-                                          width: 300,
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  Color.fromRGBO(0, 0, 0, 0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(11)),
-                                          child: SfCartesianChart(
-                                            /*legend: Legend(isVisible: true),*/
-                                            tooltipBehavior: _tooltipBehavior,
-                                            plotAreaBorderWidth: 0,
-                                            primaryXAxis: CategoryAxis(
-                                              labelStyle:
-                                                  TextStyle(color: light),
-                                              title: AxisTitle(
-                                                  text: 'Frequency (Hz)',
-                                                  textStyle: TextStyle(
-                                                      color: light,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              majorGridLines:
-                                                  MajorGridLines(width: 0),
-                                              axisLine: AxisLine(
-                                                  width: 3, color: light),
-                                            ),
-                                            primaryYAxis: NumericAxis(
-                                              labelStyle:
-                                                  TextStyle(color: light),
-                                              isInversed: true,
-                                              title: AxisTitle(
-                                                  text: 'Hearing Level (dB HL)',
-                                                  textStyle: TextStyle(
-                                                      color: light,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              majorGridLines: MajorGridLines(
-                                                  width: 0.5,
-                                                  color:
-                                                      light.withOpacity(0.5)),
-                                              axisLine: AxisLine(
-                                                  width: 3, color: light),
-                                              minimum: -10,
-                                              maximum: 100,
-                                              interval: 10,
-                                            ),
-                                            //Data from Hearing Test
-                                            series: <ChartSeries>[
-                                              LineSeries<AudiogramData, String>(
-                                                enableTooltip: true,
-                                                dataSource: [
-                                                  AudiogramData(
-                                                      '250', history2[0]),
-                                                  AudiogramData(
-                                                      '500', history2[1]),
-                                                  AudiogramData(
-                                                      '1000', history2[2]),
-                                                  AudiogramData(
-                                                      '2000', history2[3]),
-                                                  AudiogramData(
-                                                      '4000', history2[4]),
-                                                  AudiogramData(
-                                                      '8000', history2[5]),
-                                                ],
-                                                color: pink,
-                                                width: 4,
-                                                xValueMapper:
-                                                    (AudiogramData freq, _) =>
-                                                        freq.freq,
-                                                yValueMapper:
-                                                    (AudiogramData freq, _) =>
-                                                        freq.hear,
-                                                markerSettings: MarkerSettings(
-                                                    isVisible: true),
-                                                /*dataLabelSettings: DataLabelSettings(
+                                      //Data from Hearing Test
+                                      series: <ChartSeries>[
+                                        LineSeries<AudiogramData, String>(
+                                          enableTooltip: true,
+                                          dataSource: [
+                                            AudiogramData('250', history2[0]),
+                                            AudiogramData('500', history2[1]),
+                                            AudiogramData('1000', history2[2]),
+                                            AudiogramData('2000', history2[3]),
+                                            AudiogramData('4000', history2[4]),
+                                            AudiogramData('8000', history2[5]),
+                                          ],
+                                          color: pink,
+                                          width: 4,
+                                          xValueMapper:
+                                              (AudiogramData freq, _) =>
+                                                  freq.freq,
+                                          yValueMapper:
+                                              (AudiogramData freq, _) =>
+                                                  freq.hear,
+                                          markerSettings:
+                                              MarkerSettings(isVisible: true),
+                                          /*dataLabelSettings: DataLabelSettings(
                                   isVisible: true,
                                   textStyle: TextStyle(
                                       color: .light, fontSize: 12),
                                   offset: Offset(16, 0),
                                 ),*/
-                                              ),
-                                              LineSeries<AudiogramData2,
-                                                  String>(
-                                                enableTooltip: true,
-                                                dataSource: [
-                                                  AudiogramData2(
-                                                      '250', history[0]),
-                                                  AudiogramData2(
-                                                      '500', history[1]),
-                                                  AudiogramData2(
-                                                      '1000', history[2]),
-                                                  AudiogramData2(
-                                                      '2000', history[3]),
-                                                  AudiogramData2(
-                                                      '4000', history[4]),
-                                                  AudiogramData2(
-                                                      '8000', history[5]),
-                                                ],
-                                                color: neonblue,
-                                                width: 4,
-                                                xValueMapper:
-                                                    (AudiogramData2 freq2, _) =>
-                                                        freq2.freqs,
-                                                yValueMapper:
-                                                    (AudiogramData2 freq2, _) =>
-                                                        freq2.hears,
-                                                markerSettings: MarkerSettings(
-                                                    isVisible: true),
-                                                /*dataLabelSettings: DataLabelSettings(
+                                        ),
+                                        LineSeries<AudiogramData2, String>(
+                                          enableTooltip: true,
+                                          dataSource: [
+                                            AudiogramData2('250', history[0]),
+                                            AudiogramData2('500', history[1]),
+                                            AudiogramData2('1000', history[2]),
+                                            AudiogramData2('2000', history[3]),
+                                            AudiogramData2('4000', history[4]),
+                                            AudiogramData2('8000', history[5]),
+                                          ],
+                                          color: neonblue,
+                                          width: 4,
+                                          xValueMapper:
+                                              (AudiogramData2 freq2, _) =>
+                                                  freq2.freqs,
+                                          yValueMapper:
+                                              (AudiogramData2 freq2, _) =>
+                                                  freq2.hears,
+                                          markerSettings:
+                                              MarkerSettings(isVisible: true),
+                                          /*dataLabelSettings: DataLabelSettings(
                                     isVisible: true,
                                     textStyle: TextStyle(
                                         color: .light, fontSize: 12),
                                     offset: Offset(16, 0),
                                   )*/
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 100),
+                        child: Row(
+                          children: [
+                            TextButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(white),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            redtext),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ))),
+                                child: Text("generate")),
                             SizedBox(
-                              height: 100,
-                            )
-                          ])))),
+                              width: 15,
+                            ),
+                            TextButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                    foregroundColor:
+                                        MaterialStateProperty.all<Color>(white),
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(blue),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ))),
+                                child: Text(" more details"))
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 80,
+                      ),
+                    ]),
+                  ))),
             ])),
       ),
     );

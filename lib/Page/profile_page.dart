@@ -136,7 +136,7 @@ class _MyProfileState extends State<MyProfile> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: ElevatedButton(
-                  style: myButtonstyle(primary: darkgray, boarderRadius: 20.0),
+                  style: myButtonstyle(primary: darkgray, boarderRadius: 12.0),
                   onPressed: () {},
                   child: Text(
                     "Edit Profile",
@@ -145,7 +145,7 @@ class _MyProfileState extends State<MyProfile> {
                 ),
               ),
               ButtonTheme(
-                minWidth: 100,
+                minWidth: 110,
                 height: 30,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

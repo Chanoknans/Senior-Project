@@ -50,7 +50,7 @@ class _HearingAidssState extends State<HearingAidss> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 130, left: 320),
+              padding: EdgeInsets.only(top: 135, left: 330),
               child: CircleButton(),
             ),
             Padding(

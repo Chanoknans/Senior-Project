@@ -56,6 +56,7 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
   }
 
   final navigatorKey = GlobalKey<NavigatorState>();
+  // ignore: unused_element
   Widget _buildBody() => MaterialApp(
         navigatorKey: navigatorKey,
         onGenerateRoute: (settings) {
@@ -122,7 +123,7 @@ class CircleButton extends StatefulWidget {
 
 class _CircleButtonState extends State<CircleButton> {
   List<String> text = [];
-  bool distext = false;
+  bool _showtext = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,7 +139,11 @@ class _CircleButtonState extends State<CircleButton> {
           color: light,
           size: 30,
         ),
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            _showtext = !_showtext;
+          });
+        },
       ),
     );
   }

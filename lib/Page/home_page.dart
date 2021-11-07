@@ -3,10 +3,11 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:hearing_aid/Page/aids_home.dart';
+import 'package:hearing_aid/Page/bottom_app_bar.dart';
+import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
-import 'package:hearing_aid/fade_route.dart';
-import 'package:hearing_aid/page/aids_home.dart';
-import 'package:hearing_aid/page/profile_page.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/widgets.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -26,13 +27,6 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  /*String text = '';
-  bool distext = false;*/
-  /*@override
-  void MyValue() {
-    List<int>? new_val = widget.result!;
-  }*/
-
   late TooltipBehavior _tooltipBehavior;
   final FirebaseAuth auth = FirebaseAuth.instance;
   int i = 0;
@@ -111,33 +105,54 @@ class _HomepageState extends State<Homepage> {
             color: const Color.fromRGBO(245, 245, 245, 1),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const Text("Information");
+                return HearingAidss();
               }));
             },
           ),
         ],
       ),
+      drawer: MyProfile(),
       body: Container(
         child: SingleChildScrollView(
             reverse: true,
-            child: Column(children: [
+            child: Stack(children: [
               Padding(
-                padding: const EdgeInsets.only(top: 15, left: 320),
+                padding: const EdgeInsets.only(top: 35, left: 20),
+                child: Container(
+                  height: 40,
+                  width: 320,
+                  decoration: BoxDecoration(color: blackground),
+                  child: Text(
+                    "For new users or those who want to use the value elsewhere, "
+                    "please fill in your hearing level before using.",
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 12,
+                      color: transgray,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 25, left: 330),
                 child: FloatingActionButton(
-                  backgroundColor: green,
+                  elevation: 5,
+                  heroTag: "btn1",
+                  backgroundColor: dgreen,
+                  child: Icon(
+                    LineIcons.plus,
+                    color: light,
+                    size: 30,
+                  ),
                   onPressed: () {
                     setState(() {
                       _showtext = !_showtext;
                     });
                   },
-                  child: Icon(
-                    Icons.add,
-                    color: white,
-                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 12),
+                padding: EdgeInsets.only(top: 90, left: 80),
                 child: Container(
                   width: 240,
                   height: 40,
@@ -164,14 +179,14 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 0),
+                padding: EdgeInsets.only(top: 120),
                 child: Container(
                   constraints: BoxConstraints.expand(height: 200),
                   child: todaySlider(context),
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 10),
+                  padding: EdgeInsets.only(top: 300, left: 50),
                   child: Container(
                       child: Visibility(
                           visible: _audiogram,
@@ -182,8 +197,8 @@ class _HomepageState extends State<Homepage> {
                             Column(
                               children: [
                                 Container(
-                                  height: 360,
-                                  width: 350,
+                                  height: 290,
+                                  width: 290,
                                   decoration: BoxDecoration(
                                       color: Color.fromRGBO(0, 0, 0, 0.3),
                                       borderRadius: BorderRadius.circular(15)),
@@ -191,7 +206,7 @@ class _HomepageState extends State<Homepage> {
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.only(
-                                            top: 15, left: 210, right: 1),
+                                            top: 15, left: 150, right: 1),
                                         child: Column(
                                           children: [
                                             Container(
@@ -233,8 +248,8 @@ class _HomepageState extends State<Homepage> {
                                         padding: const EdgeInsets.only(
                                             top: 12, left: 12, right: 12),
                                         child: Container(
-                                          height: 290,
-                                          width: 350,
+                                          height: 230,
+                                          width: 300,
                                           decoration: BoxDecoration(
                                               color:
                                                   Color.fromRGBO(0, 0, 0, 0.1),
@@ -357,8 +372,11 @@ class _HomepageState extends State<Homepage> {
                                   ),
                                 ),
                               ],
+                            ),
+                            SizedBox(
+                              height: 100,
                             )
-                          ]))))
+                          ])))),
             ])),
       ),
     );
@@ -366,7 +384,7 @@ class _HomepageState extends State<Homepage> {
 
   Swiper todaySlider(context) {
     return Swiper(
-      autoplay: true,
+      autoplay: false,
       key: UniqueKey(),
       loop: true,
       itemBuilder: (BuildContext context, int index) {
@@ -390,25 +408,6 @@ class _HomepageState extends State<Homepage> {
                 setState(() {
                   _audiogram = !_audiogram;
                   getdata2(index);
-                  /*Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Homepage(
-                                result: history2,
-                                result2: history,
-                                sumall: history2[0] +
-                                    history2[1] +
-                                    history2[2] +
-                                    history2[3] +
-                                    history2[4] +
-                                    history2[5] +
-                                    history[0] +
-                                    history[1] +
-                                    history[2] +
-                                    history[3] +
-                                    history[4] +
-                                    history[5],
-                              )));*/
                 });
               },
               child: RichText(
@@ -438,10 +437,7 @@ class _HomepageState extends State<Homepage> {
       pagination: SwiperPagination(
         margin: EdgeInsets.only(top: 120),
         builder: const DotSwiperPaginationBuilder(
-            activeColor: Color.fromRGBO(228, 73, 28, 1),
-            size: 10.0,
-            activeSize: 12.0,
-            space: 10.0),
+            activeColor: yellow, size: 10.0, activeSize: 12.0, space: 10.0),
       ),
       //control: new SwiperControl(),
     );

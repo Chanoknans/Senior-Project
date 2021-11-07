@@ -18,6 +18,7 @@ const Color blue = Color.fromRGBO(3, 135, 177, 1);
 const Color grayy = Color.fromRGBO(57, 57, 57, 1);
 const Color grayy2 = Color.fromRGBO(57, 57, 57, 0.65);
 const Color orange = Color.fromRGBO(228, 73, 28, 1);
+const Color redtext = Color.fromRGBO(206, 43, 55, 1);
 const Color bluee = Color.fromRGBO(66, 103, 178, 1);
 const Color yellow = Color.fromRGBO(252, 245, 148, 1);
 const Color dark = const Color.fromRGBO(43, 65, 98, 1);

@@ -163,20 +163,24 @@ class _RecordingPageState extends State<RecordingPage> {
                 width: 3,
               ),
             ),
-            child: Row(children: [
-              ElevatedButton(
-                onPressed: getRecorderFn(),
-                //color: Colors.white,
-                //disabledColor: Colors.grey,
-                child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(_mRecorder!.isRecording
-                  ? 'Recording in progress'
-                  : 'Recorder is stopped'),
-            ]),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: getRecorderFn(),
+                  //color: Colors.white,
+                  //disabledColor: Colors.grey,
+                  child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  _mRecorder!.isRecording
+                      ? 'Recording in progress'
+                      : 'Recorder is stopped',
+                ),
+              ],
+            ),
           ),
           Container(
             margin: const EdgeInsets.all(3),
@@ -201,9 +205,11 @@ class _RecordingPageState extends State<RecordingPage> {
               SizedBox(
                 width: 20,
               ),
-              Text(_mPlayer!.isPlaying
-                  ? 'Playback in progress'
-                  : 'Player is stopped'),
+              Text(
+                _mPlayer!.isPlaying
+                    ? 'Playback in progress'
+                    : 'Player is stopped',
+              ),
             ]),
           ),
         ],

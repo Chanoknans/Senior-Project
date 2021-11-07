@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hearing_aid/Myconstant.dart';
-import 'package:hearing_aid/Page/Page2.dart';
-import 'package:hearing_aid/Page/Profile.dart';
+import 'package:hearing_aid/constant.dart';
+import 'package:hearing_aid/page/second_page.dart';
+import 'package:hearing_aid/models/profile.dart';
 import 'package:line_icons/line_icons.dart';
 
 class MyProfile extends StatefulWidget {
@@ -88,7 +88,7 @@ class _MyProfileState extends State<MyProfile> {
                           fontFamily: 'Nunito',
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Myconstant.blackground),
+                          color: blackground),
                       textAlign: TextAlign.center,
                     ),
                   ))
@@ -97,68 +97,79 @@ class _MyProfileState extends State<MyProfile> {
         ),
         SizedBox(height: 10),
         Positioned(
-            height: 600,
-            child: Row(
-              children: [
-                SizedBox(width: 12),
-                Icon(LineIcons.calendar, color: Myconstant.blue),
-                SizedBox(width: 4),
-                Text(
-                  profile.date.split(" ")[0],
-                  style: TextStyle(color: Myconstant.blackground),
-                )
-              ],
-            )),
+          height: 600,
+          child: Row(
+            children: [
+              SizedBox(width: 12),
+              Icon(LineIcons.calendar, color: blue),
+              SizedBox(width: 4),
+              Text(
+                profile.date.split(" ")[0],
+                style: TextStyle(color: blackground),
+              )
+            ],
+          ),
+        ),
         Positioned(
-            height: 670,
-            child: Row(
-              children: [
-                SizedBox(width: 12),
-                Icon(LineIcons.venusMars, color: Myconstant.blue),
-                SizedBox(width: 4),
-                Text(
-                  profile.gen,
-                  style: TextStyle(color: Myconstant.blackground),
-                )
-              ],
-            )),
+          height: 670,
+          child: Row(
+            children: [
+              SizedBox(width: 12),
+              Icon(LineIcons.venusMars, color: blue),
+              SizedBox(width: 4),
+              Text(
+                profile.gen,
+                style: TextStyle(color: blackground),
+              )
+            ],
+          ),
+        ),
         SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.only(left: 50, top: 365),
           child: Column(
             children: [
               ButtonTheme(
-                  minWidth: 90,
-                  height: 30,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: RaisedButton(
-                      color: Myconstant.darkgray,
-                      onPressed: () {},
-                      child: Text(
-                        "Edit Profile",
-                        style: TextStyle(color: Myconstant.grayy),
-                      ))),
+                minWidth: 90,
+                height: 30,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ElevatedButton(
+                  style: myButtonstyle(primary: darkgray, boarderRadius: 20.0),
+                  onPressed: () {},
+                  child: Text(
+                    "Edit Profile",
+                    style: TextStyle(color: grayy),
+                  ),
+                ),
+              ),
               ButtonTheme(
-                  minWidth: 100,
-                  height: 30,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: RaisedButton(
-                    color: Myconstant.som,
-                    onPressed: () async {
-                      await auth.signOut().then((value) {
-                        Navigator.pushReplacement(context,
-                            MaterialPageRoute(builder: (context) {
-                          return Page2();
-                        }));
-                      });
-                    },
-                    child: Text(
-                      "Logout",
-                      style: TextStyle(color: Myconstant.light),
-                    ),
-                  ))
+                minWidth: 100,
+                height: 30,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ElevatedButton(
+                  style: myButtonstyle(primary: orange, boarderRadius: 12.0),
+                  onPressed: () async {
+                    await auth.signOut().then((value) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return Page2();
+                          },
+                        ),
+                      );
+                    });
+                  },
+                  child: Text(
+                    "Logout",
+                    style: TextStyle(color: light),
+                  ),
+                ),
+              )
             ],
           ),
         ),

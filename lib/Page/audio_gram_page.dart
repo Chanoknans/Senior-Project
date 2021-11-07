@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hearing_aid/Page/profilepage.dart';
+import 'package:hearing_aid/page/profile_page.dart';
 
 class AudiogramPage extends StatefulWidget {
   AudiogramPage({Key? key}) : super(key: key);

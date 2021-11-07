@@ -1,11 +1,3 @@
-// ignore_for_file: duplicate_import
-
-import 'dart:async';
-import 'dart:typed_data'; // ignore: unused_import
-import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:flutter/services.dart' show rootBundle; // ignore: unused_import
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';

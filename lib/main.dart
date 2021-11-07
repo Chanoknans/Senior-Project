@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'Page/Page1.dart';
+import 'package:hearing_aid/page/first_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

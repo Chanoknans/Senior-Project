@@ -6,14 +6,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hearing_aid/constant.dart';
 
-import 'package:form_field_validator/form_field_validator.dart';
-import 'package:hearing_aid/Page/Profile.dart';
-import 'package:hearing_aid/Page/bottomappbar.dart';
-import 'package:hearing_aid/Page/homepage.dart';
+import 'package:hearing_aid/models/profile.dart';
+import 'package:hearing_aid/page/bottom_app_bar.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../Myconstant.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -67,7 +64,6 @@ class _LoginState extends State<Login> {
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width;
     return FutureBuilder(
         future: firebase,
         builder: (context, snapshot) {
@@ -127,96 +123,98 @@ class _LoginState extends State<Login> {
                           ),
                           Container(
                             margin: const EdgeInsets.only(top: 80),
-                            child: Stack(children: [
-                              Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 20, horizontal: 20),
-                                child: CircleAvatar(
-                                  radius: 60,
-                                  backgroundColor: Myconstant.green,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                      vertical: 20, horizontal: 20),
                                   child: CircleAvatar(
-                                    radius: 55,
-                                    backgroundColor: Myconstant.light,
-                                    backgroundImage: _Image == null
-                                        ? null
-                                        : FileImage(_Image!),
+                                    radius: 60,
+                                    backgroundColor: green,
+                                    child: CircleAvatar(
+                                      radius: 55,
+                                      backgroundColor: light,
+                                      backgroundImage: _Image == null
+                                          ? null
+                                          : FileImage(_Image!),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Positioned(
+                                Positioned(
                                   top: 90,
                                   left: 80,
                                   child: RawMaterialButton(
                                     elevation: 10,
-                                    fillColor: Myconstant.light,
-                                    child: Icon(Icons.add_a_photo),
+                                    fillColor: light,
                                     padding: EdgeInsets.all(15),
                                     shape: CircleBorder(),
                                     onPressed: () {
                                       showDialog(
-                                          context: this.context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                                title: Text(
-                                                  'Choose option',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Myconstant
-                                                          .blackground),
-                                                ),
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: _picimagecamera,
-                                                        splashColor: Myconstant
-                                                            .blackground,
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                child: Icon(
-                                                                  Icons.camera,
-                                                                  color: Myconstant
-                                                                      .blackground,
-                                                                )),
-                                                            Text('Camera',
-                                                                style: Myconstant()
-                                                                    .a4Style())
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: _picimagegallery,
-                                                        splashColor: Myconstant
-                                                            .blackground,
-                                                        child: Row(
-                                                          children: [
-                                                            Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                child: Icon(
-                                                                  Icons.image,
-                                                                  color: Myconstant
-                                                                      .blackground,
-                                                                )),
-                                                            Text('Gallery',
-                                                                style: Myconstant()
-                                                                    .a4Style())
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
+                                        context: this.context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Choose option',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                color: blackground,
+                                              ),
+                                            ),
+                                            content: SingleChildScrollView(
+                                              child: ListBody(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: _picimagecamera,
+                                                    splashColor: blackground,
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Icon(
+                                                              Icons.camera,
+                                                              color:
+                                                                  blackground,
+                                                            )),
+                                                        Text('Camera',
+                                                            style: a4Style())
+                                                      ],
+                                                    ),
                                                   ),
-                                                ));
-                                          });
+                                                  InkWell(
+                                                    onTap: _picimagegallery,
+                                                    splashColor: blackground,
+                                                    child: Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            color: blackground,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          'Gallery',
+                                                          style: a4Style(),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
                                     },
-                                  ))
-                            ]),
+                                    child: Icon(Icons.add_a_photo),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                           Column(
                             children: [

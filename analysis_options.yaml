@@ -1,0 +1,12 @@
+linter:
+  rules:
+    - unnecessary_new
+    - avoid_empty_else
+    - avoid_relative_lib_imports
+    - avoid_types_as_parameter_names
+    - empty_statements
+    - no_duplicate_case_values
+    - valid_regexps
+    - file_names
+    - package_names
+    - sort_child_properties_last

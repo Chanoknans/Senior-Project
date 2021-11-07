@@ -4,12 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:hearing_aid/Page/Profile.dart';
-import 'package:hearing_aid/Page/create_page.dart';
+import 'package:hearing_aid/constant.dart';
+import 'package:hearing_aid/models/profile.dart';
+import 'package:hearing_aid/page/create_page.dart';
 
-import '../Myconstant.dart';
-
-import 'Page2.dart';
+import 'second_page.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -163,14 +162,12 @@ class _SignupState extends State<Signup> {
                                                   icon: statusEye
                                                       ? Icon(
                                                           Icons.remove_red_eye,
-                                                          color:
-                                                              Myconstant.grayy,
+                                                          color: grayy,
                                                         )
                                                       : Icon(
                                                           Icons
                                                               .remove_red_eye_outlined,
-                                                          color:
-                                                              Myconstant.grayy,
+                                                          color: grayy,
                                                         )),
                                             ),
                                             labelText: 'Password',
@@ -232,14 +229,12 @@ class _SignupState extends State<Signup> {
                                                   icon: statusEye2
                                                       ? Icon(
                                                           Icons.remove_red_eye,
-                                                          color:
-                                                              Myconstant.grayy,
+                                                          color: grayy,
                                                         )
                                                       : Icon(
                                                           Icons
                                                               .remove_red_eye_outlined,
-                                                          color:
-                                                              Myconstant.grayy,
+                                                          color: grayy,
                                                         )),
                                             ),
                                             labelText: 'Confirm Password',

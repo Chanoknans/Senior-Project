@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hearing_aid/Myconstant.dart';
-import 'package:hearing_aid/Page/aids_home.dart';
-import 'package:hearing_aid/Page/historypage.dart';
-import 'package:hearing_aid/Page/homepage.dart';
-import 'package:hearing_aid/Page/modepage.dart';
-import 'package:hearing_aid/Page/recordingpage.dart';
+import 'package:hearing_aid/constant.dart';
+import 'package:hearing_aid/page/aids_home.dart';
+import 'package:hearing_aid/page/history_page.dart';
+import 'package:hearing_aid/page/home_page.dart';
+import 'package:hearing_aid/page/mode_page.dart';
+import 'package:hearing_aid/page/recording_page.dart';
 import 'package:line_icons/line_icons.dart';
 
 class BottomAppBarbar extends StatefulWidget {
@@ -57,12 +57,13 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
 
   final navigatorKey = GlobalKey<NavigatorState>();
   Widget _buildBody() => MaterialApp(
-      navigatorKey: navigatorKey,
-      onGenerateRoute: (settings) {
-        Widget pages = Homepage();
-        if (settings.name == 'Page 2') pages = HearingAidss();
-        return MaterialPageRoute(builder: (_) => pages);
-      });
+        navigatorKey: navigatorKey,
+        onGenerateRoute: (settings) {
+          Widget pages = Homepage();
+          if (settings.name == 'Page 2') pages = HearingAidss();
+          return MaterialPageRoute(builder: (_) => pages);
+        },
+      );
 
   // ignore: non_constant_identifier_names
   Widget _BottomAppBarBarBar(int selectedIndex) => BottomNavigationBar(
@@ -77,8 +78,8 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
               icon: Icon(LineIcons.microphone), label: 'Recording'),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: Myconstant.som,
-        selectedIconTheme: IconThemeData(color: Myconstant.som),
+        selectedItemColor: orange,
+        selectedIconTheme: IconThemeData(color: orange),
         type: BottomNavigationBarType.fixed,
         onTap: _onItemTapped,
       );
@@ -86,12 +87,13 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
-        body: //_buildBody(),
-            PageStorage(
-          bucket: bucket,
-          child: pages[_selectedIndex],
-        ));
+      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
+      body: //_buildBody(),
+          PageStorage(
+        bucket: bucket,
+        child: pages[_selectedIndex],
+      ),
+    );
     /*  Navigator(onGenerateRoute: (settings) {
           PageStorage(
             bucket: bucket,
@@ -123,22 +125,21 @@ class _CircleButtonState extends State<CircleButton> {
   bool distext = false;
   @override
   Widget build(BuildContext context) {
-    return new Container(
+    return Container(
       width: 60,
       height: 60,
       padding: EdgeInsets.only(top: 5),
       child: FloatingActionButton(
         elevation: 5,
         heroTag: "btn1",
-        backgroundColor: Myconstant.dgreen,
+        backgroundColor: dgreen,
         child: Icon(
           LineIcons.plus,
-          color: Myconstant.white,
+          color: light,
           size: 30,
         ),
         onPressed: () {},
       ),
-      // ignore: dead_code
     );
   }
 }
@@ -166,8 +167,8 @@ class _CircleButtonState extends State<CircleButton> {
             icon: Icon(LineIcons.microphone), label: 'Recording'),
       ],
       currentIndex: _selectedIndex,
-      selectedItemColor: Myconstant.som,
-      selectedIconTheme: IconThemeData(color: Myconstant.som),
+      selectedItemColor: som,
+      selectedIconTheme: IconThemeData(color: som),
       type: BottomNavigationBarType.fixed,
       onTap: _onItemTapped,
     );

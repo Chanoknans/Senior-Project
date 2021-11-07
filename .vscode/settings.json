@@ -1,6 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
-    "editor.fontSize": 18,
+    "editor.fontSize": 15,
     "dart.flutterRunAdditionalArgs": [
         "--no-sound-null-safety"
     ],

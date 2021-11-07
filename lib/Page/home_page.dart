@@ -28,18 +28,18 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   /*String text = '';
   bool distext = false;*/
-  @override
+  /*@override
   void MyValue() {
     List<int>? new_val = widget.result!;
-  }
+  }*/
 
   late TooltipBehavior _tooltipBehavior;
   final FirebaseAuth auth = FirebaseAuth.instance;
   int i = 0;
   String _uid = '';
   List<String> today = [];
-  List<int> history = [];
-  List<int> history2 = [];
+  List<int> history = [0, 0, 0, 0, 0, 0];
+  List<int> history2 = [0, 0, 0, 0, 0, 0];
   String? meen;
   //ScrollController? _scrollController;
   void initState() {
@@ -276,7 +276,7 @@ class _HomepageState extends State<Homepage> {
                                                       light.withOpacity(0.5)),
                                               axisLine: AxisLine(
                                                   width: 3, color: light),
-                                              minimum: 0,
+                                              minimum: -10,
                                               maximum: 100,
                                               interval: 10,
                                             ),
@@ -376,9 +376,16 @@ class _HomepageState extends State<Homepage> {
             width: 150,
             height: 120,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: white),
-            child: RaisedButton(
-              color: white,
+                borderRadius: BorderRadius.circular(20), color: white),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ))),
+
+              //color: white,
               onPressed: () async {
                 setState(() {
                   _audiogram = !_audiogram;

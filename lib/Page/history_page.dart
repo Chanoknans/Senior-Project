@@ -16,6 +16,7 @@ class _HistoryPageState extends State<HistoryPage> {
       backgroundColor: const Color.fromRGBO(0, 50, 70, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(3, 135, 177, 1),
+        elevation: 0,
         title: Row(mainAxisAlignment: MainAxisAlignment.center,
             //ignore: prefer_const_literals_to_create_immutables
             children: <Widget>[

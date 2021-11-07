@@ -81,6 +81,7 @@ class _Page5State extends State<Page5> {
       backgroundColor: blackground,
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(3, 135, 177, 1),
+        elevation: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -133,46 +134,44 @@ class _Page5State extends State<Page5> {
       loop: true,
       itemBuilder: (BuildContext context, int index) {
         return Align(
-          alignment: Alignment.center,
-          child: RichText(
-            text: TextSpan(
-              text: 'การทดสอบวันที่ \n' '${today[index].split(" ")[0]}\n',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Prompt',
-                  fontWeight: FontWeight.bold,
-                  color: gray),
-              children: <TextSpan>[
-                TextSpan(
-                  text: '${today[index].split(" ")[1]}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+            alignment: Alignment.center,
+            child: Container(
+                width: 140,
+                height: 110,
+                decoration: BoxDecoration(
+                    color: white, borderRadius: BorderRadius.circular(10)),
+                child: TextButton(
+                  onPressed: () {},
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'การทดสอบวันที่ \n'
+                            '${today[index].split(" ")[0]}\n',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: 'Prompt',
+                            fontWeight: FontWeight.bold,
+                            color: blackground),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: '${today[index].split(" ")[1]}',
+                              style: TextStyle(
+                                  fontSize: 13.5, fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            /*Text(
-            'การทดสอบวันที่ ${today[index].split(" ")[0]}\n'
-            '${today[index].split(" ")[1]}',
-            style: TextStyle(
-                color: white, fontFamily: 'Prompt', fontSize: 15),
-            //textAlign: TextAlign.start,
-          ),*/
-          ),
-        );
+                )));
       },
       itemCount: today.length,
       viewportFraction: 0.4,
       scale: 0.4,
       scrollDirection: Axis.horizontal,
       pagination: SwiperPagination(
-        margin: EdgeInsets.only(top: 10),
-        builder: DotSwiperPaginationBuilder(
-          color: white,
-          activeColor: yellow,
-        ),
-      ),
+          margin: EdgeInsets.only(top: 10),
+          builder:
+              DotSwiperPaginationBuilder(color: white, activeColor: yellow)),
       //control: new SwiperControl(),
     );
   }

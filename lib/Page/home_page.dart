@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:hearing_aid/Page/aids_home.dart';
-import 'package:hearing_aid/Page/bottom_app_bar.dart';
+import 'package:hearing_aid/Page/history_page.dart';
 import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
+import 'package:hearing_aid/fade_route.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/widgets.dart';
@@ -75,7 +76,7 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
-  String text = '';
+  List<int> text = [0, 0, 0, 0, 0, 0];
   bool _showtext = false;
   bool _audiogram = false;
 
@@ -105,7 +106,7 @@ class _HomepageState extends State<Homepage> {
             color: const Color.fromRGBO(245, 245, 245, 1),
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return HearingAidss();
+                return Text("Information");
               }));
             },
           ),
@@ -165,7 +166,7 @@ class _HomepageState extends State<Homepage> {
                           child: TextField(
                             onChanged: (value) {
                               setState(() {
-                                text = value;
+                                text = value as List<int>;
                               });
                             },
                             style: TextStyle(
@@ -388,7 +389,13 @@ class _HomepageState extends State<Homepage> {
                         child: Row(
                           children: [
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      FadeRoute(
+                                        page: HearingAidss(),
+                                      ));
+                                },
                                 style: ButtonStyle(
                                     foregroundColor:
                                         MaterialStateProperty.all<Color>(white),
@@ -405,7 +412,13 @@ class _HomepageState extends State<Homepage> {
                               width: 15,
                             ),
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      FadeRoute(
+                                        page: HistoryPage(),
+                                      ));
+                                },
                                 style: ButtonStyle(
                                     foregroundColor:
                                         MaterialStateProperty.all<Color>(white),
@@ -485,7 +498,7 @@ class _HomepageState extends State<Homepage> {
       pagination: SwiperPagination(
         margin: EdgeInsets.only(top: 120),
         builder: const DotSwiperPaginationBuilder(
-            activeColor: yellow, size: 10.0, activeSize: 12.0, space: 10.0),
+            activeColor: yellow, size: 6.0, activeSize: 10.0, space: 5),
       ),
       //control: new SwiperControl(),
     );

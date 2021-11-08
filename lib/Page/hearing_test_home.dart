@@ -141,7 +141,9 @@ class _Page5State extends State<Page5> {
                 decoration: BoxDecoration(
                     color: white, borderRadius: BorderRadius.circular(10)),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _showDialog(context);
+                  },
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 5),
                     child: RichText(
@@ -175,4 +177,24 @@ class _Page5State extends State<Page5> {
       //control: new SwiperControl(),
     );
   }
+}
+
+void _showDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: new Text("Alert!!"),
+        content: new Text("You are awesome!"),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text("OK"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

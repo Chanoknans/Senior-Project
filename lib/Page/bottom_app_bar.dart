@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/aids_home.dart';
 import 'package:hearing_aid/page/history_page.dart';
@@ -141,12 +143,76 @@ class _CircleButtonState extends State<CircleButton> {
         ),
         onPressed: () {
           setState(() {
-            _showtext = !_showtext;
+            _showDialog(context);
           });
         },
       ),
     );
   }
+}
+
+void _showDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          "กรุณากรอกค่าการได้ยินในช่องว่าง",
+          style: TextStyle(
+              fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        content: Container(
+          width: 200,
+          height: 240,
+          child: Column(
+            children: [
+              TextFormField(
+                style: TextStyle(
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14),
+                decoration: const InputDecoration(
+                  icon: Icon(LineIcons.chevronRight),
+                  hintText: 'เช่น [10,10,10,10,10,10]',
+                  labelText: 'หูขวา*',
+                ),
+                /*onSaved: (String? value) {},
+                validator: (value) {
+                 value.isEmpty? 'กรุณากรอกค่าให้ครบ' :null,
+                },*/
+              ),
+              TextFormField(
+                style: TextStyle(
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14),
+                decoration: const InputDecoration(
+                  icon: Icon(LineIcons.chevronLeft),
+                  hintText: 'เช่น [10,10,10,10,10,10]',
+                  labelText: 'หูซ้าย*',
+                ),
+              ),
+              //Image.asset('assets/image/vector2.png')
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text(
+              "OK",
+              style: TextStyle(
+                  color: redtext,
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w600),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
 
 

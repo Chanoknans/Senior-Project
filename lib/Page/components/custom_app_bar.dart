@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hearing_aid/Page/hearing_test_home.dart';
 import 'package:hearing_aid/page/bottom_app_bar.dart';
 import 'package:hearing_aid/page/hearing_test_home.dart';
 import 'package:hearing_aid/constant.dart';
@@ -44,7 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return Page5();
+                  return Text("data");
                 },
               ),
             );

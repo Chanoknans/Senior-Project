@@ -11,6 +11,13 @@ import 'package:hearing_aid/page/hearing_test_home.dart';
 import 'package:hearing_aid/page/home_page.dart';
 import 'package:hearing_aid/page/signup_page.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+
+const int tSampleRate = 44100;
+const int tBlockSize = 4096;
+typedef Fn = void Function();
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
@@ -21,8 +28,67 @@ class HearingAidss extends StatefulWidget {
 
 class _HearingAidssState extends State<HearingAidss> {
   bool started = false;
+  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
+  bool _mPlayerIsInited = false;
+
+  Future<void> open() async {
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Microphone permission not granted');
+    }
+
+    // Be careful : openAudioSession returns a Future.
+    // Do not access your FlutterSoundPlayer or FlutterSoundRecorder before the completion of the Future
+    await _mPlayer!.openAudioSession(
+      device: AudioDevice.blueToothA2DP,
+      audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
+      category: SessionCategory.playAndRecord,
+    );
+    setState(() {
+      _mPlayerIsInited = true;
+    });
+  }
+
+  //@override
   void initState() {
     super.initState();
+    open();
+  }
+
+  //@override
+  void dispose() {
+    stopPlayer();
+    // Be careful : you must `close` the audio session when you have finished with it.
+    _mPlayer!.closeAudioSession();
+    _mPlayer = null;
+
+    super.dispose();
+  }
+
+  // -------  Here is the code to play from the microphone -----------------------
+
+  void play() async {
+    await _mPlayer!.startPlayerFromMic(sampleRate: 44000);
+    setState(() {});
+  }
+
+  Future<void> stopPlayer() async {
+    if (_mPlayer != null) {
+      await _mPlayer!.stopPlayer();
+    }
+  }
+
+  // ---------------------------------------
+
+  Fn? getPlaybackFn() {
+    if (!_mPlayerIsInited) {
+      return null;
+    }
+    return _mPlayer!.isStopped
+        ? play
+        : () {
+            stopPlayer().then((value) => setState(() {}));
+          };
   }
 
   @override
@@ -87,7 +153,7 @@ class _HearingAidssState extends State<HearingAidss> {
                     fontSize: 16,
                     fontFamily: 'Nunito',
                     fontWeight: FontWeight.w600,
-                    color: started ? green : redtext,
+                    color: _mPlayer!.isPlaying ? redtext : green,
                   ),
                 ),
               ),
@@ -101,42 +167,41 @@ class _HearingAidssState extends State<HearingAidss> {
                   height: 185,
                   padding: EdgeInsets.only(top: 2),
                   child: FloatingActionButton(
-                      elevation: 5,
-                      backgroundColor: started ? green : redtext,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 15),
-                            child: Text(
-                              started ? "START" : "STOP",
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.bold,
-                                  color: white),
-                            ),
+                    onPressed: getPlaybackFn(),
+                    elevation: 5,
+                    backgroundColor: _mPlayer!.isPlaying ? redtext : green,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 15),
+                          child: Text(
+                            _mPlayer!.isPlaying ? "STOP" : "START",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.bold,
+                                color: white),
                           ),
-                          SizedBox(height: 5),
-                          Image.asset(
-                            "assets/image/headphones.png",
-                            scale: 2.05,
+                        ),
+                        SizedBox(height: 5),
+                        Image.asset(
+                          "assets/image/headphones.png",
+                          scale: 2.05,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(
+                            "pressed here",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.w600,
+                                color: white),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Text(
-                              "pressed here",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.w600,
-                                  color: white),
-                            ),
-                          ),
-                        ],
-                      ),
-                      onPressed: () => setState(() {
-                            started = !started;
-                          })),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -125,7 +125,6 @@ class CircleButton extends StatefulWidget {
 
 class _CircleButtonState extends State<CircleButton> {
   List<String> text = [];
-  bool _showtext = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -155,45 +154,63 @@ void _showDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
+      final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
       return AlertDialog(
         title: Text(
           "กรุณากรอกค่าการได้ยินในช่องว่าง",
           style: TextStyle(
               fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        content: Container(
-          width: 200,
-          height: 240,
-          child: Column(
-            children: [
-              TextFormField(
-                style: TextStyle(
-                    fontFamily: 'Prompt',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14),
-                decoration: const InputDecoration(
-                  icon: Icon(LineIcons.chevronRight),
-                  hintText: 'เช่น [10,10,10,10,10,10]',
-                  labelText: 'หูขวา*',
-                ),
-                /*onSaved: (String? value) {},
-                validator: (value) {
-                 value.isEmpty? 'กรุณากรอกค่าให้ครบ' :null,
+        content: Form(
+          key: _formKey,
+          child: Container(
+            width: 200,
+            height: 220,
+            child: Column(
+              children: [
+                TextFormField(
+                  style: TextStyle(
+                      fontFamily: 'Prompt',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14),
+                  decoration: const InputDecoration(
+                      icon: Icon(LineIcons.chevronRight),
+                      hintText: 'เช่น [10,10,10,10,10,10]',
+                      labelText: 'หูขวา*',
+                      errorStyle: TextStyle(fontFamily: 'Prompt')),
+                  validator: (String? value) {
+                    if (value!.length <= 13 && value.isEmpty) {
+                      return 'กรุณากรอกค่าให้ครบค่ะ';
+                    } else {
+                      return null;
+                    }
+                  },
+                  /*onSaved: (String? value) {
+                  value != value;
                 },*/
-              ),
-              TextFormField(
-                style: TextStyle(
-                    fontFamily: 'Prompt',
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14),
-                decoration: const InputDecoration(
-                  icon: Icon(LineIcons.chevronLeft),
-                  hintText: 'เช่น [10,10,10,10,10,10]',
-                  labelText: 'หูซ้าย*',
                 ),
-              ),
-              //Image.asset('assets/image/vector2.png')
-            ],
+                TextFormField(
+                  style: TextStyle(
+                      fontFamily: 'Prompt',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14),
+                  decoration: const InputDecoration(
+                      icon: Icon(LineIcons.chevronLeft),
+                      hintText: 'เช่น [10,10,10,10,10,10]',
+                      labelText: 'หูซ้าย*',
+                      errorStyle: TextStyle(fontFamily: 'Prompt')),
+                  //keyboardType: TextInputType.number,
+                  validator: (String? value) {
+                    if (value!.length <= 13 && value.isEmpty) {
+                      return 'กรุณากรอกค่าให้ครบค่ะ';
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
+                //Image.asset('assets/image/vector2.png')
+              ],
+            ),
           ),
         ),
         actions: [
@@ -206,7 +223,12 @@ void _showDialog(BuildContext context) {
                   fontWeight: FontWeight.w600),
             ),
             onPressed: () {
-              Navigator.of(context).pop();
+              //var formKey;
+              if (!_formKey.currentState!.validate()) {
+                return;
+              } else {
+                Navigator.of(context).pop();
+              }
             },
           ),
         ],

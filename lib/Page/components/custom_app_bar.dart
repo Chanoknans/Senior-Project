@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hearing_aid/Page/hearing_test_home.dart';
 import 'package:hearing_aid/page/bottom_app_bar.dart';
-import 'package:hearing_aid/page/hearing_test_home.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/fade_route.dart';
 import 'package:line_icons/line_icons.dart';

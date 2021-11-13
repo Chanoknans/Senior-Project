@@ -184,11 +184,11 @@ void _showDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: new Text("Alert!!"),
-        content: new Text("You are awesome!"),
+        title: Text("Alert!!"),
+        content: Text("You are awesome!"),
         actions: <Widget>[
-          new FlatButton(
-            child: new Text("OK"),
+          TextButton(
+            child: Text("OK"),
             onPressed: () {
               Navigator.of(context).pop();
             },

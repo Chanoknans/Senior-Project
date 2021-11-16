@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -9,6 +11,9 @@ import 'package:hearing_aid/page/home_page.dart';
 import 'package:hearing_aid/page/mode_page.dart';
 import 'package:hearing_aid/page/recording_page.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:hearing_aid/models/profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BottomAppBarbar extends StatefulWidget {
   BottomAppBarbar({Key? key}) : super(key: key);
@@ -38,6 +43,9 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
       key: PageStorageKey('Page4'),
     )
   ];
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String _uid = '';
+  List<String> today = [];
   final PageStorageBucket bucket = PageStorageBucket();
   int _selectedIndex = 1;
   static const TextStyle optionStyle =
@@ -55,6 +63,31 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  void getdata() async {
+    User? user = auth.currentUser;
+
+    _uid = user!.uid;
+    print('user.email ${user.email}');
+    final DocumentSnapshot userDoc =
+        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
+    setState(() {
+      today = List.from(userDoc.get('today'));
+    });
+    // meen = today![1];
+  }
+
+  Future getdata2(int value) async {
+    User? user = auth.currentUser;
+    _uid = user!.uid;
+    final DocumentSnapshot userDoc2 = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .collection('history')
+        .doc()
+        .get();
+    setState(() {});
   }
 
   final navigatorKey = GlobalKey<NavigatorState>();

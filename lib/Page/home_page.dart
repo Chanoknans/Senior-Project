@@ -4,16 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:hearing_aid/Page/aids_home.dart';
+import 'package:hearing_aid/Page/bottom_app_bar.dart';
 import 'package:hearing_aid/Page/history_page.dart';
 import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/fade_route.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter/widgets.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+List<int> _countR = [0, 0, 0, 0, 0, 0];
+List<int> _countL = [0, 0, 0, 0, 0, 0];
 
 class Homepage extends StatefulWidget {
   final List<int>? result; //left
@@ -58,6 +61,9 @@ class _HomepageState extends State<Homepage> {
     });
     // meen = today![1];
   }
+
+  var nows = DateTime.now().toString();
+  //final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
   Future getdata2(int value) async {
     User? user = auth.currentUser;
@@ -135,8 +141,9 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 25, left: 330),
-                child: FloatingActionButton(
+                  padding: EdgeInsets.only(top: 25, left: 330),
+                  child:
+                      CircleButton() /*FloatingActionButton(
                   elevation: 5,
                   heroTag: "btn1",
                   backgroundColor: dgreen,
@@ -150,9 +157,9 @@ class _HomepageState extends State<Homepage> {
                       _showtext = !_showtext;
                     });
                   },
-                ),
-              ),
-              Padding(
+                ),*/
+                  ),
+              /*Padding(
                 padding: EdgeInsets.only(top: 80, left: 80),
                 child: Container(
                   width: 240,
@@ -209,16 +216,16 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                 ),
-              ),
+              ),*/
               Padding(
-                padding: EdgeInsets.only(top: 150),
+                padding: EdgeInsets.only(top: 80),
                 child: Container(
                   constraints: BoxConstraints.expand(height: 200),
                   child: todaySlider(context),
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 330, left: 0),
+                  padding: EdgeInsets.only(top: 280, left: 0),
                   child: Container(
                       child: Visibility(
                     visible: _audiogram,
@@ -338,12 +345,6 @@ class _HomepageState extends State<Homepage> {
                                                   freq.hear,
                                           markerSettings:
                                               MarkerSettings(isVisible: true),
-                                          /*dataLabelSettings: DataLabelSettings(
-                                  isVisible: true,
-                                  textStyle: TextStyle(
-                                      color: .light, fontSize: 12),
-                                  offset: Offset(16, 0),
-                                ),*/
                                         ),
                                         LineSeries<AudiogramData2, String>(
                                           enableTooltip: true,
@@ -365,12 +366,6 @@ class _HomepageState extends State<Homepage> {
                                                   freq2.hears,
                                           markerSettings:
                                               MarkerSettings(isVisible: true),
-                                          /*dataLabelSettings: DataLabelSettings(
-                                    isVisible: true,
-                                    textStyle: TextStyle(
-                                        color: .light, fontSize: 12),
-                                    offset: Offset(16, 0),
-                                  )*/
                                         )
                                       ],
                                     ),
@@ -385,7 +380,8 @@ class _HomepageState extends State<Homepage> {
                         height: 10,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 100),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 100),
                         child: Row(
                           children: [
                             TextButton(

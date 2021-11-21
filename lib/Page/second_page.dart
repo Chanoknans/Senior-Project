@@ -61,9 +61,12 @@ class _Page2State extends State<Page2> {
               child: Stack(
                 children: [
                   Align(
-                      child: Image.asset("assets/image/BG2.png",
-                          width: MediaQuery.of(context).size.width,
-                          fit: BoxFit.cover)),
+                    child: Image.asset(
+                      "assets/image/BG2.png",
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   Align(
                     alignment: Alignment(-0.65, -0.35),
                     child: Text(
@@ -129,13 +132,6 @@ class _Page2State extends State<Page2> {
                           ),
                           filled: true,
                           fillColor: gray,
-                          /*labelText: "Email :",
-                            labelStyle: TextStyle(
-                                fontSize: 14,
-                                letterSpacing: 1,
-                                color: myFocusNode.hasFocus
-                                    ? Color.fromRGBO(255, 0, 0, 0)
-                                    : grayy),*/
                           hintText: "Email : ",
                           hintStyle: TextStyle(fontSize: 12),
                           prefixIcon:
@@ -205,21 +201,16 @@ class _Page2State extends State<Page2> {
                           ),
                           hintText: "Password :",
                           hintStyle: TextStyle(fontSize: 12),
-                          /*labelText: "Password :",
-                            labelStyle: TextStyle(
-                                fontSize: 14,
-                                letterSpacing: 1,
-                                color: myFocusNode2.hasFocus
-                                    ? Color.fromRGBO(255, 0, 0, 0)
-                                    : grayy),*/
                           prefixIcon:
                               Icon(Icons.vpn_key_outlined, color: blackground),
                           enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: gray),
-                              borderRadius: BorderRadius.circular(10)),
+                            borderSide: BorderSide(color: gray),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: gray),
-                              borderRadius: BorderRadius.circular(10)),
+                            borderSide: BorderSide(color: gray),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
                     ),
@@ -254,15 +245,21 @@ class _Page2State extends State<Page2> {
                                       password: profile.password)
                                   .then((value) {
                                 formKey.currentState!.reset();
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return BottomAppBarbar();
-                                }));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return BottomAppBarbar();
+                                    },
+                                  ),
+                                );
                               });
                             } on FirebaseAuthException catch (e) {
                               print(e.message);
                               Fluttertoast.showToast(
-                                  msg: e.code, gravity: ToastGravity.CENTER);
+                                msg: e.code,
+                                gravity: ToastGravity.CENTER,
+                              );
                             }
                           }
                         },

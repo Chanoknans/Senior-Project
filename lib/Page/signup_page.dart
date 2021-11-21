@@ -19,6 +19,7 @@ class _SignupState extends State<Signup> {
   bool statusEye = true;
   bool statusEye2 = true;
   final formKey = GlobalKey<FormState>();
+
   Profile profile = Profile(
     email: '',
     password: '',
@@ -28,6 +29,7 @@ class _SignupState extends State<Signup> {
     date: '',
     Imageurl: '',
   );
+
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<FirebaseApp> firebase = Firebase.initializeApp();
@@ -90,7 +92,8 @@ class _SignupState extends State<Signup> {
                                   validator: MultiValidator(
                                     [
                                       RequiredValidator(
-                                          errorText: 'Please Enter email'),
+                                        errorText: 'Please Enter email',
+                                      ),
                                       EmailValidator(
                                         errorText:
                                             'Please enter a valid email address',
@@ -141,7 +144,8 @@ class _SignupState extends State<Signup> {
                                 margin: const EdgeInsets.only(top: 20),
                                 child: TextFormField(
                                   validator: RequiredValidator(
-                                      errorText: 'Please enter password'),
+                                    errorText: 'Please enter password',
+                                  ),
                                   onSaved: (String? password) {
                                     profile.password = password!;
                                   },
@@ -202,7 +206,8 @@ class _SignupState extends State<Signup> {
                                 margin: const EdgeInsets.only(top: 20),
                                 child: TextFormField(
                                   validator: RequiredValidator(
-                                      errorText: 'Please enter password'),
+                                    errorText: 'Please enter password',
+                                  ),
                                   onSaved: (String? password) {
                                     profile.password = password!;
                                   },
@@ -283,8 +288,9 @@ class _SignupState extends State<Signup> {
                                       try {
                                         await FirebaseAuth.instance
                                             .createUserWithEmailAndPassword(
-                                                email: profile.email,
-                                                password: profile.password)
+                                          email: profile.email,
+                                          password: profile.password,
+                                        )
                                             .then((value) {
                                           formKey.currentState!.reset();
                                           Fluttertoast.showToast(

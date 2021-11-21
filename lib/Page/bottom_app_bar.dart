@@ -102,23 +102,27 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
       );
 
   // ignore: non_constant_identifier_names
-  Widget _BottomAppBarBarBar(int selectedIndex) => BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(LineIcons.history), label: 'History'),
-          /*BottomNavigationBarItem(
-              icon: Icon(LineIcons.areaChart), label: 'Audiogram'),*/
-          BottomNavigationBarItem(icon: Icon(LineIcons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(LineIcons.headset), label: 'Mode'),
-          BottomNavigationBarItem(
-              icon: Icon(LineIcons.microphone), label: 'Recording'),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: orange,
-        selectedIconTheme: IconThemeData(color: orange),
-        type: BottomNavigationBarType.fixed,
-        onTap: _onItemTapped,
-      );
+  Widget _BottomAppBarBarBar(int selectedIndex) {
+    return BottomNavigationBar(
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(LineIcons.history),
+          label: 'History',
+        ),
+        BottomNavigationBarItem(icon: Icon(LineIcons.home), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(LineIcons.headset), label: 'Mode'),
+        BottomNavigationBarItem(
+          icon: Icon(LineIcons.microphone),
+          label: 'Recording',
+        ),
+      ],
+      currentIndex: selectedIndex,
+      selectedItemColor: orange,
+      selectedIconTheme: IconThemeData(color: orange),
+      type: BottomNavigationBarType.fixed,
+      onTap: _onItemTapped,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

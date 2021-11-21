@@ -16,17 +16,21 @@ class _AudiogramPageState extends State<AudiogramPage> {
       backgroundColor: const Color.fromRGBO(0, 50, 70, 1),
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(3, 135, 177, 1),
-        title: Row(mainAxisAlignment: MainAxisAlignment.center,
-            //ignore: prefer_const_literals_to_create_immutables
-            children: <Widget>[
-              const Text("Audiogram",
-                  style: TextStyle(
-                      color: Color.fromRGBO(245, 245, 245, 1),
-                      fontSize: 25,
-                      fontFamily: 'Nunito',
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
-            ]),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              "Audiogram",
+              style: TextStyle(
+                color: Color.fromRGBO(245, 245, 245, 1),
+                fontSize: 25,
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(
@@ -35,9 +39,14 @@ class _AudiogramPageState extends State<AudiogramPage> {
             ),
             color: const Color.fromRGBO(245, 245, 245, 1),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return const Text("Information");
-              }));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const Text("Information");
+                  },
+                ),
+              );
             },
           ),
         ],

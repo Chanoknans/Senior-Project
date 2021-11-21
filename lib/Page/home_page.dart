@@ -65,20 +65,49 @@ class _HomepageState extends State<Homepage> {
   var nows = DateTime.now().toString();
   //final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
-  Future getdata2(int value) async {
+  Future getdata2(DateTime pickedDate) async {
     User? user = auth.currentUser;
     _uid = user!.uid;
-    final DocumentSnapshot userDoc2 = await FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
         .collection('history')
-        .doc(today[value])
-        .get();
-    setState(() {
-      history = List.from(userDoc2.get('Left'));
-      history2 = List.from(userDoc2.get('Right'));
-      print('my Left ${history}');
-      print('my Right ${history2}');
+        .where(
+          "created_at",
+          isGreaterThan: DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            0,
+            0,
+            0,
+            0,
+          ),
+        )
+        .where(
+          "created_at",
+          isLessThan: DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            23,
+            59,
+            59,
+            999,
+          ),
+        )
+        .get()
+        .then((userDoc2) {
+      setState(() {
+        if (userDoc2.docs.length > 0) {
+          userDoc2.docs.forEach((element) {
+            history = List.from(element.get('Left'));
+            history2 = List.from(element.get('Right'));
+            print('my Left ${history}');
+            print('my Right ${history2}');
+          });
+        }
+      });
     });
   }
 
@@ -455,7 +484,7 @@ class _HomepageState extends State<Homepage> {
               onPressed: () async {
                 setState(() {
                   _audiogram = !_audiogram;
-                  getdata2(index);
+                  getdata2(DateTime.now());
                 });
               },
               child: RichText(

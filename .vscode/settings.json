@@ -4,4 +4,5 @@
     "dart.flutterRunAdditionalArgs": [
         "--no-sound-null-safety"
     ],
+    "python.formatting.provider": "yapf",
 }

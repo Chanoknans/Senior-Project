@@ -134,22 +134,6 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
         child: pages[_selectedIndex],
       ),
     );
-    /*  Navigator(onGenerateRoute: (settings) {
-          PageStorage(
-            bucket: bucket,
-            child: pages[_selectedIndex],
-          );
-          Widget page1 = Homepage();
-          if (settings.name == 'Page 2') page1 = HearingAidss();
-          return MaterialPageRoute(builder: (_) => page1);
-        }));*/
-    /*Scaffold(
-      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
-      body: PageStorage(
-        bucket: bucket,
-        child: pages[_selectedIndex],
-      ),
-    );*/
   }
 }
 
@@ -162,6 +146,7 @@ class CircleButton extends StatefulWidget {
 
 class _CircleButtonState extends State<CircleButton> {
   List<String> text = [];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -188,6 +173,9 @@ class _CircleButtonState extends State<CircleButton> {
 }
 
 void _showDialog(BuildContext context) {
+  List<int> Lcount = [];
+  List<int> Rcount = [];
+  var nows = DateTime.now();
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -215,16 +203,28 @@ void _showDialog(BuildContext context) {
                       hintText: 'เช่น [10,10,10,10,10,10]',
                       labelText: 'หูขวา*',
                       errorStyle: TextStyle(fontFamily: 'Prompt')),
-                  validator: (String? value) {
-                    if (value!.length <= 13 && value.isEmpty) {
+                  validator: (value) {
+                    if (value!.length <= 13 || value.isEmpty) {
                       return 'กรุณากรอกค่าให้ครบค่ะ';
                     } else {
                       return null;
                     }
                   },
-                  /*onSaved: (String? value) {
-                  value != value;
-                },*/
+                  onSaved: (String? value) {
+                    List<String> newvalue = value!.split(",");
+                    List<String> New = [];
+                    for (int i = 0; i < newvalue.length; i++) {
+                      if (i == 0) {
+                        New = newvalue[i].split("[");
+                        newvalue[i] = New[1];
+                      } else if (i == newvalue.length - 1) {
+                        New = newvalue[i].split("]");
+                        newvalue[i] = New[0];
+                      }
+                      Rcount.add(int.parse(newvalue[i]));
+                      ;
+                    }
+                  },
                 ),
                 TextFormField(
                   style: TextStyle(
@@ -238,14 +238,28 @@ void _showDialog(BuildContext context) {
                       errorStyle: TextStyle(fontFamily: 'Prompt')),
                   //keyboardType: TextInputType.number,
                   validator: (String? value) {
-                    if (value!.length <= 13 && value.isEmpty) {
+                    if (value!.length <= 13 || value.isEmpty) {
                       return 'กรุณากรอกค่าให้ครบค่ะ';
                     } else {
                       return null;
                     }
                   },
+                  onSaved: (String? value) {
+                    List<String> newvalue = value!.split(",");
+                    List<String> New = [];
+                    for (int i = 0; i < newvalue.length; i++) {
+                      if (i == 0) {
+                        New = newvalue[i].split("[");
+                        newvalue[i] = New[1];
+                      } else if (i == newvalue.length - 1) {
+                        New = newvalue[i].split("]");
+                        newvalue[i] = New[0];
+                      }
+                      Lcount.add(int.parse(newvalue[i]));
+                      ;
+                    }
+                  },
                 ),
-                //Image.asset('assets/image/vector2.png')
               ],
             ),
           ),
@@ -259,12 +273,34 @@ void _showDialog(BuildContext context) {
                   fontFamily: 'Nunito',
                   fontWeight: FontWeight.w600),
             ),
-            onPressed: () {
+            onPressed: () async {
               //var formKey;
-              if (!_formKey.currentState!.validate()) {
-                return;
-              } else {
-                Navigator.of(context).pop();
+
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState!.save();
+                print(Lcount);
+                print(Rcount);
+                final auth = FirebaseAuth.instance;
+                final User? user = auth.currentUser;
+                final _uid = user!.uid;
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(_uid)
+                    .collection('history')
+                    .doc()
+                    .set({
+                  'Left': Lcount,
+                  'Right': Rcount,
+                  'created_date': nows
+                });
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return BottomAppBarbar();
+                    },
+                  ),
+                );
               }
             },
           ),
@@ -273,34 +309,3 @@ void _showDialog(BuildContext context) {
     },
   );
 }
-
-
-/*Scaffold(
-      bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
-      body: Navigator(onGenerateRoute: (settings) {
-        
-        Widget pages = Homepage();
-        if (settings.name == 'HearingAidss') pages = HearingAidss();
-        return MaterialPageRoute(builder: (_) => pages);
-      }*/
-/*@override
-  Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-            icon: Icon(LineIcons.history), label: 'History'),
-        BottomNavigationBarItem(
-            icon: Icon(LineIcons.areaChart), label: 'Audiogram'),
-        BottomNavigationBarItem(icon: Icon(LineIcons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(LineIcons.headset), label: 'Mode'),
-        BottomNavigationBarItem(
-            icon: Icon(LineIcons.microphone), label: 'Recording'),
-      ],
-      currentIndex: _selectedIndex,
-      selectedItemColor: som,
-      selectedIconTheme: IconThemeData(color: som),
-      type: BottomNavigationBarType.fixed,
-      onTap: _onItemTapped,
-    );
-  }
-}*/      

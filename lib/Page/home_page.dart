@@ -35,10 +35,13 @@ class _HomepageState extends State<Homepage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   int i = 0;
   String _uid = '';
-  List<String> today = [];
   List<int> history = [0, 0, 0, 0, 0, 0];
   List<int> history2 = [0, 0, 0, 0, 0, 0];
   String? meen;
+  late Timestamp today;
+  late DateTime date;
+  List<DateTime> time = [];
+
   //ScrollController? _scrollController;
   void initState() {
     getdata();
@@ -50,16 +53,40 @@ class _HomepageState extends State<Homepage> {
   }
 
   void getdata() async {
-    User? user = auth.currentUser;
+    // ignore: unused_local_variable
 
+    User? user = auth.currentUser;
     _uid = user!.uid;
-    print('user.email ${user.email}');
-    final DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
-    setState(() {
-      today = List.from(userDoc.get('today'));
-    });
-    // meen = today![1];
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .collection('history')
+        .get()
+        .then(
+      (value) {
+        setState(
+          () {
+            if (value.docs.length > 0) {
+              value.docs.forEach(
+                (element) {
+                  FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(_uid)
+                      .collection('history')
+                      .doc(element.id)
+                      .get();
+                  today = element.get('created_date');
+                  print('object ${today}');
+                  DateTime date = today.toDate();
+                  time.add(date);
+                },
+              );
+            }
+            print('today is ${time}');
+          },
+        );
+      },
+    );
   }
 
   var nows = DateTime.now().toString();
@@ -72,30 +99,7 @@ class _HomepageState extends State<Homepage> {
         .collection('users')
         .doc(_uid)
         .collection('history')
-        .where(
-          "created_at",
-          isGreaterThan: DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            0,
-            0,
-            0,
-            0,
-          ),
-        )
-        .where(
-          "created_at",
-          isLessThan: DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            23,
-            59,
-            59,
-            999,
-          ),
-        )
+        .where("created_date", isEqualTo: pickedDate)
         .get()
         .then((userDoc2) {
       setState(() {
@@ -198,7 +202,7 @@ class _HomepageState extends State<Homepage> {
                         Column(
                           children: [
                             Container(
-                              height: 290,
+                              //height: 290,
                               width: 290,
                               decoration: BoxDecoration(
                                   color: Color.fromRGBO(0, 0, 0, 0.3),
@@ -237,39 +241,6 @@ class _HomepageState extends State<Homepage> {
                                         )
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 12, left: 9, right: 12),
-                                    child: Container(
-                                        height: 230,
-                                        width: 300,
-                                        decoration: BoxDecoration(
-                                            color: Color.fromRGBO(0, 0, 0, 0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(11)),
-                                        child: SfCartesianChart(
-                                          /*legend: Legend(isVisible: true),*/
-                                          tooltipBehavior: _tooltipBehavior,
-                                          plotAreaBorderWidth: 0,
-                                          primaryXAxis: CategoryAxis(
-                                            labelStyle: TextStyle(color: light),
-                                            title: AxisTitle(
-                                                text: 'Frequency (Hz)',
-                                                textStyle: TextStyle(
-                                                    color: light,
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            majorGridLines:
-                                                MajorGridLines(width: 0),
-                                            axisLine: AxisLine(
-                                                width: 3, color: light),
-                                          ),
-                                        )),
                                   ),
                                   SizedBox(
                                     height: 2,
@@ -484,34 +455,25 @@ class _HomepageState extends State<Homepage> {
               onPressed: () async {
                 setState(() {
                   _audiogram = !_audiogram;
-                  getdata2(DateTime.now());
+                  getdata2(time[index]);
                 });
               },
               child: RichText(
                 text: TextSpan(
-                  text: 'การทดสอบวันที่ \n' '${today[index].split(" ")[0]}\n',
+                  text: 'การทดสอบวันที่ \n' '${time[index]}\n',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Prompt',
                     fontWeight: FontWeight.bold,
                     color: blackground,
                   ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: '${today[index].split(" ")[1]}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
                 ),
               ),
             ),
           ),
         );
       },
-      itemCount: today.length,
+      itemCount: time.length,
       viewportFraction: 0.4,
       scale: 0.5,
 

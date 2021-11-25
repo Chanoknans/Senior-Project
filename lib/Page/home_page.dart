@@ -60,7 +60,7 @@ class _HomepageState extends State<Homepage> {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
-        .collection('history')
+        .collection('audiogram_history')
         .get()
         .then(
       (value) {
@@ -72,7 +72,7 @@ class _HomepageState extends State<Homepage> {
                   FirebaseFirestore.instance
                       .collection('users')
                       .doc(_uid)
-                      .collection('history')
+                      .collection('audiogram_history')
                       .doc(element.id)
                       .get();
                   today = element.get('created_date');
@@ -98,7 +98,7 @@ class _HomepageState extends State<Homepage> {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
-        .collection('history')
+        .collection('audiogram_history')
         .where("created_date", isEqualTo: pickedDate)
         .get()
         .then((userDoc2) {

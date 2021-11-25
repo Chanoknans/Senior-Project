@@ -84,7 +84,7 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     final DocumentSnapshot userDoc2 = await FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
-        .collection('history')
+        .collection('audiogram_history')
         .doc()
         .get();
     setState(() {});
@@ -286,7 +286,7 @@ void _showDialog(BuildContext context) {
                 await FirebaseFirestore.instance
                     .collection('users')
                     .doc(_uid)
-                    .collection('history')
+                    .collection('audiogram_history')
                     .doc()
                     .set({
                   'Left': Lcount,

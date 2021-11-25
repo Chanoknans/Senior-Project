@@ -47,7 +47,7 @@ class _Page5State extends State<Page5> {
     final DocumentSnapshot userDoc2 = await FirebaseFirestore.instance
         .collection('users')
         .doc(_uid)
-        .collection('history')
+        .collection('audiogram_history')
         .doc(today[value])
         .get();
     setState(() {
@@ -66,7 +66,7 @@ class _Page5State extends State<Page5> {
           await FirebaseFirestore.instance
               .collection('users')
               .doc(_uid)
-              .collection('history')
+              .collection('audiogram_history')
               .doc(today[i]);
 
       setState(() {

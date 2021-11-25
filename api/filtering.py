@@ -78,11 +78,11 @@ def on_message(client, userdata, msg):
     fhpf = abs(xopt[6])
     Qhpf = abs(xopt[7])
     Ghpf = abs(xopt[8])
-    q,h_lpf = BiquadLPF(flpf,Qlpf)
+    q,h_lpf,num_lpf,den_lpf = BiquadLPF(flpf,Qlpf)
     H_lpf = h_lpf*Glpf
-    q,h_bpf = BiquadBPF(fbpf,Qbpf)
+    q,h_bpf,num_bpf,den_bpf  = BiquadBPF(fbpf,Qbpf)
     H_bpf = h_bpf*Gbpf
-    q,h_hpf = BiquadHPF(fhpf,Qhpf)
+    q,h_hpf,num_hpf,den_hpf  = BiquadHPF(fhpf,Qhpf)
     H_hpf = h_hpf*Ghpf
 
     desired_flt = abs(H_lpf+H_bpf+H_hpf)
@@ -94,12 +94,16 @@ def on_message(client, userdata, msg):
 
     #sending patient's data back to firebase
     UTC = pytz.utc
-    coeff = xopt.tolist()
+    Lcoeff = (num_lpf+den_lpf+Glpf).tolist()
+    Bcoeff = (num_bpf+den_bpf+Gbpf).tolist()
+    Hcoeff = (num_hpf+den_hpf+Ghpf).tolist()
 
     # update back to DB
     doc_result = db.collection(u'users').document(user_id).collection(u'audiogram_history').document(a_id)
     doc_result.update({
-        u'coeff': coeff, # array
+        u'LPFcoeff': Lcoeff, # array
+        u'BPFcoeff': Bcoeff,
+        u'HPFcoeff': Hcoeff,
         u'updated_at': datetime.now(UTC),
     })
 
@@ -114,10 +118,10 @@ def BiquadLPF(flpf,Qlpf):
         [1,-1,1]]
     a1 = np.dot(P,np.transpose(A1))
     b1 = np.dot(P,np.transpose(B1))
-    num1= a1/b1[0]
-    den1 = b1/b1[0]
-    q1,h1 = signal.freqz(num1,den1,worN=1000,fs=20000)#fs=16000
-    return q1,h1
+    num= a1/b1[0]
+    den = b1/b1[0]
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)#fs=16000
+    return q1,h1,num,den
 
 def BiquadBPF(fbpf,Qbpf):
     f_samp = 20000
@@ -129,10 +133,10 @@ def BiquadBPF(fbpf,Qbpf):
         [1,-1,1]]
     a1 = np.dot(P,np.transpose(A1))
     b1 = np.dot(P,np.transpose(B1))
-    num1= a1/b1[0]
-    den1 = b1/b1[0]
-    q1,h1 = signal.freqz(num1,den1,worN=1000,fs=20000)
-    return q1,h1
+    num= a1/b1[0]
+    den = b1/b1[0]
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)
+    return q1,h1,num,den
 
 def BiquadHPF(fhpf,Qhpf):
     f_samp = 20000
@@ -144,17 +148,17 @@ def BiquadHPF(fhpf,Qhpf):
         [1,-1,1]]
     a1 = np.dot(P,np.transpose(A1))
     b1 = np.dot(P,np.transpose(B1))
-    num1= a1/b1[0]
-    den1 = b1/b1[0]
-    q1,h1 = signal.freqz(num1,den1,worN=1000,fs=20000)
-    return q1,h1
+    num= a1/b1[0]
+    den = b1/b1[0]
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)
+    return q1,h1,num,den
 
 def ErrorFunction(fL,QL,GL,fB,QB,GB,fH,QH,GH, newval2):
-    q,h_lpf = BiquadLPF(fL,QL)
+    q,h_lpf,num_lpf,den_lpf = BiquadLPF(fL,QL)
     HL = h_lpf*GL
-    q,h_bpf = BiquadBPF(fB,QB)
+    q,h_bpf,num_bpf,den_bpf = BiquadBPF(fB,QB)
     HB = h_bpf*GB
-    q,h_hpf = BiquadHPF(fH,QH)
+    q,h_hpf,num_hpf,den_hpf = BiquadHPF(fH,QH)
     HH = h_hpf*GH
     desired_flt = abs(HL+HB+HH)
     h_desired = 20*np.log10(desired_flt)

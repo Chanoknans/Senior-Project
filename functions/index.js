@@ -3,81 +3,46 @@ const admin = require("firebase-admin");
 const mqtt = require("mqtt");
 
 admin.initializeApp();
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
 
-exports.createUser = functions.firestore
-  .document("users/{userId}/audiogram_history/{audiogram_historyId}")
-  .onCreate((snap) => {
-    // Get an object representing the document
-    // e.g. {'name': 'Marie', 'age': 66}
-    const newValue = snap.data.data();
+const client = mqtt.connect('mqtt://ggaomyqh:3wjA27NFU3ET@m16.cloudmqtt.com:16319/');
 
-    // access a particular field as you would any JS property
-    const name = newValue.name;
-    const Left_value = newValue.Left;
-    const Right_value = newValue.Right;
-    console.log(`Trigger value`);
+client.on("connect", function () {
+  console.log("Ready To Rock!!");
+});
 
-    function publishToMqtt(topic, message) {
+client.on("reconnect", () => {
+  console.log("MQTT client is reconnecting...");
+});
 
-      return new Promise((resolve, reject) => {
-        var options = {
-          port: functions.config().mqtt.server.port,
-          host: functions.config().mqtt.server.host,
-          clientId: "mqttjs_" + Math.random().toString(16).substr(2, 8),
-          username: functions.config().mqtt.server.user,
-          password: functions.config().mqtt.server.password,
-          keepalive: 60,
-          reconnectPeriod: 1000,
-          protocolId: "MQIsdp",
-          protocolVersion: 3,
-          clean: true,
-          encoding: "utf8",
-        };
+client.on("disconnect", () => {
+  console.log("MQTT client is disconnecting...");
+});
 
-        var client = mqtt.connect(functions.config().mqtt.server.host, options);
+client.on("error", function () {
+  console.log("Can't connect");
+  client.reconnect();
+});
 
-        client.on("connect", function () {
-          console.log("client connected");
-        });
+exports.createUserAudioGram = functions
+  .region("asia-southeast1")
+  .firestore.document("users/{userId}/audiogram_history/{audiogram_historyId}")
+  .onCreate((snapshot, __) => {
+    functions.logger.info(snapshot.data());
 
-        client.on("error", function (err) {
-          console.error(err); 
-          reject();
-        });
+    let trigg_message = {
+      userID: __.params.userId,
+      audiogramID: __.params.audiogram_historyId,
+      lValue: snapshot.data().Left,
+      rValue: snapshot.data().Right,
+    };
 
-        client.subscribe("response");
-        client.publish(topic, message, function (err) {
+    client.publish("/audiogram", JSON.stringify(trigg_message), function (err) {
+      if (err) {
+        console.log("Error:" + err);
+        response.send("Error:" + err);
+        reject();
+      }
+    });
 
-
-          if (err) {
-            console.log("Error:" + err);
-            response.send("Error:" + err);
-            reject();
-          }
-        });
-
-        client.on("message", function (topic, message) {
-          console.log("client on");
-          let output = message.toString();
-
-          resolve(output);
-          client.end();
-          clearTimeout(noResp); 
-        });
-        let noResp = setTimeout(() => {
-          console.log("No connection");
-          reject();
-          client.end();
-        }, 2000);
-      });
-    }
-
-    // perform desired operations ...
+    return Promise.resolve();
   });

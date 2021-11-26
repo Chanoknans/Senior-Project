@@ -1,5 +1,3 @@
-// ignore_for_file: unused_import
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -11,7 +9,6 @@ import 'package:hearing_aid/page/home_page.dart';
 import 'package:hearing_aid/page/mode_page.dart';
 import 'package:hearing_aid/page/recording_page.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:hearing_aid/models/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -78,18 +75,6 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     // meen = today![1];
   }
 
-  Future getdata2(int value) async {
-    User? user = auth.currentUser;
-    _uid = user!.uid;
-    final DocumentSnapshot userDoc2 = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_uid)
-        .collection('audiogram_history')
-        .doc()
-        .get();
-    setState(() {});
-  }
-
   final navigatorKey = GlobalKey<NavigatorState>();
   // ignore: unused_element
   Widget _buildBody() => MaterialApp(
@@ -128,8 +113,7 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: _BottomAppBarBarBar(_selectedIndex),
-      body: //_buildBody(),
-          PageStorage(
+      body: PageStorage(
         bucket: bucket,
         child: pages[_selectedIndex],
       ),
@@ -184,7 +168,10 @@ void _showDialog(BuildContext context) {
         title: Text(
           "กรุณากรอกค่าการได้ยินในช่องว่าง",
           style: TextStyle(
-              fontFamily: 'Prompt', fontWeight: FontWeight.bold, fontSize: 18),
+            fontFamily: 'Prompt',
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         content: Form(
           key: _formKey,
@@ -195,14 +182,16 @@ void _showDialog(BuildContext context) {
               children: [
                 TextFormField(
                   style: TextStyle(
-                      fontFamily: 'Prompt',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14),
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                   decoration: const InputDecoration(
-                      icon: Icon(LineIcons.chevronRight),
-                      hintText: 'เช่น [10,10,10,10,10,10]',
-                      labelText: 'หูขวา*',
-                      errorStyle: TextStyle(fontFamily: 'Prompt')),
+                    icon: Icon(LineIcons.chevronRight),
+                    hintText: 'เช่น [10,10,10,10,10,10]',
+                    labelText: 'หูขวา*',
+                    errorStyle: TextStyle(fontFamily: 'Prompt'),
+                  ),
                   validator: (value) {
                     if (value!.length <= 13 || value.isEmpty) {
                       return 'กรุณากรอกค่าให้ครบค่ะ';
@@ -222,20 +211,21 @@ void _showDialog(BuildContext context) {
                         newvalue[i] = New[0];
                       }
                       Rcount.add(int.parse(newvalue[i]));
-                      ;
                     }
                   },
                 ),
                 TextFormField(
                   style: TextStyle(
-                      fontFamily: 'Prompt',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14),
+                    fontFamily: 'Prompt',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                   decoration: const InputDecoration(
-                      icon: Icon(LineIcons.chevronLeft),
-                      hintText: 'เช่น [10,10,10,10,10,10]',
-                      labelText: 'หูซ้าย*',
-                      errorStyle: TextStyle(fontFamily: 'Prompt')),
+                    icon: Icon(LineIcons.chevronLeft),
+                    hintText: 'เช่น [10,10,10,10,10,10]',
+                    labelText: 'หูซ้าย*',
+                    errorStyle: TextStyle(fontFamily: 'Prompt'),
+                  ),
                   //keyboardType: TextInputType.number,
                   validator: (String? value) {
                     if (value!.length <= 13 || value.isEmpty) {
@@ -256,7 +246,6 @@ void _showDialog(BuildContext context) {
                         newvalue[i] = New[0];
                       }
                       Lcount.add(int.parse(newvalue[i]));
-                      ;
                     }
                   },
                 ),
@@ -269,13 +258,12 @@ void _showDialog(BuildContext context) {
             child: Text(
               "OK",
               style: TextStyle(
-                  color: redtext,
-                  fontFamily: 'Nunito',
-                  fontWeight: FontWeight.w600),
+                color: redtext,
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w600,
+              ),
             ),
             onPressed: () async {
-              //var formKey;
-
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState!.save();
                 print(Lcount);
@@ -292,15 +280,18 @@ void _showDialog(BuildContext context) {
                   'Left': Lcount,
                   'Right': Rcount,
                   'created_date': nows
+                }).whenComplete(() {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return BottomAppBarbar();
+                      },
+                    ),
+                  );
+                }).onError((error, stackTrace) {
+                  print(error.toString());
                 });
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return BottomAppBarbar();
-                    },
-                  ),
-                );
               }
             },
           ),

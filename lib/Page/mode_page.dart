@@ -79,8 +79,12 @@ class _ModePageState extends State<ModePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget makeBody() {
-      return Column(
+    return Scaffold(
+      backgroundColor: Colors.blue,
+      appBar: AppBar(
+        title: const Text('Play from Mic'),
+      ),
+      body: Column(
         children: [
           Container(
             margin: const EdgeInsets.all(3),
@@ -95,31 +99,27 @@ class _ModePageState extends State<ModePage> {
                 width: 3,
               ),
             ),
-            child: Row(children: [
-              ElevatedButton(
-                onPressed: getPlaybackFn(),
-                //color: Colors.white,
-                //disabledColor: Colors.grey,
-                child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(_mPlayer!.isPlaying
-                  ? 'Playing microphone to headset'
-                  : 'Recorder is stopped'),
-            ]),
+            child: Row(
+              children: [
+                ElevatedButton(
+                  onPressed: getPlaybackFn(),
+                  //color: Colors.white,
+                  //disabledColor: Colors.grey,
+                  child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                Text(
+                  _mPlayer!.isPlaying
+                      ? 'Playing microphone to headset'
+                      : 'Recorder is stopped',
+                ),
+              ],
+            ),
           ),
         ],
-      );
-    }
-
-    return Scaffold(
-      backgroundColor: Colors.blue,
-      appBar: AppBar(
-        title: const Text('Play from Mic'),
       ),
-      body: makeBody(),
     );
   }
 }

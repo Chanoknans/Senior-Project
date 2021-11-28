@@ -5,17 +5,15 @@ class Profile {
   String name;
   String gen;
   String date;
-  // ignore: non_constant_identifier_names
-  String Imageurl;
-  
-  Profile(
-      {required this.email,
-      required this.password,
-      required this.confirmpassword,
-      required this.date,
-      required this.gen,
-      required this.name,
-      // ignore: non_constant_identifier_names
-      required this.Imageurl
-      });
+  String imageUrl;
+
+  Profile({
+    required this.email,
+    required this.password,
+    required this.confirmpassword,
+    required this.date,
+    required this.gen,
+    required this.name,
+    required this.imageUrl,
+  });
 }

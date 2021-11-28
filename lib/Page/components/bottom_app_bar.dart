@@ -162,6 +162,7 @@ void _showDialog(BuildContext context) {
   var nows = DateTime.now();
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
       return AlertDialog(
@@ -254,6 +255,19 @@ void _showDialog(BuildContext context) {
           ),
         ),
         actions: [
+          TextButton(
+            child: Text(
+              "CANCEL",
+              style: TextStyle(
+                color: redtext,
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           TextButton(
             child: Text(
               "OK",

@@ -7,19 +7,19 @@ admin.initializeApp();
 const client = mqtt.connect('mqtt://ggaomyqh:3wjA27NFU3ET@m16.cloudmqtt.com:16319/');
 
 client.on("connect", function () {
-  console.log("Ready To Rock!!");
+  functions.logger.info("Ready To Rock!!");
 });
 
 client.on("reconnect", () => {
-  console.log("MQTT client is reconnecting...");
+  functions.logger.info("MQTT client is reconnecting...");
 });
 
 client.on("disconnect", () => {
-  console.log("MQTT client is disconnecting...");
+  functions.logger.info("MQTT client is disconnecting...");
 });
 
 client.on("error", function () {
-  console.log("Can't connect");
+  functions.logger.error("Can't connect");
   client.reconnect();
 });
 
@@ -38,11 +38,20 @@ exports.createUserAudioGram = functions
 
     client.publish("/audiogram", JSON.stringify(trigg_message), function (err) {
       if (err) {
-        console.log("Error:" + err);
+        functions.logger.error("Error:" + err);
         response.send("Error:" + err);
         reject();
       }
     });
 
+    return Promise.resolve();
+  });
+
+exports.updateUserAudioGram = functions
+  .region("asia-southeast1")
+  .firestore.document("users/{userId}/audiogram_history/{audiogram_historyId}")
+  .onUpdate((snapshot, __) => {
+    functions.logger.info(snapshot.before.data());
+    functions.logger.info(snapshot.after.data());
     return Promise.resolve();
   });

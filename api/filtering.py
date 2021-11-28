@@ -46,15 +46,11 @@ def on_message(client, userdata, msg):
     a_id = get(m_in, 'audiogramID')
     leftValue = get(m_in, 'lValue')
     rightValue = get(m_in, 'rValue')
-    print(m_in)
-    
+
     Data = [leftValue,rightValue]
     Lcoeff=[]
     Bcoeff=[]
     Hcoeff=[]
-
-    # extract
-    # TODO: => extract data
 
     # processing data
     #fminserch
@@ -67,7 +63,7 @@ def on_message(client, userdata, msg):
         print('Function evaluations: ',opt[3])
 
         xopt = opt[0]
-        print('Coefficients: ',xopt); 
+        print('Coefficients: ',xopt);
         flpf = abs(xopt[0])
         Qlpf = abs(xopt[1])
         Glpf = abs(xopt[2])
@@ -78,18 +74,10 @@ def on_message(client, userdata, msg):
         Qhpf = abs(xopt[7])
         Ghpf = abs(xopt[8])
         q,h_lpf,num_lpf,den_lpf = BiquadLPF(flpf,Qlpf)
-        # H_lpf = h_lpf*Glpf
-        q,h_bpf,num_bpf,den_bpf  = BiquadBPF(fbpf,Qbpf)
-        # H_bpf = h_bpf*Gbpf
-        q,h_hpf,num_hpf,den_hpf  = BiquadHPF(fhpf,Qhpf)
-        # H_hpf = h_hpf*Ghpf
 
-        # desired_flt = abs(H_lpf+H_bpf+H_hpf)
-        # h_desired = 20*np.log10(desired_flt)
-        # octave_freq = [250,500,1000,2000,4000,8000]
-        # threshold_dB = newval2 #[20,20,10,10,10,10] #[0,0,10,20,20,30]
-        # spc = np.linspace(250,8000,1000)
-        # h_ideal = np.interp(spc,octave_freq,threshold_dB)
+        q,h_bpf,num_bpf,den_bpf = BiquadBPF(fbpf,Qbpf)
+
+        q,h_hpf,num_hpf,den_hpf  = BiquadHPF(fhpf,Qhpf)
 
         #sending patient's data back to firebase
         UTC = pytz.utc
@@ -100,12 +88,12 @@ def on_message(client, userdata, msg):
     # update back to DB
     doc_result = db.collection(u'users').document(user_id).collection(u'audiogram_history').document(a_id)
     doc_result.update({
-        u'LPFcoeff_Left': [], # Lcoeff[0], # array
-        u'BPFcoeff_Left': [], # Bcoeff[0],
-        u'HPFcoeff_Left':  [], # Hcoeff[0],
-        u'LPFcoeff_Right': [], # Lcoeff[1],
-        u'BPFcoeff_Right': [], # Bcoeff[1],
-        u'HPFcoeff_Right':  [], # Hcoeff[1],
+        u'LPFcoeff_Left': Lcoeff[0], # array
+        u'BPFcoeff_Left': Bcoeff[0],
+        u'HPFcoeff_Left':  Hcoeff[0],
+        u'LPFcoeff_Right': Lcoeff[1],
+        u'BPFcoeff_Right': Bcoeff[1],
+        u'HPFcoeff_Right':  Hcoeff[1],
         u'updated_at': datetime.now(UTC),
     })
 

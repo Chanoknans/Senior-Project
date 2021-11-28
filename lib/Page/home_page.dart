@@ -3,10 +3,11 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:hearing_aid/Page/aids_home.dart';
-import 'package:hearing_aid/Page/bottom_app_bar.dart';
-import 'package:hearing_aid/Page/history_page.dart';
-import 'package:hearing_aid/Page/profile_page.dart';
+import 'package:hearing_aid/page/aids_home.dart';
+import 'package:hearing_aid/page/components/bottom_app_bar.dart';
+
+import 'package:hearing_aid/page/history_page.dart';
+import 'package:hearing_aid/page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/fade_route.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -22,8 +23,12 @@ class Homepage extends StatefulWidget {
   final List<int>? result; //left
   final List<int>? result2; //right
   final int? sumall;
-  const Homepage({Key? key, this.result, this.result2, this.sumall})
-      : super(key: key);
+  const Homepage({
+    Key? key,
+    this.result,
+    this.result2,
+    this.sumall,
+  }) : super(key: key);
   static const appTitle = 'Drawer Demo';
 
   @override
@@ -35,85 +40,46 @@ class _HomepageState extends State<Homepage> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   int i = 0;
   String _uid = '';
-  List<int> history = [0, 0, 0, 0, 0, 0];
-  List<int> history2 = [0, 0, 0, 0, 0, 0];
+  List<int> leftEar = [0, 0, 0, 0, 0, 0];
+  List<int> rightEar = [0, 0, 0, 0, 0, 0];
   String? meen;
   late Timestamp today;
   late DateTime date;
   List<DateTime> time = [];
 
-  //ScrollController? _scrollController;
   void initState() {
-    getdata();
+    // getData();
     _tooltipBehavior = TooltipBehavior(enable: true);
     super.initState();
-
-    //_scrollController = ScrollController(initialScrollOffset: 50.0);
-    //todaySlider(context);
   }
 
-  void getdata() async {
-    // ignore: unused_local_variable
+  // void getData() async {
+  //   User? user =;
+  //   _uid = user!.uid;
 
-    User? user = auth.currentUser;
-    _uid = user!.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_uid)
-        .collection('audiogram_history')
-        .get()
-        .then(
-      (value) {
-        setState(
-          () {
-            if (value.docs.length > 0) {
-              value.docs.forEach(
-                (element) {
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(_uid)
-                      .collection('audiogram_history')
-                      .doc(element.id)
-                      .get();
-                  today = element.get('created_date');
-                  print('object ${today}');
-                  DateTime date = today.toDate();
-                  time.add(date);
-                },
-              );
-            }
-            print('today is ${time}');
-          },
-        );
-      },
-    );
-  }
+  // }
 
-  var nows = DateTime.now().toString();
-  //final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  // var nows = DateTime.now().toString();
 
-  Future getdata2(DateTime pickedDate) async {
-    User? user = auth.currentUser;
-    _uid = user!.uid;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_uid)
-        .collection('audiogram_history')
-        .where("created_date", isEqualTo: pickedDate)
-        .get()
-        .then((userDoc2) {
-      setState(() {
-        if (userDoc2.docs.length > 0) {
-          userDoc2.docs.forEach((element) {
-            history = List.from(element.get('Left'));
-            history2 = List.from(element.get('Right'));
-            print('my Left ${history}');
-            print('my Right ${history2}');
-          });
-        }
-      });
-    });
-  }
+  // Future getdata2(DateTime pickedDate) async {
+  //   User? user = auth.currentUser;
+  //   _uid = user!.uid;
+  //   await
+  //       // .where("created_date", isEqualTo: pickedDate)
+  //       .get()
+  //       .then((userDoc2) {
+  //     setState(() {
+  //       if (userDoc2.docs.length > 0) {
+  //         userDoc2.docs.forEach((element) {
+  //           leftEar = List.from(element.get('Left'));
+  //           rightEar = List.from(element.get('Right'));
+  //           print('my Left ${leftEar}');
+  //           print('my Right ${rightEar}');
+  //         });
+  //       }
+  //     });
+  //   });
+  // }
 
   List<int> text = [0, 0, 0, 0, 0, 0];
   bool _showtext = false;
@@ -126,8 +92,6 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(3, 135, 177, 1),
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          //ignore: prefer_const_literals_to_create_immutables
           children: <Widget>[
             const Text(
               "Home",
@@ -149,9 +113,14 @@ class _HomepageState extends State<Homepage> {
             ),
             color: const Color.fromRGBO(245, 245, 245, 1),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return Text("Information");
-              }));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return Text("Information");
+                  },
+                ),
+              );
             },
           ),
         ],
@@ -180,13 +149,39 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.only(top: 25, left: 330),
-                  child: CircleButton()),
+                padding: EdgeInsets.only(top: 25, left: 330),
+                child: CircleButton(),
+              ),
               Padding(
                 padding: EdgeInsets.only(top: 80),
                 child: Container(
                   constraints: BoxConstraints.expand(height: 200),
-                  child: todaySlider(context),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(
+                          "5SgpxjqTg4V9nibJ6WobfdGeAjf2",
+                        ) //  auth.currentUser!.uid
+                        .collection('audiogram_history')
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      }
+
+                      if (!snapshot.hasData) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      final data = snapshot.requireData;
+
+                      return todaySlider(context, data.docs);
+                    },
+                  ),
                 ),
               ),
               Padding(
@@ -202,38 +197,45 @@ class _HomepageState extends State<Homepage> {
                         Column(
                           children: [
                             Container(
-                              //height: 290,
                               width: 290,
                               decoration: BoxDecoration(
-                                  color: Color.fromRGBO(0, 0, 0, 0.3),
-                                  borderRadius: BorderRadius.circular(15)),
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
                               child: Column(
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 15, left: 150, right: 1),
+                                      top: 15,
+                                      left: 150,
+                                      right: 1,
+                                    ),
                                     child: Column(
                                       children: [
                                         Container(
                                           height: 30,
                                           width: 130,
                                           decoration: BoxDecoration(
-                                              color: green,
-                                              borderRadius:
-                                                  BorderRadius.circular(11)),
+                                            color: green,
+                                            borderRadius:
+                                                BorderRadius.circular(11),
+                                          ),
                                           child: Row(
                                             children: [
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    top: 2, left: 12, right: 2),
+                                                  top: 2,
+                                                  left: 12,
+                                                  right: 2,
+                                                ),
                                               ),
                                               Text(
                                                 "Audiogram",
                                                 style: TextStyle(
-                                                    color: light,
-                                                    fontSize: 17,
-                                                    fontWeight:
-                                                        FontWeight.w500),
+                                                  color: light,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                                 textAlign: TextAlign.center,
                                               )
                                             ],
@@ -247,26 +249,30 @@ class _HomepageState extends State<Homepage> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 12, left: 9, right: 12),
+                                      top: 12,
+                                      left: 9,
+                                      right: 12,
+                                    ),
                                     child: Container(
                                       height: 230,
                                       width: 300,
                                       decoration: BoxDecoration(
-                                          color: Color.fromRGBO(0, 0, 0, 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(11)),
+                                        color: Color.fromRGBO(0, 0, 0, 0.1),
+                                        borderRadius: BorderRadius.circular(11),
+                                      ),
                                       child: SfCartesianChart(
-                                        /*legend: Legend(isVisible: true),*/
                                         tooltipBehavior: _tooltipBehavior,
                                         plotAreaBorderWidth: 0,
                                         primaryXAxis: CategoryAxis(
                                           labelStyle: TextStyle(color: light),
                                           title: AxisTitle(
-                                              text: 'Frequency (Hz)',
-                                              textStyle: TextStyle(
-                                                  color: light,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold)),
+                                            text: 'Frequency (Hz)',
+                                            textStyle: TextStyle(
+                                              color: light,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           majorGridLines:
                                               MajorGridLines(width: 0),
                                           axisLine:
@@ -276,16 +282,21 @@ class _HomepageState extends State<Homepage> {
                                           labelStyle: TextStyle(color: light),
                                           isInversed: true,
                                           title: AxisTitle(
-                                              text: 'Hearing Level (dB HL)',
-                                              textStyle: TextStyle(
-                                                  color: light,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold)),
+                                            text: 'Hearing Level (dB HL)',
+                                            textStyle: TextStyle(
+                                              color: light,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                           majorGridLines: MajorGridLines(
-                                              width: 0.5,
-                                              color: light.withOpacity(0.5)),
-                                          axisLine:
-                                              AxisLine(width: 3, color: light),
+                                            width: 0.5,
+                                            color: light.withOpacity(0.5),
+                                          ),
+                                          axisLine: AxisLine(
+                                            width: 3,
+                                            color: light,
+                                          ),
                                           minimum: -10,
                                           maximum: 100,
                                           interval: 10,
@@ -295,16 +306,30 @@ class _HomepageState extends State<Homepage> {
                                           LineSeries<AudiogramData, String>(
                                             enableTooltip: true,
                                             dataSource: [
-                                              AudiogramData('250', history2[0]),
-                                              AudiogramData('500', history2[1]),
                                               AudiogramData(
-                                                  '1000', history2[2]),
+                                                '250',
+                                                rightEar[0],
+                                              ),
                                               AudiogramData(
-                                                  '2000', history2[3]),
+                                                '500',
+                                                rightEar[1],
+                                              ),
                                               AudiogramData(
-                                                  '4000', history2[4]),
+                                                '1000',
+                                                rightEar[2],
+                                              ),
                                               AudiogramData(
-                                                  '8000', history2[5]),
+                                                '2000',
+                                                rightEar[3],
+                                              ),
+                                              AudiogramData(
+                                                '4000',
+                                                rightEar[4],
+                                              ),
+                                              AudiogramData(
+                                                '8000',
+                                                rightEar[5],
+                                              ),
                                             ],
                                             color: pink,
                                             width: 4,
@@ -317,28 +342,42 @@ class _HomepageState extends State<Homepage> {
                                             markerSettings:
                                                 MarkerSettings(isVisible: true),
                                           ),
-                                          LineSeries<AudiogramData2, String>(
+                                          LineSeries<AudiogramData, String>(
                                             enableTooltip: true,
                                             dataSource: [
-                                              AudiogramData2('250', history[0]),
-                                              AudiogramData2('500', history[1]),
-                                              AudiogramData2(
-                                                  '1000', history[2]),
-                                              AudiogramData2(
-                                                  '2000', history[3]),
-                                              AudiogramData2(
-                                                  '4000', history[4]),
-                                              AudiogramData2(
-                                                  '8000', history[5]),
+                                              AudiogramData(
+                                                '250',
+                                                leftEar[0],
+                                              ),
+                                              AudiogramData(
+                                                '500',
+                                                leftEar[1],
+                                              ),
+                                              AudiogramData(
+                                                '1000',
+                                                leftEar[2],
+                                              ),
+                                              AudiogramData(
+                                                '2000',
+                                                leftEar[3],
+                                              ),
+                                              AudiogramData(
+                                                '4000',
+                                                leftEar[4],
+                                              ),
+                                              AudiogramData(
+                                                '8000',
+                                                leftEar[5],
+                                              ),
                                             ],
                                             color: neonblue,
                                             width: 4,
                                             xValueMapper:
-                                                (AudiogramData2 freq2, _) =>
-                                                    freq2.freqs,
+                                                (AudiogramData freq2, _) =>
+                                                    freq2.freq,
                                             yValueMapper:
-                                                (AudiogramData2 freq2, _) =>
-                                                    freq2.hears,
+                                                (AudiogramData freq2, _) =>
+                                                    freq2.hear,
                                             markerSettings:
                                                 MarkerSettings(isVisible: true),
                                           )
@@ -356,7 +395,9 @@ class _HomepageState extends State<Homepage> {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 100),
+                            vertical: 10,
+                            horizontal: 100,
+                          ),
                           child: Row(
                             children: [
                               TextButton(
@@ -426,15 +467,16 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  Swiper todaySlider(context) {
+  Swiper todaySlider(context, List<QueryDocumentSnapshot> data) {
     return Swiper(
       autoplay: false,
-      key: UniqueKey(),
       loop: true,
       itemBuilder: (BuildContext context, int index) {
+        print(index);
         return Align(
           alignment: Alignment.center,
           child: Container(
+            key: Key(data[index].id),
             width: 150,
             height: 120,
             decoration: BoxDecoration(
@@ -455,12 +497,12 @@ class _HomepageState extends State<Homepage> {
               onPressed: () async {
                 setState(() {
                   _audiogram = !_audiogram;
-                  getdata2(time[index]);
+                  // getdata2(time[index]);
                 });
               },
               child: RichText(
                 text: TextSpan(
-                  text: 'การทดสอบวันที่ \n' '${time[index]}\n',
+                  text: 'การทดสอบวันที่ \n' '${data[index].id}\n',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Prompt',
@@ -473,10 +515,9 @@ class _HomepageState extends State<Homepage> {
           ),
         );
       },
-      itemCount: time.length,
+      itemCount: data.length + 1,
       viewportFraction: 0.4,
       scale: 0.5,
-
       pagination: SwiperPagination(
         margin: EdgeInsets.only(top: 120),
         builder: const DotSwiperPaginationBuilder(
@@ -486,7 +527,6 @@ class _HomepageState extends State<Homepage> {
           space: 5,
         ),
       ),
-      //control: new SwiperControl(),
     );
   }
 }
@@ -498,15 +538,5 @@ class AudiogramData {
   AudiogramData(
     this.freq,
     this.hear,
-  );
-}
-
-class AudiogramData2 {
-  final String? freqs;
-  final int? hears;
-
-  AudiogramData2(
-    this.freqs,
-    this.hears,
   );
 }

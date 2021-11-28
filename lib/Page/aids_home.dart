@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:hearing_aid/page/components/custom_app_bar.dart';
 import 'package:hearing_aid/constant.dart';
-import 'package:hearing_aid/page/bottom_app_bar.dart';
+import 'package:hearing_aid/page/components/bottom_app_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -206,10 +206,8 @@ class _HearingAidssState extends State<HearingAidss> {
             left: 105,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Center(
-                  //alignment: Alignment.center,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 2,

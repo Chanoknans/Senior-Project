@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:hearing_aid/constant.dart';
 
 import 'package:hearing_aid/models/profile.dart';
-import 'package:hearing_aid/page/bottom_app_bar.dart';
+import 'package:hearing_aid/page/components/bottom_app_bar.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Login extends StatefulWidget {
@@ -26,7 +26,7 @@ class _LoginState extends State<Login> {
     name: '',
     gen: '',
     date: '',
-    Imageurl: '',
+    imageUrl: '',
   );
   String? url;
 

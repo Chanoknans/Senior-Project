@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/constant.dart';
-import 'package:hearing_aid/page/second_page.dart';
+import 'package:hearing_aid/page/login_page.dart';
 
 class Page1 extends StatelessWidget {
   @override
@@ -78,7 +78,7 @@ class Page1 extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return Page2();
+                        return LoginPage();
                       },
                     ),
                   );

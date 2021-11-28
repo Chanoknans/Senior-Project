@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/constant.dart';
-import 'package:hearing_aid/page/second_page.dart';
+import 'package:hearing_aid/page/login_page.dart';
 import 'package:hearing_aid/models/profile.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -17,36 +17,45 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   Profile profile = Profile(
-      email: '',
-      password: '',
-      confirmpassword: '',
-      date: '',
-      gen: '',
-      name: '',
-      Imageurl: '');
+    email: '',
+    password: '',
+    confirmpassword: '',
+    date: '',
+    gen: '',
+    name: '',
+    imageUrl: '',
+  );
   String? _uid;
   String? _userimage;
   List<String>? date;
+
   void initState() {
     getdata();
     super.initState();
   }
 
   void getdata() async {
-    // ignore: unused_local_variable
     User? user = auth.currentUser;
 
     _uid = user!.uid;
     print('user.email ${user.email}');
-    final DocumentSnapshot userDoc =
-        await FirebaseFirestore.instance.collection('users').doc(_uid).get();
-    setState(() {
-      profile.name = userDoc.get('name');
-      print('name ${profile.name}');
-      profile.gen = userDoc.get('gen');
-      profile.date = userDoc.get('date');
-      _userimage = userDoc.get('image');
-      date = profile.date.split("");
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .get()
+        .then((userDoc) {
+      if (userDoc.exists) {
+        setState(() {
+          profile.name = userDoc.get('name');
+          print('name ${profile.name}');
+          profile.gen = userDoc.get('gen');
+          profile.date = userDoc.get('date');
+          _userimage = userDoc.get('image');
+          date = profile.date.split("");
+        });
+      } else {
+        return;
+      }
     });
   }
 
@@ -64,8 +73,10 @@ class _MyProfileState extends State<MyProfile> {
           child: Padding(
             padding: EdgeInsets.only(left: 28, top: 100),
             child: CircleAvatar(
-              backgroundImage: NetworkImage(_userimage ??
-                  'https://i.ytimg.com/vi/LLYKlQ2nwqQ/maxresdefault.jpg'),
+              backgroundImage: NetworkImage(
+                _userimage ??
+                    'https://i.ytimg.com/vi/LLYKlQ2nwqQ/maxresdefault.jpg',
+              ),
               radius: 70,
             ),
           ),
@@ -75,23 +86,25 @@ class _MyProfileState extends State<MyProfile> {
           child: Column(
             children: [
               Container(
-                  width: 170,
-                  height: 30,
-                  decoration:
-                      BoxDecoration(color: Color.fromRGBO(245, 245, 245, 1)),
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 2, left: 5),
-                    child: Text(
-                      //"meen chanoknan",
-                      profile.name,
-                      style: TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: blackground),
-                      textAlign: TextAlign.center,
+                width: 170,
+                height: 30,
+                decoration:
+                    BoxDecoration(color: Color.fromRGBO(245, 245, 245, 1)),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2, left: 5),
+                  child: Text(
+                    //"meen chanoknan",
+                    profile.name,
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: blackground,
                     ),
-                  ))
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -153,12 +166,12 @@ class _MyProfileState extends State<MyProfile> {
                 child: ElevatedButton(
                   style: myButtonstyle(primary: orange, boarderRadius: 12.0),
                   onPressed: () async {
-                    await auth.signOut().then((value) {
+                    await auth.signOut().then((_) {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return Page2();
+                            return LoginPage();
                           },
                         ),
                       );

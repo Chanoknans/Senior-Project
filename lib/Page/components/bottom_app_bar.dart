@@ -30,7 +30,7 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
     /*AudiogramPage(
       key: PageStorageKey('Page2'),
     ),*/
-    Homepage(
+    HomePage(
       key: PageStorageKey('Page2'),
     ),
     ModePage(
@@ -80,7 +80,7 @@ class _BottomAppBarbarState extends State<BottomAppBarbar> {
   Widget _buildBody() => MaterialApp(
         navigatorKey: navigatorKey,
         onGenerateRoute: (settings) {
-          Widget pages = Homepage();
+          Widget pages = HomePage();
           if (settings.name == 'Page 2') pages = HearingAidss();
           return MaterialPageRoute(builder: (_) => pages);
         },

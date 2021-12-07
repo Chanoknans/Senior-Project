@@ -20,12 +20,15 @@ class AudiogramLineChart extends StatelessWidget {
       builder: (context, state) => Padding(
         padding: EdgeInsets.only(top: 280, left: 0),
         child: Container(
+          width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
               SizedBox(
                 height: 25,
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: 290,
@@ -222,55 +225,73 @@ class AudiogramLineChart extends StatelessWidget {
                   vertical: 10,
                   horizontal: 100,
                 ),
-                child: Row(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          FadeRoute(
-                            page: HearingAidss(),
+                    BlocSelector<HomePageCubit, HomePageState, List?>(
+                      selector: (state) => state.coeff,
+                      builder: (_, coeff) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextButton(
+                            onPressed: coeff != null
+                                ? () {
+                                    Navigator.push(
+                                      context,
+                                      FadeRoute(
+                                        page: HearingAidss(),
+                                      ),
+                                    );
+                                  }
+                                : null,
+                            style: ButtonStyle(
+                              foregroundColor:
+                                  MaterialStateProperty.all<Color>(white),
+                              backgroundColor: coeff != null
+                                  ? MaterialStateProperty.all<Color>(redtext)
+                                  : MaterialStateProperty.all<Color>(
+                                      Colors.grey,
+                                    ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                              ),
+                            ),
+                            child: Text("generate"),
                           ),
                         );
                       },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(white),
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(redtext),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                      child: Text("generate"),
                     ),
                     SizedBox(
                       width: 15,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          FadeRoute(
-                            page: HistoryPage(),
-                          ),
-                        );
-                      },
-                      style: ButtonStyle(
-                        foregroundColor:
-                            MaterialStateProperty.all<Color>(white),
-                        backgroundColor: MaterialStateProperty.all<Color>(blue),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            FadeRoute(
+                              page: HistoryPage(),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          foregroundColor:
+                              MaterialStateProperty.all<Color>(white),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(blue),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
                           ),
                         ),
+                        child: Text(" more details"),
                       ),
-                      child: Text(" more details"),
                     )
                   ],
                 ),

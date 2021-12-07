@@ -19,15 +19,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final formKey = GlobalKey<FormState>();
-  Profile profile = Profile(
-    email: '',
-    password: '',
-    confirmpassword: '',
-    name: '',
-    gen: '',
-    date: '',
-    imageUrl: '',
-  );
+  Profile profile = Profile();
   String? url;
 
   File? _Image;
@@ -294,7 +286,8 @@ class _LoginState extends State<Login> {
                                   ),
                                 ),
                                 onSaved: (String? date) {
-                                  profile.date = date!;
+                                  profile.date =
+                                      Timestamp.fromDate(DateTime.now());
                                 },
                               ),
                             ),
@@ -360,7 +353,7 @@ class _LoginState extends State<Login> {
                                 final ref = FirebaseStorage.instance
                                     .ref()
                                     .child('userimage')
-                                    .child(profile.name + '.jpg');
+                                    .child(profile.name! + '.jpg');
                                 await ref.putFile(_Image!);
                                 url = await ref.getDownloadURL();
                                 final User? user = auth.currentUser;
@@ -382,7 +375,7 @@ class _LoginState extends State<Login> {
                                   this.context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return BottomAppBarbar();
+                                      return Dashboard();
                                     },
                                   ),
                                 );

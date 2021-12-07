@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/models/profile.dart';
 import 'package:hearing_aid/page/components/bottom_app_bar.dart';
@@ -18,17 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode myFocusNode2 = FocusNode();
   final formKey = GlobalKey<FormState>();
   bool statusEye = true;
-  Profile profile = Profile(
-    email: '',
-    password: '',
-    confirmpassword: '',
-    name: '',
-    gen: '',
-    date: '',
-    imageUrl: '',
-  );
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  Profile profile = Profile();
 
   @override
   void dispose() {
@@ -38,6 +29,19 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final appCubit = BlocProvider.of<ApplicationCubit>(context);
+    appCubit.init().then((value) {
+      if (value) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return Dashboard();
+            },
+          ),
+        );
+      }
+    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Form(
@@ -219,29 +223,26 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
-                      try {
-                        await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                                email: profile.email,
-                                password: profile.password)
-                            .then((value) {
-                          formKey.currentState!.reset();
+                      await appCubit
+                          .loginWithEmail(profile.email!, profile.password!)
+                          .then((value) {
+                        formKey.currentState!.reset();
+                        if (value['complete']) {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
-                                return BottomAppBarbar();
+                                return Dashboard();
                               },
                             ),
                           );
-                        });
-                      } on FirebaseAuthException catch (e) {
-                        print(e.message);
-                        Fluttertoast.showToast(
-                          msg: e.code,
-                          gravity: ToastGravity.CENTER,
-                        );
-                      }
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: value['message'],
+                            gravity: ToastGravity.CENTER,
+                          );
+                        }
+                      });
                     }
                   },
                   child: Text(

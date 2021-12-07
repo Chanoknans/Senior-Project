@@ -1,19 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Profile {
-  String email;
-  String password;
-  String confirmpassword;
-  String name;
-  String gen;
-  String date;
-  String imageUrl;
+  String? email;
+  String? password;
+  String? confirmpassword;
+  String? name;
+  String? gen;
+  Timestamp? date;
+  String? imageUrl;
 
   Profile({
-    required this.email,
-    required this.password,
-    required this.confirmpassword,
-    required this.date,
-    required this.gen,
-    required this.name,
-    required this.imageUrl,
+    this.email,
+    this.password,
+    this.confirmpassword,
+    this.date,
+    this.gen,
+    this.name,
+    this.imageUrl,
   });
 }

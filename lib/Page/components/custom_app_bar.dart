@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Navigator.push(
             context,
             FadeRoute(
-              page: BottomAppBarbar(),
+              page: Dashboard(),
             ),
           );
         },

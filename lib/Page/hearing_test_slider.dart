@@ -33,8 +33,8 @@ class HearingTestSlider extends StatelessWidget {
             ),
             child: RichText(
               text: TextSpan(
-                text: 'การทดสอบวันที่ \n'
-                    '${DateTime.now()}\n',
+                text: 'การทดสอบวันที่: '
+                    '${data[index]["created_date"].toDate()}\n',
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Prompt',

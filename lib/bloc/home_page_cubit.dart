@@ -1,31 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
 
 class HomePageCubit extends Cubit<HomePageState> {
-  HomePageCubit() : super(HomePageState());
+  ApplicationCubit appCubit;
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  HomePageCubit(this.appCubit) : super(HomePageState()) {
+    // streamCurrentCoeff();
+  }
 
   Future<void> init() async {
     print('land');
   }
 
   Future<void> getHearingResult(String docID) async {
-    print(docID);
-
     FirebaseFirestore.instance
         .collection("users")
-        .doc(auth.currentUser!.uid)
+        .doc(appCubit.state.currentUser!.uid)
         .collection("audiogram_history")
         .doc(docID)
         .get()
         .then((value) {
       if (value.exists) {
-        print(value.data());
+        emit(state.copyWith(currentDoc: docID));
         emit(state.copyWith(leftEar: value.data()!['Left']));
         emit(state.copyWith(rightEar: value.data()!['Right']));
+        emit(state.copyWith(coeff: value.data()!['LPFcoeff_Left']));
       }
     }).whenComplete(() {
       print('success');

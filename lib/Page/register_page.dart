@@ -19,15 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool statusEye2 = true;
   final formKey = GlobalKey<FormState>();
 
-  Profile profile = Profile(
-    email: '',
-    password: '',
-    confirmpassword: '',
-    name: '',
-    gen: '',
-    date: '',
-    imageUrl: '',
-  );
+  Profile profile = Profile();
 
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -272,8 +264,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 try {
                                   await FirebaseAuth.instance
                                       .createUserWithEmailAndPassword(
-                                    email: profile.email,
-                                    password: profile.password,
+                                    email: profile.email!,
+                                    password: profile.password!,
                                   )
                                       .then((value) {
                                     formKey.currentState!.reset();

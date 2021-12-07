@@ -4,11 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hearing_aid/bloc/application_cubit.dart';
+import 'package:hearing_aid/bloc/application_state.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
+import 'package:hearing_aid/fade_route.dart';
+import 'package:hearing_aid/page/aids_home.dart';
 
 import 'package:hearing_aid/page/components/bottom_app_bar.dart';
-import 'package:hearing_aid/page/components/line_char.dart';
+import 'package:hearing_aid/page/components/line_chart.dart';
 import 'package:hearing_aid/page/hearing_test_slider.dart';
+import 'package:hearing_aid/page/history_page.dart';
 
 import 'package:hearing_aid/page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
@@ -30,7 +35,7 @@ class HomePage extends StatelessWidget {
     this.sumall,
   }) : super(key: key);
 
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  // final FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -113,42 +118,46 @@ class HomePage extends StatelessWidget {
                 padding: EdgeInsets.only(top: 80),
                 child: Container(
                   constraints: BoxConstraints.expand(height: 200),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(
-                          auth.currentUser!.uid,
-                        ) //
-                        .collection('audiogram_history')
-                        // .where(
-                        //   'created_at',
-                        //   isGreaterThanOrEqualTo: Timestamp.fromDate(fromTime),
-                        // )
-                        // .where(
-                        //   'created_at',
-                        //   isLessThanOrEqualTo: Timestamp.fromDate(toTime),
-                        // )
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(snapshot.error.toString()),
-                        );
-                      }
+                  child:
+                      BlocSelector<ApplicationCubit, ApplicationState, User?>(
+                    selector: (state) => state.currentUser,
+                    builder: (_, currentUser) => StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(
+                            currentUser!.uid,
+                          ) //
+                          .collection('audiogram_history')
+                          // .where(
+                          //   'created_at',
+                          //   isGreaterThanOrEqualTo: Timestamp.fromDate(fromTime),
+                          // )
+                          // .where(
+                          //   'created_at',
+                          //   isLessThanOrEqualTo: Timestamp.fromDate(toTime),
+                          // )
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Text(snapshot.error.toString()),
+                          );
+                        }
 
-                      if (!snapshot.hasData) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
+                        if (!snapshot.hasData) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-                      final data = snapshot.requireData;
-                      if (data.docs.length != 0) {
-                        return HearingTestSlider(data: data.docs);
-                      } else {
-                        return Container();
-                      }
-                    },
+                        final data = snapshot.requireData;
+                        if (data.docs.length != 0) {
+                          return HearingTestSlider(data: data.docs);
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),

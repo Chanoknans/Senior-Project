@@ -12,14 +12,14 @@ import 'package:line_icons/line_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class BottomAppBarbar extends StatefulWidget {
-  BottomAppBarbar({Key? key}) : super(key: key);
+class Dashboard extends StatefulWidget {
+  Dashboard({Key? key}) : super(key: key);
 
   @override
-  _BottomAppBarbarState createState() => _BottomAppBarbarState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _BottomAppBarbarState extends State<BottomAppBarbar> {
+class _DashboardState extends State<Dashboard> {
   /*@override
   Widget build(BuildContext context) {return Container();*/
 
@@ -299,7 +299,7 @@ void _showDialog(BuildContext context) {
                     context,
                     MaterialPageRoute(
                       builder: (context) {
-                        return BottomAppBarbar();
+                        return Dashboard();
                       },
                     ),
                   );

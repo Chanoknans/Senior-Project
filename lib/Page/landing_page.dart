@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/login_page.dart';
 
-class Page1 extends StatelessWidget {
+class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

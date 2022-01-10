@@ -23,7 +23,7 @@ class HearingTestSlider extends StatelessWidget {
         return Align(
           alignment: Alignment.center,
           child: Container(
-            padding: EdgeInsets.all(5.0),
+            padding: EdgeInsets.all(8.0),
             key: Key(data[index].id),
             width: 150,
             height: 120,

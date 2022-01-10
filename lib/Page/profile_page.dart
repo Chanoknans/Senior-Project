@@ -77,7 +77,8 @@ class _MyProfileState extends State<MyProfile> {
                 Icon(LineIcons.calendar, color: blue),
                 SizedBox(width: 4),
                 Text(
-                  state.userProfile?.date!.toDate().toIso8601String() ?? '-',
+                  state.userProfile?.date!.toDate().toString().split(" ")[0] ??
+                      '-',
                   style: TextStyle(color: blackground),
                 )
               ],

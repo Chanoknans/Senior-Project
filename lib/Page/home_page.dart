@@ -54,6 +54,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(3, 135, 177, 1),
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
               "Home",

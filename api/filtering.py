@@ -63,7 +63,7 @@ def on_message(client, userdata, msg):
         print('Function evaluations: ',opt[3])
 
         xopt = opt[0]
-        print('Coefficients: ',xopt);
+        print('Coefficients: ',xopt)
         flpf = abs(xopt[0])
         Qlpf = abs(xopt[1])
         Glpf = abs(xopt[2])
@@ -167,7 +167,7 @@ def on_subscribe(client, obj, mid, granted_qos):
 def on_disconnect(client, userdata, rc):
     logging.debug(f'disconnecting reason {str(rc)}')
     client.connected_flag = False
-    client.disconnect_flag = True
+    client.disconnect_flag = True       
 
 
 

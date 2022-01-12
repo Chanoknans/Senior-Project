@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hearing_aid/Page/audiogram_detail_page.dart';
+import 'package:hearing_aid/Page/history_page.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/fade_route.dart';
 import 'package:hearing_aid/models/audiogram.dart';
 import 'package:hearing_aid/page/aids_home.dart';
-import 'package:hearing_aid/page/history_page.dart';
+import 'package:hearing_aid/Page/history_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AudiogramLineChart extends StatelessWidget {
@@ -274,7 +276,7 @@ class AudiogramLineChart extends StatelessWidget {
                           Navigator.push(
                             context,
                             FadeRoute(
-                              page: HistoryPage(),
+                              page: detailPage(),
                             ),
                           );
                         },

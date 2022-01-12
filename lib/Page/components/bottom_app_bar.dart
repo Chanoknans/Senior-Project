@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hearing_aid/Page/history_page.dart';
+import 'package:hearing_aid/Page/historyhome_page.dart';
+import 'package:hearing_aid/Page/recording_pro.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/aids_home.dart';
-import 'package:hearing_aid/page/history_page.dart';
 import 'package:hearing_aid/page/home_page.dart';
 import 'package:hearing_aid/page/mode_page.dart';
-import 'package:hearing_aid/page/recording_page.dart';
+//import 'package:hearing_aid/page/recording_page.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -24,7 +26,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {return Container();*/
 
   final List<Widget> pages = [
-    HistoryPage(
+    historyhomePage(
       key: PageStorageKey('Page1'),
     ),
     /*AudiogramPage(
@@ -36,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
     ModePage(
       key: PageStorageKey('Page3'),
     ),
-    RecordingPage(
+    RecordingPrototype(
       key: PageStorageKey('Page4'),
     )
   ];

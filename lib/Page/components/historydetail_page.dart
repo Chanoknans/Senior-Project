@@ -31,7 +31,7 @@ class _AudiogramState extends State<Audiogram> {
     return BlocBuilder<HomePageCubit, HomePageState>(
         buildWhen: (prev, curr) => prev != curr,
         builder: (context, state) => Padding(
-              padding: EdgeInsets.only(top: 20, left: 0),
+              padding: EdgeInsets.only(top: 0, left: 0),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: Column(
@@ -464,13 +464,16 @@ class _AudiogramState extends State<Audiogram> {
                                               ),
                                               child: Row(
                                                 children: <Widget>[
-                                                  if ((state.leftEar[1] +
-                                                          state.leftEar[2] +
-                                                          state.leftEar[3] +
-                                                          state.rightEar[1] +
-                                                          state.rightEar[2] +
-                                                          state.rightEar[3] /
-                                                              6) <
+                                                  if (((state.leftEar[1] +
+                                                              state.leftEar[2] +
+                                                              state.leftEar[3] +
+                                                              state
+                                                                  .rightEar[1] +
+                                                              state
+                                                                  .rightEar[2] +
+                                                              state.rightEar[
+                                                                  3]) /
+                                                          6) <
                                                       26)
                                                     Padding(
                                                       padding:
@@ -488,28 +491,31 @@ class _AudiogramState extends State<Audiogram> {
                                                         ),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           26 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           41)
                                                     Padding(
                                                       padding:
@@ -527,28 +533,31 @@ class _AudiogramState extends State<Audiogram> {
                                                                     .w600),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           41 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           61)
                                                     Padding(
                                                       padding:
@@ -566,28 +575,31 @@ class _AudiogramState extends State<Audiogram> {
                                                                     .w600),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           61 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           81)
                                                     Padding(
                                                       padding:
@@ -641,13 +653,16 @@ class _AudiogramState extends State<Audiogram> {
                                               ),
                                               child: Column(
                                                 children: <Widget>[
-                                                  if ((state.leftEar[1] +
-                                                          state.leftEar[2] +
-                                                          state.leftEar[3] +
-                                                          state.rightEar[1] +
-                                                          state.rightEar[2] +
-                                                          state.rightEar[3]! /
-                                                              6) <
+                                                  if (((state.leftEar[1] +
+                                                              state.leftEar[2] +
+                                                              state.leftEar[3] +
+                                                              state
+                                                                  .rightEar[1] +
+                                                              state
+                                                                  .rightEar[2] +
+                                                              state.rightEar[
+                                                                  3]) /
+                                                          6) <
                                                       26)
                                                     Padding(
                                                       padding:
@@ -668,28 +683,31 @@ class _AudiogramState extends State<Audiogram> {
                                                                 'Prompt'),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           26 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           41)
                                                     Padding(
                                                       padding:
@@ -710,28 +728,31 @@ class _AudiogramState extends State<Audiogram> {
                                                                 'Prompt'),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           41 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           61)
                                                     Padding(
                                                       padding:
@@ -752,28 +773,31 @@ class _AudiogramState extends State<Audiogram> {
                                                                 'Prompt'),
                                                       ),
                                                     )
-                                                  else if ((state.leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) >=
+                                                  else if (((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) >=
                                                           61 &&
-                                                      (state
-                                                                  .leftEar[1] +
-                                                              state.leftEar[2] +
-                                                              state.leftEar[3] +
-                                                              state
-                                                                  .rightEar[1] +
-                                                              state
-                                                                  .rightEar[2] +
-                                                              state.rightEar[
-                                                                      3] /
-                                                                  6) <
+                                                      ((state.leftEar[1] +
+                                                                  state.leftEar[
+                                                                      2] +
+                                                                  state.leftEar[
+                                                                      3] +
+                                                                  state.rightEar[
+                                                                      1] +
+                                                                  state.rightEar[
+                                                                      2] +
+                                                                  state.rightEar[
+                                                                      3]) /
+                                                              6) <
                                                           81)
                                                     Padding(
                                                       padding:

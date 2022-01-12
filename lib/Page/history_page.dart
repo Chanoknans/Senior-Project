@@ -103,23 +103,57 @@ class Historypage extends StatelessWidget {
           child: ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                  title: TextButton(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'การทดสอบวันที่ ${data[index]["created_date"].toDate()}',
-                    style: TextStyle(
-                        color: white, fontFamily: 'Prompt', fontSize: 15),
-                    //textAlign: TextAlign.start,
+              return Dismissible(
+                key: UniqueKey(),
+                direction: DismissDirection.endToStart,
+                onDismissed: (_) {},
+                background: Container(
+                  color: Colors.red,
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  alignment: Alignment.centerRight,
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.white,
                   ),
                 ),
-                onPressed: () async {
-                  await homePageCubit.getHearingResult(data[index].id);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => detailPage()));
-                },
-              ));
+                child: ListTile(
+                  title: TextButton(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'การทดสอบวันที่ ${data[index]["created_date"].toDate()}',
+                        style: TextStyle(
+                            color: white, fontFamily: 'Prompt', fontSize: 15),
+                        //textAlign: TextAlign.start,
+                      ),
+                    ),
+                    onPressed: () async {
+                      await homePageCubit.getHearingResult(data[index].id);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => detailPage()));
+                    },
+                  ),
+                ),
+              ); /*ListTile(
+                title: TextButton(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'การทดสอบวันที่ ${data[index]["created_date"].toDate()}',
+                      style: TextStyle(
+                          color: white, fontFamily: 'Prompt', fontSize: 15),
+                      //textAlign: TextAlign.start,
+                    ),
+                  ),
+                  onPressed: () async {
+                    await homePageCubit.getHearingResult(data[index].id);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => detailPage()));
+                  },
+                ),
+              );*/
             },
           ),
         ),

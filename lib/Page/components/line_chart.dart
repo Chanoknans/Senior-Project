@@ -1,14 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hearing_aid/Page/audiogram_detail_page.dart';
+import 'package:hearing_aid/Page/components/historydetail_page.dart';
 import 'package:hearing_aid/Page/history_page.dart';
+import 'package:hearing_aid/Page/historyhome_page.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/fade_route.dart';
 import 'package:hearing_aid/models/audiogram.dart';
 import 'package:hearing_aid/page/aids_home.dart';
-import 'package:hearing_aid/Page/history_page.dart';
+import 'package:hearing_aid/page/history_page.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AudiogramLineChart extends StatelessWidget {
@@ -26,7 +29,7 @@ class AudiogramLineChart extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: 25,
+                height: 10,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -273,12 +276,40 @@ class AudiogramLineChart extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            FadeRoute(
-                              page: detailPage(),
-                            ),
-                          );
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialog(
+                                    backgroundColor: blackground,
+                                    insetPadding: EdgeInsets.all(10),
+                                    child: Stack(
+                                      overflow: Overflow.visible,
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        Container(
+                                            width: double.infinity,
+                                            height: 650,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
+                                              color: grayy2,
+                                            ),
+                                            padding: EdgeInsets.fromLTRB(
+                                                5, 50, 20, 20),
+                                            child: Audiogram()),
+                                        Positioned(
+                                            right: 0,
+                                            top: 10,
+                                            child: IconButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              icon: Icon(Icons.close),
+                                              color: white,
+                                            ))
+                                      ],
+                                    ));
+                              });
                         },
                         style: ButtonStyle(
                           foregroundColor:

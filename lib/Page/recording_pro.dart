@@ -23,6 +23,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   ]; //can be datetime length
   final dayy = ['11-01-2022', '10-01-2022', '09-01-2022', '09-01-2022'];
   get _durationState => null;
+  final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
   bool _pause = true;
 
   // List<bool> _isVisible = [false, false, false, false];

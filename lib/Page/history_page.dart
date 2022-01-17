@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/Page/audiogram_detail_page.dart';
@@ -9,11 +10,39 @@ import 'package:hearing_aid/page/profile_page.dart';
 
 class Historypage extends StatelessWidget {
   final List<QueryDocumentSnapshot> data;
+  //DateTime date = data[1];
 
   const Historypage({
     Key? key,
     required this.data,
   }) : super(key: key);
+
+  Future getdata2(String pickedDate) async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    User? user = auth.currentUser;
+    String _uid = '';
+
+    _uid = user!.uid;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_uid)
+        .collection('audiogram_history')
+        .doc(pickedDate)
+        .delete();
+    //   .where("created_date", isEqualTo: pickedDate)
+    //   .get()
+    //   .then((value) {
+    // if (value.docs.length > 0) {
+    //   value.docs.forEach((element) {
+    //     FirebaseFirestore.instance
+    //         .collection('users')
+    //         .doc(_uid)
+    //         .collection('audiogram_history')
+    //         .doc(element.id)
+    //         .delete();
+    //   });
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +101,7 @@ class Historypage extends StatelessWidget {
                       children: <Widget>[
                         Container(
                           width: 4,
-                          height: 16,
+                          height: 18.75,
                           color: Colors.white,
                         ),
                         Container(
@@ -106,11 +135,13 @@ class Historypage extends StatelessWidget {
               return Dismissible(
                 key: UniqueKey(),
                 direction: DismissDirection.endToStart,
-                onDismissed: (_) {},
+                onDismissed: (_) async {
+                  await getdata2(data[index].id);
+                },
                 background: Container(
                   color: Colors.red,
-                  margin: EdgeInsets.symmetric(horizontal: 15),
-                  alignment: Alignment.centerRight,
+                  margin: EdgeInsets.only(right: 0),
+                  alignment: Alignment(0.95, 0),
                   child: Icon(
                     Icons.delete,
                     color: Colors.white,
@@ -119,7 +150,7 @@ class Historypage extends StatelessWidget {
                 child: ListTile(
                   title: TextButton(
                     child: Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment(-1, 0),
                       child: Text(
                         'การทดสอบวันที่ ${data[index]["created_date"].toDate()}',
                         style: TextStyle(
@@ -128,6 +159,7 @@ class Historypage extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
+                      print(data[index].id);
                       await homePageCubit.getHearingResult(data[index].id);
                       Navigator.push(
                           context,

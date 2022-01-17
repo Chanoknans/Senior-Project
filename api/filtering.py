@@ -1,3 +1,4 @@
+from msvcrt import LK_LOCK
 import numpy as np
 import math
 import logging
@@ -79,11 +80,15 @@ def on_message(client, userdata, msg):
 
         q,h_hpf,num_hpf,den_hpf  = BiquadHPF(fhpf,Qhpf)
 
+        LL=np.concatenate((num_lpf,den_lpf,Glpf),axis = None)
+        BB=np.concatenate((num_bpf,den_bpf,Gbpf),axis = None)
+        HH=np.concatenate((num_hpf,den_hpf,Ghpf),axis = None)
+
         #sending patient's data back to firebase
         UTC = pytz.utc
-        Lcoeff.append((num_lpf+den_lpf+Glpf).tolist())
-        Bcoeff.append((num_bpf+den_bpf+Gbpf).tolist())
-        Hcoeff.append((num_hpf+den_hpf+Ghpf).tolist())
+        Lcoeff.append((LL).tolist())
+        Bcoeff.append((BB).tolist())
+        Hcoeff.append((HH).tolist())
 
     # update back to DB
     doc_result = db.collection(u'users').document(user_id).collection(u'audiogram_history').document(a_id)

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:hearing_aid/page/components/custom_app_bar.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/components/bottom_app_bar.dart';
@@ -10,7 +8,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 
 const int tSampleRate = 44100;
-const int tBlockSize = 4096;
 typedef Fn = void Function();
 
 class HearingAidss extends StatefulWidget {
@@ -21,7 +18,6 @@ class HearingAidss extends StatefulWidget {
 }
 
 class _HearingAidssState extends State<HearingAidss> {
-  bool started = false;
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
   bool _mPlayerIsInited = false;
 
@@ -38,6 +34,7 @@ class _HearingAidssState extends State<HearingAidss> {
       audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
       category: SessionCategory.playAndRecord,
     );
+
     setState(() {
       _mPlayerIsInited = true;
     });
@@ -61,8 +58,9 @@ class _HearingAidssState extends State<HearingAidss> {
 
   // -------  Here is the code to play from the microphone -----------------------
 
-  void play() async {
-    await _mPlayer!.startPlayerFromMic(sampleRate: 44000);
+  void startPlayer() async {
+    //
+    await _mPlayer!.startPlayerFromMic(sampleRate: tSampleRate);
     setState(() {});
   }
 
@@ -79,7 +77,7 @@ class _HearingAidssState extends State<HearingAidss> {
       return null;
     }
     return _mPlayer!.isStopped
-        ? play
+        ? startPlayer
         : () {
             stopPlayer().then((value) => setState(() {}));
           };
@@ -178,7 +176,10 @@ class _HearingAidssState extends State<HearingAidss> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      SizedBox(
+                        width: 5,
+                        height: 5,
+                      ),
                       Image.asset(
                         "assets/image/headphones.png",
                         scale: 2.05,
@@ -201,79 +202,79 @@ class _HearingAidssState extends State<HearingAidss> {
               ),
             ),
           ),
-          Positioned(
-            top: 530,
-            left: 105,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      fixedSize: const Size(180, 35),
-                      textStyle: TextStyle(),
-                      primary: Color.fromRGBO(240, 238, 233, 0.95),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Icon(
-                          LineIcons.microphone,
-                          color: redtext,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 22),
-                          child: Text(
-                            "Recording",
-                            style: TextStyle(
-                              color: blackground,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Nunito',
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      fixedSize: const Size(180, 35),
-                      textStyle: TextStyle(),
-                      primary: Color.fromRGBO(240, 238, 233, 0.95),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Icon(
-                          LineIcons.cog,
-                          color: grayy,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 28),
-                          child: Text(
-                            "Settings",
-                            style: TextStyle(
-                              color: blackground,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Nunito',
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
+          // Positioned(
+          //   top: 530,
+          //   left: 105,
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Center(
+          //         child: ElevatedButton(
+          //           style: ElevatedButton.styleFrom(
+          //             elevation: 2,
+          //             fixedSize: const Size(180, 35),
+          //             textStyle: TextStyle(),
+          //             primary: Color.fromRGBO(240, 238, 233, 0.95),
+          //           ),
+          //           onPressed: () {},
+          //           child: Row(
+          //             children: [
+          //               Icon(
+          //                 LineIcons.microphone,
+          //                 color: redtext,
+          //               ),
+          //               Padding(
+          //                 padding: EdgeInsets.only(left: 22),
+          //                 child: Text(
+          //                   "Recording",
+          //                   style: TextStyle(
+          //                     color: blackground,
+          //                     fontWeight: FontWeight.w600,
+          //                     fontFamily: 'Nunito',
+          //                     fontSize: 16,
+          //                   ),
+          //                   textAlign: TextAlign.center,
+          //                 ),
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //       Center(
+          //         child: ElevatedButton(
+          //           style: ElevatedButton.styleFrom(
+          //             elevation: 2,
+          //             fixedSize: const Size(180, 35),
+          //             textStyle: TextStyle(),
+          //             primary: Color.fromRGBO(240, 238, 233, 0.95),
+          //           ),
+          //           onPressed: () {},
+          //           child: Row(
+          //             children: [
+          //               Icon(
+          //                 LineIcons.cog,
+          //                 color: grayy,
+          //               ),
+          //               Padding(
+          //                 padding: EdgeInsets.only(left: 28),
+          //                 child: Text(
+          //                   "Settings",
+          //                   style: TextStyle(
+          //                     color: blackground,
+          //                     fontWeight: FontWeight.w600,
+          //                     fontFamily: 'Nunito',
+          //                     fontSize: 16,
+          //                   ),
+          //                   textAlign: TextAlign.center,
+          //                 ),
+          //               )
+          //             ],
+          //           ),
+          //         ),
+          //       )
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );

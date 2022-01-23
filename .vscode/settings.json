@@ -1,7 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "dart.flutterRunAdditionalArgs": [
-        "--no-sound-null-safety"
-    ],
-    "python.formatting.provider": "yapf",
-}

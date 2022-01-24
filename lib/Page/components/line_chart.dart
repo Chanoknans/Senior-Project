@@ -20,6 +20,7 @@ class AudiogramLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
+    HomePageCubit homepage = BlocProvider.of<HomePageCubit>(context);
     return BlocBuilder<HomePageCubit, HomePageState>(
       buildWhen: (prev, curr) => prev != curr,
       builder: (context, state) => Padding(
@@ -233,30 +234,30 @@ class AudiogramLineChart extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    BlocSelector<HomePageCubit, HomePageState, List?>(
-                      selector: (state) => state.coeff,
+                    BlocBuilder<HomePageCubit, HomePageState>(
                       builder: (_, coeff) {
                         return Container(
                           width: MediaQuery.of(context).size.width,
                           child: TextButton(
-                            onPressed: coeff != null
-                                ? () {
+                            onPressed: () async {
+                              await homepage.generateSampleRate().then(
+                                (complete) {
+                                  if (complete) {
                                     Navigator.push(
                                       context,
-                                      FadeRoute(
-                                        page: HearingAidss(),
+                                      MaterialPageRoute(
+                                        builder: (_) => HearingAidss(),
                                       ),
                                     );
                                   }
-                                : null,
+                                },
+                              );
+                            },
                             style: ButtonStyle(
                               foregroundColor:
                                   MaterialStateProperty.all<Color>(white),
-                              backgroundColor: coeff != null
-                                  ? MaterialStateProperty.all<Color>(redtext)
-                                  : MaterialStateProperty.all<Color>(
-                                      Colors.grey,
-                                    ),
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(redtext),
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
@@ -277,39 +278,46 @@ class AudiogramLineChart extends StatelessWidget {
                       child: TextButton(
                         onPressed: () {
                           showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                    backgroundColor: blackground,
-                                    insetPadding: EdgeInsets.all(10),
-                                    child: Stack(
-                                      overflow: Overflow.visible,
-                                      alignment: Alignment.center,
-                                      children: <Widget>[
-                                        Container(
-                                            width: double.infinity,
-                                            height: 650,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              color: grayy2,
-                                            ),
-                                            padding: EdgeInsets.fromLTRB(
-                                                5, 50, 20, 20),
-                                            child: Audiogram()),
-                                        Positioned(
-                                            right: 0,
-                                            top: 10,
-                                            child: IconButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              icon: Icon(Icons.close),
-                                              color: white,
-                                            ))
-                                      ],
-                                    ));
-                              });
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                backgroundColor: blackground,
+                                insetPadding: EdgeInsets.all(10),
+                                child: Stack(
+                                  overflow: Overflow.visible,
+                                  alignment: Alignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      width: double.infinity,
+                                      height: 650,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: grayy2,
+                                      ),
+                                      padding: EdgeInsets.fromLTRB(
+                                        5,
+                                        50,
+                                        20,
+                                        20,
+                                      ),
+                                      child: Audiogram(),
+                                    ),
+                                    Positioned(
+                                      right: 0,
+                                      top: 10,
+                                      child: IconButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        icon: Icon(Icons.close),
+                                        color: white,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          );
                         },
                         style: ButtonStyle(
                           foregroundColor:

@@ -2,6 +2,9 @@ FROM python:3.9.10
 
 WORKDIR /filtering
 
+ENV PORT 8080
+ENV HOST 0.0.0.0
+
 COPY requirements.txt .
 
 RUN pip install --trusted-host pypi.python.org -r requirements.txt

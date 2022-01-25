@@ -9,3 +9,5 @@ RUN pip install --trusted-host pypi.python.org -r requirements.txt
 COPY . .
 
 ENTRYPOINT ["python", "filtering.py"]
+
+CMD exec gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 8 app:app

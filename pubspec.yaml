@@ -31,7 +31,6 @@ dependencies:
   carousel_slider: ^4.0.0
   card_swiper: ^1.0.4
   linked_scroll_controller: ^0.2.0
-  flutter_facebook_auth: ^3.5.0+1
   image_picker: ^0.8.3+3
   intl: ^0.17.0
   cloud_firestore: ^2.5.0
@@ -47,6 +46,9 @@ dependencies:
   bloc: ^7.2.1
   syncfusion_flutter_charts: ^19.3.48
   audio_video_progress_bar: ^0.10.0
+  flutter_facebook_auth: ^4.0.1
+  flutter_login_facebook: ^1.2.0
+  #flutter_file_manager: ^0.2.0
   
 dev_dependencies:
   flutter_test:

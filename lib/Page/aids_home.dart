@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:hearing_aid/page/components/custom_app_bar.dart';
 import 'package:hearing_aid/constant.dart';
@@ -6,6 +7,8 @@ import 'package:line_icons/line_icons.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
@@ -19,7 +22,20 @@ class HearingAidss extends StatefulWidget {
 
 class _HearingAidssState extends State<HearingAidss> {
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
+  FlutterSoundPlayer? _mPlayer2 = FlutterSoundPlayer();
+  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
+  bool _mPlayerIsInited2 = false;
+  bool _mRecorderIsInited = false;
+  bool _mplaybackReady = false;
+  String? _mPath;
+  StreamSubscription? _mRecordingDataSubscription;
+  String fileExtension= '.aac';
+  String fileName = 'Recording_';
+  String dirpath = "/assets/sound/";
+
+   
+  
 
   Future<void> open() async {
     var status = await Permission.microphone.request();
@@ -34,29 +50,153 @@ class _HearingAidssState extends State<HearingAidss> {
       audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
       category: SessionCategory.playAndRecord,
     );
+    //   await _mRecorder!.openAudioSession();
+    //   setState(() {
+    //   _mRecorderIsInited = true;
+    //  });
+  }
 
+  Future<void> _openRecorder() async {
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      throw RecordingPermissionException('Microphone permission not granted');
+    }
+    await _mRecorder!.openAudioSession();
     setState(() {
-      _mPlayerIsInited = true;
+      _mRecorderIsInited = true;
     });
   }
 
   //@override
   void initState() {
     super.initState();
+    _mPlayer!.openAudioSession().then((value) {
+      setState(() {
+        _mPlayerIsInited = true;
+        //_mPlayerIsInited2 = true;
+      });
+    });
     open();
+    _mPlayer2!.openAudioSession().then((value) {
+      setState(() {
+        _mPlayerIsInited2 = true;
+      });
+    });
+    _openRecorder();
   }
 
   //@override
   void dispose() {
     stopPlayer();
-    // Be careful : you must `close` the audio session when you have finished with it.
     _mPlayer!.closeAudioSession();
     _mPlayer = null;
+    //stopPlayer2();
+    // Be careful : you must `close` the audio session when you have finished with it.
 
+    stopRecorder();
+    _mRecorder!.closeAudioSession();
+    _mRecorder = null;
+
+    stopPlayer2();
+    _mPlayer2!.closeAudioSession();
+    _mPlayer2 = null;
     super.dispose();
   }
 
   // -------  Here is the code to play from the microphone -----------------------
+  Future<IOSink> createFile() async {
+    var tempDir = await getExternalStorageDirectory();
+    var testdir = await Directory('${tempDir!.path}/sound').create(recursive: true);
+    _mPath = '${testdir.path}/${DateTime.now().toString()}.pcm';
+    print(_mPath);
+    var outputFile = File(_mPath!);
+    // Uint8List bytes = await outputFile.readAsBytes();
+    // await outputFile.writeAsBytes(bytes);
+    if (outputFile.existsSync()) {
+      await outputFile.delete(); // sent file to local storage
+    }
+    return outputFile.openWrite();
+  }
+
+  Future<void> record() async {
+    assert(_mRecorderIsInited && _mPlayer2!.isStopped || _mPlayer!.isPlaying);
+    var sink = await createFile();
+    var recordingDataController = StreamController<Food>();
+    _mRecordingDataSubscription =
+        recordingDataController.stream.listen((buffer) {
+      if (buffer is FoodData) {
+        sink.add(buffer.data!);
+        // print('my mini ${buffer} !!!!!!!!!');
+      }
+    });
+    print('Recording...');
+    await _mRecorder!.startRecorder(
+      toStream: recordingDataController.sink,
+      codec: Codec.pcm16,
+      numChannels: 1,
+      sampleRate: tSampleRate,
+      //toFile: '$fileName',
+    );
+    setState(() {});
+  }
+
+  Future<void> stopRecorder() async {
+    await _mRecorder!.stopRecorder();
+    // _writeFileToStorage();
+    if (_mRecordingDataSubscription != null) {
+      await _mRecordingDataSubscription!.cancel();
+      _mRecordingDataSubscription = null;
+    }
+    _mplaybackReady = true;
+
+  }
+
+  Fn? getRecorderFn() {
+    if (!_mRecorderIsInited || !_mPlayer2!.isStopped) {
+      return null;
+    }
+    return _mRecorder!.isStopped
+        ? record
+        : () {
+            stopRecorder().then((value) => setState(() {}));
+          };
+  }
+
+  void play() async {
+    assert(_mPlayerIsInited &&
+        _mPlayerIsInited2 &&
+        _mplaybackReady &&
+        _mRecorder!.isStopped &&
+        _mPlayer2!.isStopped);
+    await _mPlayer!.startPlayer(
+        fromURI: _mPath,
+        sampleRate: tSampleRate,
+        codec: Codec.pcm16,
+        numChannels: 1,
+        whenFinished: () {
+          setState(() {});
+        }); // The readability of Dart is very special :-(
+    setState(() {});
+  }
+
+  Future<void> stopPlayer2() async {
+    await _mPlayer2!.stopPlayer();
+  }
+
+  Fn? getPlaybackFn2() {
+    if (!_mPlayerIsInited ||
+        !_mPlayerIsInited2 ||
+        !_mplaybackReady ||
+        !_mRecorder!.isStopped) {
+      return null;
+    }
+    return _mPlayer2!.isStopped
+        ? play
+        : () {
+            stopPlayer2().then((value) => setState(() {}));
+          };
+          
+  }
 
   void startPlayer() async {
     //
@@ -82,6 +222,34 @@ class _HearingAidssState extends State<HearingAidss> {
             stopPlayer().then((value) => setState(() {}));
           };
   }
+
+// void _createFile() async {
+//   var _completeFileName = await generateFileName();
+//   File(dirpath + '/' + _completeFileName)
+//       .create(recursive: true)
+//       .then((File file) async {
+//     //write to file
+//     Uint8List bytes = await file.readAsBytes();
+//     file.writeAsBytes(bytes);
+//     print(file.path);
+//   });
+// }
+
+// void _createDirectory() async {
+//   bool isDirectoryCreated = await Directory(dirpath).exists();
+//   if (!isDirectoryCreated) {
+//     Directory(dirpath).create()
+//         // The created directory is returned as a Future.
+//         .then((Directory directory) {
+//       print(directory.path);
+//     });
+//   }
+// }
+
+// void _writeFileToStorage() async {
+//   _createDirectory();
+//   _createFile();
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -202,79 +370,81 @@ class _HearingAidssState extends State<HearingAidss> {
               ),
             ),
           ),
-          // Positioned(
-          //   top: 530,
-          //   left: 105,
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Center(
-          //         child: ElevatedButton(
-          //           style: ElevatedButton.styleFrom(
-          //             elevation: 2,
-          //             fixedSize: const Size(180, 35),
-          //             textStyle: TextStyle(),
-          //             primary: Color.fromRGBO(240, 238, 233, 0.95),
-          //           ),
-          //           onPressed: () {},
-          //           child: Row(
-          //             children: [
-          //               Icon(
-          //                 LineIcons.microphone,
-          //                 color: redtext,
-          //               ),
-          //               Padding(
-          //                 padding: EdgeInsets.only(left: 22),
-          //                 child: Text(
-          //                   "Recording",
-          //                   style: TextStyle(
-          //                     color: blackground,
-          //                     fontWeight: FontWeight.w600,
-          //                     fontFamily: 'Nunito',
-          //                     fontSize: 16,
-          //                   ),
-          //                   textAlign: TextAlign.center,
-          //                 ),
-          //               )
-          //             ],
-          //           ),
-          //         ),
-          //       ),
-          //       Center(
-          //         child: ElevatedButton(
-          //           style: ElevatedButton.styleFrom(
-          //             elevation: 2,
-          //             fixedSize: const Size(180, 35),
-          //             textStyle: TextStyle(),
-          //             primary: Color.fromRGBO(240, 238, 233, 0.95),
-          //           ),
-          //           onPressed: () {},
-          //           child: Row(
-          //             children: [
-          //               Icon(
-          //                 LineIcons.cog,
-          //                 color: grayy,
-          //               ),
-          //               Padding(
-          //                 padding: EdgeInsets.only(left: 28),
-          //                 child: Text(
-          //                   "Settings",
-          //                   style: TextStyle(
-          //                     color: blackground,
-          //                     fontWeight: FontWeight.w600,
-          //                     fontFamily: 'Nunito',
-          //                     fontSize: 16,
-          //                   ),
-          //                   textAlign: TextAlign.center,
-          //                 ),
-          //               )
-          //             ],
-          //           ),
-          //         ),
-          //       )
-          //     ],
-          //   ),
-          // )
+          Positioned(
+            top: 530,
+            left: 105,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 2,
+                      fixedSize: const Size(180, 35),
+                      textStyle: TextStyle(),
+                      primary: Color.fromRGBO(240, 238, 233, 0.95),
+                    ),
+                    onPressed: getRecorderFn(),
+                    child: Row(
+                      children: [
+                        Icon(
+                          LineIcons.microphone,
+                          color: redtext,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 22),
+                          child: Text(
+                            _mRecorder!.isRecording ? 'Stop' : 'Record',
+                            style: TextStyle(
+                              color: blackground,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Nunito',
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 2,
+                      fixedSize: const Size(180, 35),
+                      textStyle: TextStyle(),
+                      primary: Color.fromRGBO(240, 238, 233, 0.95),
+                    ),
+                    onPressed: getPlaybackFn2(),
+                    child: Row(
+                      children: [
+                        Icon(
+                          LineIcons.cog,
+                          color: grayy,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 28),
+                          child: Text(
+                            _mPlayer2!.isPlaying
+                                ? 'Stop'
+                                : 'Play' /*"Settings"*/,
+                            style: TextStyle(
+                              color: blackground,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Nunito',
+                              fontSize: 16,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          )
         ],
       ),
     );

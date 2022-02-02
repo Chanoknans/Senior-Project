@@ -1,10 +1,12 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+// import 'package:flutter_file_manager/flutter_file_manager.dart';
 import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class RecordingPrototype extends StatefulWidget {
   RecordingPrototype({Key? key}) : super(key: key);
@@ -23,14 +25,15 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   ]; //can be datetime length
   final dayy = ['11-01-2022', '10-01-2022', '09-01-2022', '09-01-2022'];
   get _durationState => null;
+  // ignore: unused_field
   final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
   bool _pause = true;
 
-  // List<bool> _isVisible = [false, false, false, false];
-  // void showDialog() {
-  //   setState(() {
-  //     _isVisible = !_isVisible;
-  //   });
+  // void _extractDirectory() {
+  //   Directory(
+  //           '/storage/emulated/0/Android/data/com.example.hearing_aid/files/sound/2')
+  //       .create()
+  //       .then((Directory directory) => print(directory.path));
   // }
 
   @override
@@ -62,14 +65,112 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
             ),
             color: const Color.fromRGBO(245, 245, 245, 1),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
+              showDialog(
+                  context: context,
                   builder: (context) {
-                    return Text("Information");
-                  },
-                ),
-              );
+                    return Dialog(
+                        backgroundColor: light2,
+                        insetPadding: EdgeInsets.all(10),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Column(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.only(top: 25),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'Instruction',
+                                    style: TextStyle(
+                                      color: blue,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Nunito',
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.only(top: 20),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'วิธีใช้งานแอปพลิเคชั่นเครื่องช่วยฟัง',
+                                    style: TextStyle(
+                                      color: greendialog2,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Prompt',
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  margin:
+                                      const EdgeInsets.only(top: 20, left: 20),
+                                  child: const Text(
+                                    '1. เลือกผลการทดสอบที่จะใช้งานในการชดเชย \n    การได้ยิน',
+                                    style: TextStyle(
+                                      color: greendialog2,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'Prompt',
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  margin:
+                                      const EdgeInsets.only(top: 20, left: 20),
+                                  child: const Text(
+                                    '2. เลือกหูซ้ายหรือหูขวาเพียงหนึ่งข้างที่จะทำการชดเชย\n    การได้ยิน',
+                                    style: TextStyle(
+                                      color: greendialog2,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'Prompt',
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: double.infinity,
+                                  margin:
+                                      const EdgeInsets.only(top: 20, left: 20),
+                                  child: const Text(
+                                    '3. เลือกหูซ้ายหรือหูขวาเพียงหนึ่งข้างที่จะทำการชดเชย\n    การได้ยิน',
+                                    style: TextStyle(
+                                      color: greendialog2,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'Prompt',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 350),
+                              alignment: Alignment.center,
+                              child: Image.asset(
+                                'assets/image/hearing-aid.png',
+                                fit: BoxFit.fill,
+                                height: 200,
+                                width: 200,
+                              ),
+                            ),
+                            Positioned(
+                                right: 0,
+                                top: 10,
+                                child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Icon(Icons.close),
+                                  color: red,
+                                ))
+                          ],
+                        ));
+                  });
             },
           ),
         ],
@@ -127,6 +228,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                             onTap: () {
                               setState(() {
                                 _isVisible[index] = !_isVisible[index];
+                                //_extractDirectory();
                               });
                             },
                             title: Align(
@@ -328,3 +430,9 @@ class DurationState {
   final Duration buffered;
   final Duration total;
 }
+
+// _FileExtraction() async {
+//   var root = await getExternalStorageDirectory();
+//   var files = await FileManager(root: root).walk().toList();
+//   return files;
+// }

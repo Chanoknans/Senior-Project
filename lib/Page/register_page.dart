@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hearing_aid/Page/create_page.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/models/profile.dart';
-import 'package:hearing_aid/page/create_page.dart';
 import 'package:hearing_aid/page/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -244,7 +245,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Column(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 500),
+                          margin: const EdgeInsets.only(top: 450),
                           child: ElevatedButton(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
@@ -299,6 +300,102 @@ class _RegisterPageState extends State<RegisterPage> {
                                 fontFamily: 'Nunito',
                               ),
                             ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5,),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'or',
+                            style: TextStyle(
+                              color: light,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'Nunito',
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 5,),
+                          width: 270,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: light,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.facebook),
+                                color: bluee,
+                                iconSize: 40,
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  final fb = FacebookLogin();
+
+                                  final res = await fb.logIn(permissions: [
+                                    FacebookPermission.publicProfile,
+                                    FacebookPermission.email,
+                                  ]);
+
+                                  switch (res.status) {
+                                    case FacebookLoginStatus.success:
+                                      final FacebookAccessToken? accessToken =
+                                          res.accessToken;
+                                      print(
+                                          'Access token: ${accessToken!.token}');
+                                      final AuthCredential credential =
+                                          FacebookAuthProvider.credential(
+                                              accessToken.token);
+                                      final result = await FirebaseAuth.instance
+                                          .signInWithCredential(credential);
+
+                                      print('${result.user} is now logged in');
+
+                                      // Get profile data
+                                      final profile = await fb.getUserProfile();
+                                      print(
+                                          'Hello, ${profile!.name}! You ID: ${profile.userId}');
+
+                                      // Get user profile image url
+                                      final imageUrl = await fb
+                                          .getProfileImageUrl(width: 100);
+                                      print('Your profile image: $imageUrl');
+
+                                      // Get email (since we request email permission)
+                                      final email = await fb.getUserEmail();
+                                      // But user can decline permission
+                                      if (email != null)
+                                        print('And your email is $email');
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return Login();
+                                      }));
+
+                                      break;
+                                    case FacebookLoginStatus.cancel:
+                                      // User cancel log in
+                                      break;
+                                    case FacebookLoginStatus.error:
+                                      // Log in failed
+                                      print('Error while log in: ${res.error}');
+                                      break;
+                                  }
+                                },
+                                child: Text(
+                                  'Sign up with facebook',
+                                  style: TextStyle(
+                                    color: bluee,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Nunito',
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                         Container(

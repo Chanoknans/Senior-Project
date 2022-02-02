@@ -1,17 +1,39 @@
-FROM python:3.9.10
+# FROM python:3.9.10
 
-WORKDIR /filtering
+# WORKDIR /filtering
 
-EXPOSE 8080
-ENV PORT 8080
-ENV HOST 0.0.0.0
+# EXPOSE 8080
+# ENV PORT 8080
+# ENV HOST 0.0.0.0
 
-COPY requirements.txt .
+# COPY requirements.txt .
 
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+# RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-COPY . .
+# COPY . .
 
-ENTRYPOINT ["python", "filtering.py"]
+# ENTRYPOINT ["python", "filtering.py"]
 
-CMD exec gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 8 app:app
+# CMD exec gunicorn --bind 0.0.0.0:8080 --workers 1 --threads 8 app:app
+
+# Use the official lightweight Python image.
+# https://hub.docker.com/_/python
+FROM python:3.10
+
+# Allow statements and log messages to immediately appear in the Knative logs
+ENV PYTHONUNBUFFERED True
+
+# Copy local code to the container image.
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+COPY . ./
+
+# Install production dependencies.
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run the web service on container startup. Here we use the gunicorn
+# webserver, with one worker process and 8 threads.
+# For environments with multiple CPU cores, increase the number of workers
+# to be equal to the cores available.
+# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
+CMD exec gunicorn --bind 0.0.0.0:8080  --workers 1 --threads 8 --timeout 0 main:app

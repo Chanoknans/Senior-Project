@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:hearing_aid/Page/forgot_password_page.dart';
+
 import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/models/profile.dart';
@@ -60,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Text(
                 'Login.',
                 style: TextStyle(
-                  color: light,
+                  color: white,
                   fontSize: 42,
                   fontWeight: FontWeight.w800,
                   fontFamily: 'Nunito',
@@ -202,17 +206,20 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Align(
-              alignment: Alignment(-0.47, 0.24),
-              child: Text(
-                'Forgot password?',
-                style: TextStyle(
-                  color: grayy2,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Nunito',
-                ),
-              ),
-            ),
+                alignment: Alignment(-0.47, 0.24),
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Forgot()));
+                    },
+                    child: Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                          color: grayy2,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Nunito'),
+                    ))),
             Align(
               alignment: Alignment(0, 0.34),
               child: SizedBox(
@@ -281,7 +288,56 @@ class _LoginPageState extends State<LoginPage> {
                     iconSize: 40,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final fb = FacebookLogin();
+
+                      final res = await fb.logIn(permissions: [
+                        FacebookPermission.publicProfile,
+                        FacebookPermission.email,
+                      ]);
+
+                      switch (res.status) {
+                        case FacebookLoginStatus.success:
+                          final FacebookAccessToken? accessToken =
+                              res.accessToken;
+                          print('Access token: ${accessToken!.token}');
+                          final AuthCredential credential =
+                              FacebookAuthProvider.credential(
+                                  accessToken.token);
+                          final result = await FirebaseAuth.instance
+                              .signInWithCredential(credential);
+
+                          print('${result.user} is now logged in');
+
+                          // Get profile data
+                          final profile = await fb.getUserProfile();
+                          print(
+                              'Hello, ${profile!.name}! You ID: ${profile.userId}');
+
+                          // Get user profile image url
+                          final imageUrl =
+                              await fb.getProfileImageUrl(width: 100);
+                          print('Your profile image: $imageUrl');
+
+                          // Get email (since we request email permission)
+                          final email = await fb.getUserEmail();
+                          // But user can decline permission
+                          if (email != null) print('And your email is $email');
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Dashboard();
+                          }));
+
+                          break;
+                        case FacebookLoginStatus.cancel:
+                          // User cancel log in
+                          break;
+                        case FacebookLoginStatus.error:
+                          // Log in failed
+                          print('Error while log in: ${res.error}');
+                          break;
+                      }
+                    },
                     child: Text(
                       'Login with facebook',
                       style: TextStyle(

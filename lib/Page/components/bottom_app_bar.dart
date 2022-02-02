@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hearing_aid/Page/history_page.dart';
 import 'package:hearing_aid/Page/historyhome_page.dart';
+import 'package:hearing_aid/Page/recording_page.dart';
 import 'package:hearing_aid/Page/recording_pro.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/aids_home.dart';
@@ -35,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
     HomePage(
       key: PageStorageKey('Page2'),
     ),
-    ModePage(
+    RecordingPage(
       key: PageStorageKey('Page3'),
     ),
     RecordingPrototype(

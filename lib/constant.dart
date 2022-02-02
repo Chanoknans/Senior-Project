@@ -8,6 +8,7 @@ const String routnpath = 'Path';
 //color
 
 const Color light = Color.fromRGBO(245, 240, 246, 1);
+const Color light2 = Color.fromRGBO(229, 229, 229, 1);
 const Color white = Color.fromRGBO(245, 245, 245, 1);
 const Color gray = Color.fromRGBO(229, 229, 229, 1);
 const Color darkgray = Color.fromRGBO(196, 196, 196, 1);
@@ -27,7 +28,9 @@ const Color dark = const Color.fromRGBO(43, 65, 98, 1);
 const Color primary = const Color.fromRGBO(56, 95, 113, 1);
 const Color green = const Color.fromRGBO(98, 148, 96, 1);
 const Color dgreen = const Color.fromRGBO(0, 152, 116, 1);
-
+const Color red = Color.fromRGBO(177, 116, 116, 1);
+const Color greendialog = Color.fromRGBO(63, 122, 99,1);
+const Color greendialog2 = Color.fromRGBO(56, 95, 113,1);
 TextStyle a1Style() =>
     TextStyle(fontSize: 20, color: Color.fromRGBO(43, 65, 98, 1));
 TextStyle a2Style() =>

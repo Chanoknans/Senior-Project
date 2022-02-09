@@ -9,6 +9,7 @@ import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/models/profile.dart';
 import 'package:hearing_aid/page/components/bottom_app_bar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/date_time_patterns.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -287,7 +288,7 @@ class _LoginState extends State<Login> {
                                 ),
                                 onSaved: (String? date) {
                                   profile.date =
-                                      Timestamp.fromDate(DateTime.now());
+                                      Timestamp.fromDate(DateTime.parse(date!));
                                 },
                               ),
                             ),

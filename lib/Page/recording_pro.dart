@@ -1,12 +1,16 @@
-import 'dart:ui';
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-// import 'package:flutter_file_manager/flutter_file_manager.dart';
+import 'package:hearing_aid/Page/aids_home.dart';
 import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class RecordingPrototype extends StatefulWidget {
   RecordingPrototype({Key? key}) : super(key: key);
@@ -28,13 +32,81 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   // ignore: unused_field
   final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
   bool _pause = true;
+  bool permissionGranted = true;
+  StreamSubscription? _mRecordingDataSubscription;
+  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
+  var path;
+  Uint8List? datas;
+  Codec codec = Codec.aacADTS;
+  // bool _mPlayerIsInited = false;
+  // String? dir;
+  // List<String> files =[];
+  // double _mSpeed = 100.0;
 
-  // void _extractDirectory() {
-  //   Directory(
-  //           '/storage/emulated/0/Android/data/com.example.hearing_aid/files/sound/2')
-  //       .create()
-  //       .then((Directory directory) => print(directory.path));
+  Future<File> get _getStoragepermission async {
+    if (await Permission.storage.request().isGranted) {
+      String dir =
+          (await getExternalStorageDirectory())!.absolute.path + "/sound";
+      print(dir);
+      //List<HearingAidss> recording = [];
+      final List<FileSystemEntity> files = Directory(dir).listSync();
+      // print(files[0]);
+     
+      // await flutterSoundHelper.pcmToWave(
+      //   inputFile: dir,
+      //   outputFile: dir,
+      //   numChannels: 1,
+      //   //bitsPerSample: 16,
+      //   sampleRate: 44100,
+      // );
+      // codec = Codec.pcm16WAV;
+    }
+    return  File('$path/2022-02-09 18:05:16.218546.pcm'); 
+  }
+
+  // void initState() {
+  //   super.initState();
+  //   init().then((value) {
+  //     setState(() {
+  //       _mPlayerIsInited = true;
+  //     });
+  //   });
   // }
+
+  // void dispose() {
+  //   stopPlayer(_mPlayer!);
+
+  //   // Be careful : you must `close` the audio session when you have finished with it.
+  //   _mPlayer!.closePlayer();
+
+  //   super.dispose();
+  // }
+
+  // Future<void> init() async {
+  //   await _mPlayer!.openPlayer();
+  //   await _mPlayer!.setSpeed(
+  //       1.0); // This dummy instruction is MANDATORY on iOS, before the first `startRecorder()`.
+  //   datas = await getAssetData();
+  // }
+
+  Future<Uint8List> getAssetData(String path) async {
+    var asset = await rootBundle.load(path);
+    return asset.buffer.asUint8List();
+  }
+
+  void play(FlutterSoundPlayer? player) async {
+    await player!.startPlayer(
+        fromDataBuffer: datas,
+        codec: Codec.pcm16,
+        whenFinished: () {
+          setState(() {});
+        });
+    setState(() {});
+  }
+
+  Future<void> stopPlayer(FlutterSoundPlayer player) async {
+    await player.stopPlayer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,6 +300,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                             onTap: () {
                               setState(() {
                                 _isVisible[index] = !_isVisible[index];
+                                //_getStoragepermission();
                                 //_extractDirectory();
                               });
                             },

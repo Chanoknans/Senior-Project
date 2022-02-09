@@ -145,7 +145,7 @@ class _ForgotState extends State<Forgot> {
                             },
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: light,
+                              fillColor: white,
                               labelStyle: TextStyle(fontSize: 15, color: dark),
                               labelText: "Email :",
                               prefixIcon: Icon(Icons.email, color: dark),

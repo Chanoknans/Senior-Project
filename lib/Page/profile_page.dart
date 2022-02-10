@@ -2,11 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/bloc/application_state.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/login_page.dart';
 import 'package:line_icons/line_icons.dart';
+
+import 'edit_profile_page.dart';
 
 class MyProfile extends StatefulWidget {
   MyProfile({Key? key}) : super(key: key);
@@ -112,7 +115,10 @@ class _MyProfileState extends State<MyProfile> {
                   child: ElevatedButton(
                     style:
                         myButtonstyle(primary: darkgray, boarderRadius: 12.0),
-                    onPressed: () {},
+                   onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => EditProfilePage()));
+                    },
                     child: Text(
                       "Edit Profile",
                       style: TextStyle(color: grayy),
@@ -127,8 +133,9 @@ class _MyProfileState extends State<MyProfile> {
                   ),
                   child: ElevatedButton(
                     style: myButtonstyle(primary: orange, boarderRadius: 12.0),
-                    onPressed: () async {
-                      await auth.signOut().then((_) {
+                   onPressed: () async {
+                      await auth.signOut().then((_) async {
+                        await FacebookAuth.instance.logOut();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

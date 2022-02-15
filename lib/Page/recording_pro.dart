@@ -10,6 +10,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:file_manager/file_manager.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class RecordingPrototype extends StatefulWidget {
@@ -29,6 +30,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   ]; //can be datetime length
   final dayy = ['11-01-2022', '10-01-2022', '09-01-2022', '09-01-2022'];
   get _durationState => null;
+  var files;
   // ignore: unused_field
   final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
   bool _pause = true;
@@ -38,10 +40,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   var path;
   Uint8List? datas;
   Codec codec = Codec.aacADTS;
-  // bool _mPlayerIsInited = false;
-  // String? dir;
-  // List<String> files =[];
-  // double _mSpeed = 100.0;
+  Future<Directory?>? _downloadDir;
 
   Future<File> get _getStoragepermission async {
     if (await Permission.storage.request().isGranted) {
@@ -50,20 +49,30 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
       print(dir);
       //List<HearingAidss> recording = [];
       final List<FileSystemEntity> files = Directory(dir).listSync();
-      // print(files[0]);
-     
-      // await flutterSoundHelper.pcmToWave(
-      //   inputFile: dir,
-      //   outputFile: dir,
-      //   numChannels: 1,
-      //   //bitsPerSample: 16,
-      //   sampleRate: 44100,
-      // );
-      // codec = Codec.pcm16WAV;
+      print(files[0]);
     }
-    return  File('$path/2022-02-09 18:05:16.218546.pcm'); 
+    return File('$path/2022-02-09 18:05:16.218546.pcm');
   }
 
+  // void initState() {
+  //   super.initState();
+  //   _getStoragepermission;
+  // }
+
+  void _requestDownload(){
+    setState(() {
+      _downloadDir = getDownloadsDirectory();
+    });
+  }
+
+  // await flutterSoundHelper.pcmToWave(
+  //   inputFile: dir,
+  //   outputFile: dir,
+  //   numChannels: 1,
+  //   //bitsPerSample: 16,
+  //   sampleRate: 44100,
+  // );
+  // codec = Codec.pcm16WAV;
   // void initState() {
   //   super.initState();
   //   init().then((value) {
@@ -89,24 +98,24 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   //   datas = await getAssetData();
   // }
 
-  Future<Uint8List> getAssetData(String path) async {
-    var asset = await rootBundle.load(path);
-    return asset.buffer.asUint8List();
-  }
+  // Future<Uint8List> getAssetData(String path) async {
+  //   var asset = await rootBundle.load(path);
+  //   return asset.buffer.asUint8List();
+  // }
 
-  void play(FlutterSoundPlayer? player) async {
-    await player!.startPlayer(
-        fromDataBuffer: datas,
-        codec: Codec.pcm16,
-        whenFinished: () {
-          setState(() {});
-        });
-    setState(() {});
-  }
+  // void play(FlutterSoundPlayer? player) async {
+  //   await player!.startPlayer(
+  //       fromDataBuffer: datas,
+  //       codec: Codec.pcm16,
+  //       whenFinished: () {
+  //         setState(() {});
+  //       });
+  //   setState(() {});
+  // }
 
-  Future<void> stopPlayer(FlutterSoundPlayer player) async {
-    await player.stopPlayer();
-  }
+  // Future<void> stopPlayer(FlutterSoundPlayer player) async {
+  //   await player.stopPlayer();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -392,6 +401,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                                                     onPressed: () {
                                                       setState(() {
                                                         _pause = !_pause;
+                                                        
                                                       });
                                                     },
                                                   ),

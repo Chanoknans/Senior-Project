@@ -1,5 +1,7 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/public/util/wave_header.dart';
 import 'package:hearing_aid/page/components/custom_app_bar.dart';
 import 'package:hearing_aid/constant.dart';
 import 'package:hearing_aid/page/components/bottom_app_bar.dart';
@@ -9,12 +11,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hearing_aid/bloc/home_page_cubit.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
+  
 
   @override
   _HearingAidssState createState() => _HearingAidssState();
@@ -35,7 +41,6 @@ class _HearingAidssState extends State<HearingAidss> {
   String dirpath = "/assets/sound/";
 
    
-  
 
   Future<void> open() async {
     var status = await Permission.microphone.request();
@@ -119,14 +124,27 @@ class _HearingAidssState extends State<HearingAidss> {
   }
 
   Future<void> record() async {
+    HomePageCubit homePageCubit = BlocProvider.of<HomePageCubit>(context);
     assert(_mRecorderIsInited && _mPlayer2!.isStopped || _mPlayer!.isPlaying);
     var sink = await createFile();
     var recordingDataController = StreamController<Food>();
     _mRecordingDataSubscription =
-        recordingDataController.stream.listen((buffer) {
+        recordingDataController.stream.listen((buffer) async{
       if (buffer is FoodData) {
+        Future<List<num>> data =
+            homePageCubit.generateSampleRate(buffer.data!, buffer.data!.length);
+        List<num> data2 = await data;
+        //print('pluem said ${data2}');
+        // Uint8List bytess = Uint8List.fromList(data2);
+        //print('${buffer.data![1]}');
         sink.add(buffer.data!);
-        // print('my mini ${buffer} !!!!!!!!!');
+        // Future<Uint8List> x = pcmToWaveBuffer(inputBuffer: buffer.data!);
+        // List<num> x2 = await x;
+        // print(x2);
+        SequentialProcessor<TensorBuffer> probProcessor = TensorProcessorBuilder().add(QuantizeOp(256,1/256)).build();
+        //TensorBuffer quantizeBuffer = probProcessor.process(List<int> g(Uint8List y) => f(y as String));
+        print('is ${buffer.data!}');
+        //print('my mini ${buffer.data} !!!!!!!!!');
       }
     });
     print('Recording...');
@@ -449,4 +467,34 @@ class _HearingAidssState extends State<HearingAidss> {
       ),
     );
   }
+}
+
+Future<Uint8List> pcmToWaveBuffer({
+  required Uint8List inputBuffer,
+  int numChannels = 1,
+  int sampleRate = 44100,
+  //int bitsPerSample,
+}) async {
+  var size = inputBuffer.length;
+  var header = WaveHeader(
+    WaveHeader.formatPCM,
+    numChannels,
+    sampleRate,
+    16,
+    size, // total number of bytes
+  );
+
+  var buffer = <int>[];
+  StreamController controller = StreamController<List<int>>();
+  var sink = controller.sink as StreamSink<List<int>>;
+  var stream = controller.stream as Stream<List<int>>;
+  stream.listen((e) {
+    var x = e.toList();
+    buffer.addAll(x);
+  });
+  header.write(sink);
+  sink.add(inputBuffer);
+  await sink.close();
+  await controller.close();
+  return Uint8List.fromList(buffer);
 }

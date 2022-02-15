@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/Page/components/historydetail_page.dart';
@@ -240,9 +241,9 @@ class AudiogramLineChart extends StatelessWidget {
                           width: MediaQuery.of(context).size.width,
                           child: TextButton(
                             onPressed: () async {
-                              await homepage.generateSampleRate().then(
+                              await homepage.checkdata().then(
                                 (complete) {
-                                  if (complete) {
+                                  if (complete == true) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
-
+import 'dart:typed_data';
 class HomePageCubit extends Cubit<HomePageState> {
   ApplicationCubit appCubit;
 
@@ -12,6 +12,10 @@ class HomePageCubit extends Cubit<HomePageState> {
 
   Future<void> init() async {
     print('land');
+  }
+  Future<bool> checkdata() async{
+    print(state.bpfCoeff!);
+    return state.bpfCoeff! != null;
   }
 
   Future<void> getHearingResult(String docID) async {
@@ -42,30 +46,36 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
-  Future<bool> generateSampleRate() async {
+  Future<List<num>> generateSampleRate(Uint8List data, int len) async {
     // TODO: do calculation here!
     List<num> lpfCovolve = await convolve(
+      data,
       state.lpfCoeff!.getRange(0, 3).toList(),
       state.lpfCoeff!.getRange(3, 6).toList(),
+      len,
     );
-    print(lpfCovolve);
+    //print(lpfCovolve);
     List<num> bpfCovolve = await convolve(
+      data,
       state.bpfCoeff!.getRange(0, 3).toList(),
       state.bpfCoeff!.getRange(3, 6).toList(),
+      len,
     );
-    print(bpfCovolve);
+    //print(bpfCovolve);
     List<num> hpfCovolve = await convolve(
+      data,
       state.hpfCoeff!.getRange(0, 3).toList(),
       state.hpfCoeff!.getRange(3, 6).toList(),
+      len,
     );
-    print(hpfCovolve);
-    return true;
+    //print(hpfCovolve);
+    return lpfCovolve + bpfCovolve + hpfCovolve;
   }
 
-  List<num> convolve(List Num, List Den) {
-    List<num> y = List<num>.generate(10, (indexs) => 0);
-    List<num> x = List<num>.generate(10, (indexs) => 1);
-    for (int n = 3; n < 10; n++) {
+  List<num> convolve(Uint8List data, List Num, List Den, int len) {
+    List<num> y = List<num>.generate(len, (indexs) => 0);
+    List<num> x = data;
+    for (int n = 3; n < len; n++) {
       y[n] = Num[0] * x[n] +
           Num[1] * x[n - 1] +
           Num[2] * x[n - 2] -

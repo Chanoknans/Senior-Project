@@ -103,7 +103,7 @@ def on_message(client, userdata, msg):
 
 
 def BiquadLPF(flpf,Qlpf):
-    f_samp = 20000
+    f_samp = 44100
     ohm0 = np.tan(np.pi*flpf/f_samp)
     A1 = [(ohm0)**2, 0, 0]
     B1 = [(ohm0)**2, ohm0/Qlpf, 1]
@@ -118,7 +118,7 @@ def BiquadLPF(flpf,Qlpf):
     return q1,h1,num,den
 
 def BiquadBPF(fbpf,Qbpf):
-    f_samp = 20000
+    f_samp = 44100
     ohm0 = np.tan(np.pi*fbpf/f_samp)
     A1 = [0, ohm0/Qbpf, 0]
     B1 = [(ohm0)**2, ohm0/Qbpf, 1]
@@ -133,7 +133,7 @@ def BiquadBPF(fbpf,Qbpf):
     return q1,h1,num,den
 
 def BiquadHPF(fhpf,Qhpf):
-    f_samp = 20000
+    f_samp = 44100
     ohm0 = np.tan(np.pi*fhpf/f_samp)
     A1 = [0, 0, 1]
     B1 = [(ohm0)**2, ohm0/Qhpf, 1]

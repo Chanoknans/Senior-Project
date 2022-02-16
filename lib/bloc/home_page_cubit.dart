@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
 import 'dart:typed_data';
+
 class HomePageCubit extends Cubit<HomePageState> {
   ApplicationCubit appCubit;
 
@@ -13,7 +14,8 @@ class HomePageCubit extends Cubit<HomePageState> {
   Future<void> init() async {
     print('land');
   }
-  Future<bool> checkdata() async{
+
+  Future<bool> checkdata() async {
     print(state.bpfCoeff!);
     return state.bpfCoeff! != null;
   }
@@ -46,13 +48,14 @@ class HomePageCubit extends Cubit<HomePageState> {
     });
   }
 
-  Future<List<num>> generateSampleRate(Uint8List data, int len) async {
+  Future<List<num>> generateSampleRate(List<num> data, int len) async {
     // TODO: do calculation here!
     List<num> lpfCovolve = await convolve(
       data,
       state.lpfCoeff!.getRange(0, 3).toList(),
       state.lpfCoeff!.getRange(3, 6).toList(),
       len,
+      state.lpfCoeff![6],
     );
     //print(lpfCovolve);
     List<num> bpfCovolve = await convolve(
@@ -60,6 +63,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.bpfCoeff!.getRange(0, 3).toList(),
       state.bpfCoeff!.getRange(3, 6).toList(),
       len,
+      state.bpfCoeff![6],
     );
     //print(bpfCovolve);
     List<num> hpfCovolve = await convolve(
@@ -67,20 +71,22 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.hpfCoeff!.getRange(0, 3).toList(),
       state.hpfCoeff!.getRange(3, 6).toList(),
       len,
+      state.hpfCoeff![6],
     );
     //print(hpfCovolve);
     return lpfCovolve + bpfCovolve + hpfCovolve;
   }
 
-  List<num> convolve(Uint8List data, List Num, List Den, int len) {
+  List<num> convolve(List<num> data, List Num, List Den, int len, num g) {
     List<num> y = List<num>.generate(len, (indexs) => 0);
     List<num> x = data;
     for (int n = 3; n < len; n++) {
       y[n] = Num[0] * x[n] +
-          Num[1] * x[n - 1] +
-          Num[2] * x[n - 2] -
-          Den[1] * y[n - 1] -
-          Den[2] * y[n - 2];
+              Num[1] * x[n - 1] +
+              Num[2] * x[n - 2] -
+              Den[1] * y[n - 1] -
+              Den[2] * y[n - 2]
+          ;
     }
     return y;
   }

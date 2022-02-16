@@ -20,7 +20,6 @@ typedef Fn = void Function();
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
-  
 
   @override
   _HearingAidssState createState() => _HearingAidssState();
@@ -36,11 +35,9 @@ class _HearingAidssState extends State<HearingAidss> {
   bool _mplaybackReady = false;
   String? _mPath;
   StreamSubscription? _mRecordingDataSubscription;
-  String fileExtension= '.aac';
+  String fileExtension = '.aac';
   String fileName = 'Recording_';
   String dirpath = "/assets/sound/";
-
-   
 
   Future<void> open() async {
     var status = await Permission.microphone.request();
@@ -111,7 +108,8 @@ class _HearingAidssState extends State<HearingAidss> {
   // -------  Here is the code to play from the microphone -----------------------
   Future<IOSink> createFile() async {
     var tempDir = await getExternalStorageDirectory();
-    var testdir = await Directory('${tempDir!.path}/sound').create(recursive: true);
+    var testdir =
+        await Directory('${tempDir!.path}/sound').create(recursive: true);
     _mPath = '${testdir.path}/${DateTime.now().toString()}.pcm';
     print(_mPath);
     var outputFile = File(_mPath!);
@@ -129,22 +127,28 @@ class _HearingAidssState extends State<HearingAidss> {
     var sink = await createFile();
     var recordingDataController = StreamController<Food>();
     _mRecordingDataSubscription =
-        recordingDataController.stream.listen((buffer) async{
+        recordingDataController.stream.listen((buffer) async {
       if (buffer is FoodData) {
+        List<double> beforedata = [
+          for (var offset = 0; offset < buffer.data!.length; offset += 1)
+          buffer.data![offset].toDouble()/255,
+        ];
+        // print("object is ${beforedata2}");
+        //print("object is ${beforedata.getFloat64(8)}");
+        // print("OOOObject is ${beforedata2}");
         Future<List<num>> data =
-            homePageCubit.generateSampleRate(buffer.data!, buffer.data!.length);
-        List<num> data2 = await data;
-        //print('pluem said ${data2}');
-        // Uint8List bytess = Uint8List.fromList(data2);
-        //print('${buffer.data![1]}');
-        sink.add(buffer.data!);
-        // Future<Uint8List> x = pcmToWaveBuffer(inputBuffer: buffer.data!);
-        // List<num> x2 = await x;
-        // print(x2);
-        SequentialProcessor<TensorBuffer> probProcessor = TensorProcessorBuilder().add(QuantizeOp(256,1/256)).build();
-        //TensorBuffer quantizeBuffer = probProcessor.process(List<int> g(Uint8List y) => f(y as String));
-        print('is ${buffer.data!}');
-        //print('my mini ${buffer.data} !!!!!!!!!');
+            homePageCubit.generateSampleRate(beforedata, beforedata.length);
+        List<num> data2 = await data; //float type
+
+        List<int> afterdata = [
+          for (var offset = 0; offset < data2.length; offset += 1)
+            (data2[offset]*255).round().toInt(),
+        ];
+        Uint8List afterdata2 = Uint8List.fromList(afterdata) ;
+        print(afterdata2);
+        print(buffer.data!);
+        // print('is ${buffer.data!}');
+        sink.add(afterdata2); // Uint8 type
       }
     });
     print('Recording...');
@@ -166,7 +170,6 @@ class _HearingAidssState extends State<HearingAidss> {
       _mRecordingDataSubscription = null;
     }
     _mplaybackReady = true;
-
   }
 
   Fn? getRecorderFn() {
@@ -213,7 +216,6 @@ class _HearingAidssState extends State<HearingAidss> {
         : () {
             stopPlayer2().then((value) => setState(() {}));
           };
-          
   }
 
   void startPlayer() async {

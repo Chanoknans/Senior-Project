@@ -114,7 +114,7 @@ def BiquadLPF(flpf,Qlpf):
     b1 = np.dot(P,np.transpose(B1))
     num= a1/b1[0]
     den = b1/b1[0]
-    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)#fs=16000
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=44100)#fs=16000
     return q1,h1,num,den
 
 def BiquadBPF(fbpf,Qbpf):
@@ -129,7 +129,7 @@ def BiquadBPF(fbpf,Qbpf):
     b1 = np.dot(P,np.transpose(B1))
     num= a1/b1[0]
     den = b1/b1[0]
-    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=44100)
     return q1,h1,num,den
 
 def BiquadHPF(fhpf,Qhpf):
@@ -144,7 +144,7 @@ def BiquadHPF(fhpf,Qhpf):
     b1 = np.dot(P,np.transpose(B1))
     num= a1/b1[0]
     den = b1/b1[0]
-    q1,h1 = signal.freqz(num,den,worN=1000,fs=20000)
+    q1,h1 = signal.freqz(num,den,worN=1000,fs=44100)
     return q1,h1,num,den
 
 def ErrorFunction(fL,QL,GL,fB,QB,GB,fH,QH,GH, newval2):

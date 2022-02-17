@@ -50,7 +50,7 @@ class HomePageCubit extends Cubit<HomePageState> {
 
   Future<List<num>> generateSampleRate(List<num> data, int len) async {
     // TODO: do calculation here!
-    List<num> lpfCovolve = await convolve(
+    List<num> lpfConvolve = await convolve(
       data,
       state.lpfCoeff!.getRange(0, 3).toList(),
       state.lpfCoeff!.getRange(3, 6).toList(),
@@ -58,7 +58,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.lpfCoeff![6],
     );
     //print(lpfCovolve);
-    List<num> bpfCovolve = await convolve(
+    List<num> bpfConvolve = await convolve(
       data,
       state.bpfCoeff!.getRange(0, 3).toList(),
       state.bpfCoeff!.getRange(3, 6).toList(),
@@ -66,7 +66,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.bpfCoeff![6],
     );
     //print(bpfCovolve);
-    List<num> hpfCovolve = await convolve(
+    List<num> hpfConvolve = await convolve(
       data,
       state.hpfCoeff!.getRange(0, 3).toList(),
       state.hpfCoeff!.getRange(3, 6).toList(),
@@ -74,18 +74,18 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.hpfCoeff![6],
     );
     //print(hpfCovolve);
-    return lpfCovolve + bpfCovolve + hpfCovolve;
+    return lpfConvolve + bpfConvolve + hpfConvolve;
   }
 
   List<num> convolve(List<num> data, List Num, List Den, int len, num g) {
-    List<num> y = List<num>.generate(len, (indexs) => 0);
+    List<num> y = List<num>.generate(len, (indexs) => 0.0);
     List<num> x = data;
     for (int n = 3; n < len; n++) {
-      y[n] = Num[0] * x[n] +
-              Num[1] * x[n - 1] +
-              Num[2] * x[n - 2] -
-              Den[1] * y[n - 1] -
-              Den[2] * y[n - 2]
+      y[n] = (Num[0] * x[n]) +
+              (Num[1] * x[n - 1]) +
+              (Num[2] * x[n - 2]) -
+              (Den[1] * y[n - 1]) -
+              (Den[2] * y[n - 2])
           ;
     }
     return y;

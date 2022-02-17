@@ -57,7 +57,7 @@ def on_message(client, userdata, msg):
     for i in range(2):
 
         banana = lambda x: ErrorFunction(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8], Data[i])
-        opt = scipy.optimize.fmin(func=banana, x0=[1599,0.299,9.5,4000,0.899,10,8000,0.5,10],xtol=1e-4,ftol=1e-4,full_output=True) #,full_output=True to see all outputs [1500,0.3,10,4000,0.9,10,8000,0.5,10]
+        opt = scipy.optimize.fmin(func=banana, x0=[2000,0.3,10,4000,0.9,10,8000,0.5,10],xtol=1e-4,ftol=1e-4,full_output=True) #,full_output=True to see all outputs [1500,0.3,10,4000,0.9,10,8000,0.5,10]
         print('Current function value: ',opt[1])
         print('Iterations: ',opt[2])
         print('Function evaluations: ',opt[3])

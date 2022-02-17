@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/util/wave_header.dart';
@@ -131,23 +130,17 @@ class _HearingAidssState extends State<HearingAidss> {
       if (buffer is FoodData) {
         List<double> beforedata = [
           for (var offset = 0; offset < buffer.data!.length; offset += 1)
-          buffer.data![offset].toDouble()/255,
+            buffer.data![offset].roundToDouble() / 255,
         ];
-        // print("object is ${beforedata2}");
-        //print("object is ${beforedata.getFloat64(8)}");
-        // print("OOOObject is ${beforedata2}");
         Future<List<num>> data =
             homePageCubit.generateSampleRate(beforedata, beforedata.length);
         List<num> data2 = await data; //float type
-
         List<int> afterdata = [
-          for (var offset = 0; offset < data2.length; offset += 1)
-            (data2[offset]*255).round().toInt(),
+          for (var offset = 3; offset < data2.length; offset += 1)
+            (data2[offset] * 255).round().toInt(),
         ];
-        Uint8List afterdata2 = Uint8List.fromList(afterdata) ;
+        Uint8List afterdata2 = Uint8List.fromList(afterdata);
         print(afterdata2);
-        print(buffer.data!);
-        // print('is ${buffer.data!}');
         sink.add(afterdata2); // Uint8 type
       }
     });

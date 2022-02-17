@@ -74,7 +74,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.hpfCoeff![6],
     );
     //print(hpfCovolve);
-    return lpfConvolve + bpfConvolve + hpfConvolve;
+    return lpfConvolve + bpfConvolve;
   }
 
   List<num> convolve(List<num> data, List Num, List Den, int len, num g) {

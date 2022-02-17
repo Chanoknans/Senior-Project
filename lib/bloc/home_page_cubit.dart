@@ -74,11 +74,11 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.hpfCoeff![6],
     );
     //print(hpfCovolve);
-    return lpfConvolve + bpfConvolve;
+    return bpfConvolve;
   }
 
   List<num> convolve(List<num> data, List Num, List Den, int len, num g) {
-    List<num> y = List<num>.generate(len, (indexs) => 0.0);
+    List<num> y = List<num>.generate(len, (indexs) => 0);
     List<num> x = data;
     for (int n = 3; n < len; n++) {
       y[n] = (Num[0] * x[n]) +

@@ -130,17 +130,20 @@ class _HearingAidssState extends State<HearingAidss> {
       if (buffer is FoodData) {
         List<double> beforedata = [
           for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            buffer.data![offset].roundToDouble() / 255,
+            buffer.data![offset] / 255,
         ];
+        print('double: ${buffer.data!}');
+        print('before data to double: ${beforedata}');
         Future<List<num>> data =
             homePageCubit.generateSampleRate(beforedata, beforedata.length);
         List<num> data2 = await data; //float type
         List<int> afterdata = [
-          for (var offset = 3; offset < data2.length; offset += 1)
-            (data2[offset] * 255).round().toInt(),
+          for (var offset = 0; offset < data2.length; offset += 1)
+            (data2[offset] * 255).abs().round(),
         ];
+        print('after filter is double: ${data2}');
         Uint8List afterdata2 = Uint8List.fromList(afterdata);
-        print(afterdata2);
+        print('after filter is Uint8List: ${afterdata2}');
         sink.add(afterdata2); // Uint8 type
       }
     });

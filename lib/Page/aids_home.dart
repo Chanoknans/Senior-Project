@@ -128,23 +128,28 @@ class _HearingAidssState extends State<HearingAidss> {
     _mRecordingDataSubscription =
         recordingDataController.stream.listen((buffer) async {
       if (buffer is FoodData) {
+        print('double: ${buffer.data!}');
         List<double> beforedata = [
           for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            buffer.data![offset] / 255,
+            (reduce(buffer.data![offset])),
         ];
-        print('double: ${buffer.data!}');
+        List<double> beforedata2 = [
+          for (var offset = 0; offset < buffer.data!.length; offset += 1)
+            reduce(buffer.data![offset]),
+        ];
         print('before data to double: ${beforedata}');
         Future<List<num>> data =
             homePageCubit.generateSampleRate(beforedata, beforedata.length);
         List<num> data2 = await data; //float type
-        List<int> afterdata = [
-          for (var offset = 0; offset < data2.length; offset += 1)
-            (data2[offset] * 255).abs().round(),
-        ];
         print('after filter is double: ${data2}');
+        List<int> afterdata = [
+          for (var offset = 2; offset < data2.length; offset += 1)
+            scaling(data2 [offset]),
+        ];
         Uint8List afterdata2 = Uint8List.fromList(afterdata);
-        print('after filter is Uint8List: ${afterdata2}');
-        sink.add(afterdata2); // Uint8 type
+        print('after filter is Uint8List: ${afterdata}');
+      
+        sink.add(afterdata2); // xUint8 type
       }
     });
     print('Recording...');
@@ -156,6 +161,26 @@ class _HearingAidssState extends State<HearingAidss> {
       //toFile: '$fileName',
     );
     setState(() {});
+  }
+
+  int scaling(num value) {
+    int y;
+    if (value >= 0) {
+      y = (value*127).round() ;
+    }else {
+      y =  ((value*127)+255).round();
+    }
+    return y;
+  }
+
+  double reduce(int value) {
+    double y;
+    if (value < 128) {
+      y = ((value).round()/127);
+    } else {
+      y = (((value).round())-255)/127;
+    }
+    return y;
   }
 
   Future<void> stopRecorder() async {

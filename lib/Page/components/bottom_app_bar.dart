@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hearing_aid/Page/audioplay.dart';
 import 'package:hearing_aid/Page/history_page.dart';
 import 'package:hearing_aid/Page/historyhome_page.dart';
+import 'package:hearing_aid/Page/newaudioplay.dart';
 import 'package:hearing_aid/Page/recording_page.dart';
 import 'package:hearing_aid/Page/recording_pro.dart';
 import 'package:hearing_aid/constant.dart';
@@ -36,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
     HomePage(
       key: PageStorageKey('Page2'),
     ),
-    RecordingPage(
+    HearingAidsss(
       key: PageStorageKey('Page3'),
     ),
     RecordingPrototype(

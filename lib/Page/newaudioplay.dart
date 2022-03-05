@@ -13,18 +13,19 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
 
-class HearingAidss extends StatefulWidget {
-  HearingAidss({Key? key}) : super(key: key);
+class HearingAidsss extends StatefulWidget {
+  HearingAidsss({Key? key}) : super(key: key);
 
   @override
-  _HearingAidssState createState() => _HearingAidssState();
+  _HearingAidsssState createState() => _HearingAidsssState();
 }
 
-class _HearingAidssState extends State<HearingAidss> {
+class _HearingAidsssState extends State<HearingAidsss> {
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
   FlutterSoundPlayer? _mPlayer2 = FlutterSoundPlayer();
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
@@ -33,6 +34,7 @@ class _HearingAidssState extends State<HearingAidss> {
   bool _mRecorderIsInited = false;
   bool _mplaybackReady = false;
   String? _mPath;
+  Uint8List? buffer2;
   StreamSubscription? _mRecordingDataSubscription;
   String fileExtension = '.aac';
   String fileName = 'Recording_';
@@ -68,9 +70,22 @@ class _HearingAidssState extends State<HearingAidss> {
     });
   }
 
+  
+
+  Future<Uint8List> _getAssetData(String path) async {
+    var asset = await rootBundle.load(path);
+    return asset.buffer.asUint8List();
+  }
+
   //@override
   void initState() {
     super.initState();
+    _getAssetData(
+      'assets/sound/2022-02-28 13_22_16.961722.pcm',
+    ).then((value) => setState(() {
+          buffer2 = value;
+          
+        }));
     _mPlayer!.openAudioSession().then((value) {
       setState(() {
         _mPlayerIsInited = true;
@@ -108,7 +123,7 @@ class _HearingAidssState extends State<HearingAidss> {
   Future<IOSink> createFile() async {
     var tempDir = await getExternalStorageDirectory();
     var testdir =
-        await Directory('${tempDir!.path}/sound').create(recursive: true);
+        await Directory('${tempDir!.path}/filter ').create(recursive: true);
     _mPath = '${testdir.path}/${DateTime.now().toString()}.pcm';
     print(_mPath);
     var outputFile = File(_mPath!);
@@ -119,42 +134,34 @@ class _HearingAidssState extends State<HearingAidss> {
     }
     return outputFile.openWrite();
   }
+  
 
   Future<void> record() async {
     HomePageCubit homePageCubit = BlocProvider.of<HomePageCubit>(context);
     assert(_mRecorderIsInited && _mPlayer2!.isStopped || _mPlayer!.isPlaying);
     var sink = await createFile();
     var recordingDataController = StreamController<Food>();
+    print(buffer2!.getRange(30000, 300000));
     _mRecordingDataSubscription =
         recordingDataController.stream.listen((buffer) async {
-      if (buffer is FoodData) {
-        print('uint8: ${buffer.data!}');
-        List<double> beforedata = [
-          for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            ((reduce(buffer.data![offset]))),
-        ];
-        List<int> beforedata2 = [
-          for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            buffer.data![offset] = 255,
-        ];
-        print('before data to double: ${beforedata}');
-        // List<num> data = homePageCubit.conv(beforedata, beforedata.length);
-        List<num> data = [
-          for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            (beforedata[offset]+0.05),
-        ];
+    if (buffer is FoodData) {
+        List<double> beforedata3 = [
+          for (var offset = 0; offset < buffer2!.length; offset += 1)
+            (reduce(buffer2![offset])),
+        ]; 
+        print('is : ${beforedata3.getRange(30000, 300000)}');    
+        List<num> data2 = homePageCubit.conv(beforedata3, beforedata3.length);
         // List<num> data2 = await data; //float type
-        print('after filter is double: ${data}');
-        List<int> afterdata = [
-          for (var offset = 0; offset < data.length; offset += 1)
-            scaling(data[offset]),
+        
+        List<int> afterdata4 = [
+          for (var offset = 2; offset < data2.length; offset += 1)
+            scaling(data2[offset]),
         ];
-        //List<int> afterdata0 = adding(afterdata);
-        Uint8List afterdata2 = Uint8List.fromList(afterdata);
-        print('after filter is Uint8List: ${afterdata}');
-        print('after filter is Uint8List2222: ${afterdata2}');
-        sink.add(afterdata2); // xUint8 type
-      }
+        print('Done'); 
+        Uint8List afterdata3 = Uint8List.fromList(afterdata4);
+        
+      sink.add(afterdata3); 
+    }
     });
     print('Recording...');
     await _mRecorder!.startRecorder(
@@ -167,48 +174,22 @@ class _HearingAidssState extends State<HearingAidss> {
     setState(() {});
   }
 
-  List<int> adding(List<int> data){
-    List<int> op = [];
-    for (int i = 0 ; i < data.length; i++) {
-      op.add(data[i]);
-      op.add(255);
-    }
-    return op;
-  }
-
   int scaling(num value) {
     int y;
     if (value >= 0) {
-    y = (value * 128).round();
-    } else { 
+      y = (value * 128).round();
+    } else {
       y = ((value * 128) + 256).round();
     }
-   
-    // if (value >= 0) {
-    //   y = ((value * 32768) / 257).round();
-    // } else {
-    //   y = ((((value * 32768) - 256) / 257) + 256).round();
-    // }
-    // if (value >= 0) {
-    // y = (value * 32768).round();
-    // } else { 
-    //   y = ((value * 32768) + 65536).round();
-    // }
     return y;
   }
 
   double reduce(int value) {
     double y;
-    // y = value/255;
-    // if (value < 128) {
-    //   y = ((value * 257).round() / 32768);
-    // } else { 
-    //   y = ((((value - 256) * 257).round()) + 256) / 32768;
-    // }
     if (value < 128) {
-      y = value/128;
-    } else { 
-      y = (value - 256) / 128;
+      y = ((value / 2).round() / 128);
+    } else {
+      y = ((((value + 256) / 2).round()) - 256) / 128;
     }
     return y;
   }
@@ -551,3 +532,4 @@ Future<Uint8List> pcmToWaveBuffer({
   await controller.close();
   return Uint8List.fromList(buffer);
 }
+

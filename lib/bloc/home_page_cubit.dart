@@ -91,4 +91,31 @@ class HomePageCubit extends Cubit<HomePageState> {
     }
     return y;
   }
+
+  List<num> conv(List<num> data, int len) {
+    List<num> y1 = List<num>.generate(len, (indexs) => 0);
+    List<num> x1 = data;
+    List<num> h = [
+      0.25,
+      0.25,
+      0.25,
+      0.25,
+    ];
+    for (int n = 3; n < len; n++) {
+      y1[n] = (h[0] * x1[n]) +
+          (h[1] * x1[n - 1]) +
+          (h[2] * x1[n - 2]) +
+          (h[3] * x1[n - 3]) 
+          ;
+    }
+    return y1;
+  }
 }
+
+// List<num> h = [
+    //   0.0354646477883537,
+    //   0.240949840390482,
+    //   0.447171023642328,
+    //   0.240949840390482,
+    //   0.0354646477883537
+    // ];

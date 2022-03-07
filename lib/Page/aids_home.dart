@@ -157,11 +157,11 @@ class _HearingAidssState extends State<HearingAidss> {
         // List<num> data2 = await data; //float type
         print('after filter is double: ${data}');
         List<int> afterdata = [
-          for (var offset = 0; offset < data.length; offset += 1)
+          for (var offset = 3; offset < data.length; offset += 1)
             (scaling(data[offset])),
         ];
         List<int> afterdata3 = [
-          for (var offset = 0; offset < data.length; offset += 1)
+          for (var offset = 3; offset < data.length; offset += 1)
             (scaling(data2[offset])),
         ];
         List<int> afterdata0 = adding(afterdata,afterdata3);

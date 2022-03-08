@@ -128,24 +128,22 @@ class _HearingAidssState extends State<HearingAidss> {
     _mRecordingDataSubscription =
         recordingDataController.stream.listen((buffer) async {
       if (buffer is FoodData) {
-        print('uint8: ${buffer.data!}');
+        print('Input data uint8 type: ${buffer.data!}');
         List<double> beforedata = [
           for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            (reduce(buffer.data![offset])),
+            (reduce(buffer.data![offset])/11),
         ];
-        List<double> beforedata2 = [
-          for (var offset = 1; offset < buffer.data!.length; offset += 2)
-            reduce(buffer.data![offset]),
-        ];
-        List<double> beforedata3 = [
+        List<double> beforedataLeft = [
           for (var offset = 0; offset < buffer.data!.length; offset += 2)
-            reduce(buffer.data![offset]),
+            (reduce(buffer.data![offset])/11),
         ];
-        // print('${beforedata3}');
-        // print('${beforedata2}');
-        print('before data to double: ${beforedata}');
-        List<num> data = homePageCubit.conv(beforedata3, beforedata3.length);
-        List<num> data2 = homePageCubit.conv(beforedata2, beforedata2.length);
+        List<double> beforedataRight = [
+          for (var offset = 1; offset < buffer.data!.length; offset += 2)
+            (reduce(buffer.data![offset])/11),
+        ];
+        print('Before data to double: ${beforedata}');
+        List<num> data = await homePageCubit.generateSampleRate(beforedataLeft, beforedataLeft.length);
+        List<num> data2 = await homePageCubit.generateSampleRate(beforedataRight, beforedataRight.length);
         // List<num> data = [
         //   for (var offset = 0; offset < beforedata3.length; offset += 1)
         //     (beforedata3[offset] * 2),
@@ -154,20 +152,19 @@ class _HearingAidssState extends State<HearingAidss> {
         //   for (var offset = 0; offset < beforedata3.length; offset += 1)
         //     (beforedata2[offset] * 2),
         // ];
-        // List<num> data2 = await data; //float type
-        print('after filter is double: ${data}');
+        List<num> outputdouble = adding2(data,data2);
+        print('After filter is double: ${outputdouble}');
         List<int> afterdata = [
-          for (var offset = 3; offset < data.length; offset += 1)
+          for (var offset = 2; offset < data.length; offset += 1)
             (scaling(data[offset])),
         ];
         List<int> afterdata3 = [
-          for (var offset = 3; offset < data.length; offset += 1)
+          for (var offset = 2; offset < data.length; offset += 1)
             (scaling(data2[offset])),
         ];
         List<int> afterdata0 = adding(afterdata,afterdata3);
         Uint8List afterdata2 = Uint8List.fromList(afterdata0);
-        print('after filter is Uint8List: ${afterdata2.length}');
-        print('after filter is Uint8List2222: ${afterdata2}');
+        print('Output data uint8 type: ${afterdata2}');
         sink.add(afterdata2); // xUint8 type
       }
     });
@@ -184,18 +181,15 @@ class _HearingAidssState extends State<HearingAidss> {
 
   List<int> adding(List<int> data,List<int> data2) {
     List<int> op = [];
-    int x;
-    // for (int i = 0; i < data.length; i++) {
-    //   if (data[i] >= 0) {
-    //     x = ((data[i]*32768)/256).floor();
-    //     op.add(x);
-    //     op.add(((data[i] * 32768) - (x * 256)).round());
-    //   } else {
-    //     x = (((data[i] * 32768) + 65536) / 256).floor();
-    //     op.add(x);
-    //     op.add((((data[i] * 32768) + 65536) - (x * 256)).round());
-    //   }
-    // }
+    for (int i = 0; i < data.length; i++) {
+      op.add(data[i]); 
+      op.add(data2[i]);
+    }
+    return op;
+  }
+
+   List<num> adding2(List<num> data,List<num> data2) {
+    List<num> op = [];
     for (int i = 0; i < data.length; i++) {
       op.add(data[i]); 
       op.add(data2[i]);
@@ -205,42 +199,21 @@ class _HearingAidssState extends State<HearingAidss> {
 
   int scaling(num value) {
     int y;
-    // List<int> z = [];
-    // y = ((value * 32768) + 32768).round();
-    // z.add(((value * 32768) + 32768).round());
     if (value >= 0) {
     y = (value * 128).round();
     } else {
       y = ((value * 128) + 256).floor();
     }
-
-    // if (value >= 0) {
-    //   y = ((value * 32768) / 257).round();
-    // } else {
-    //   y = ((((value * 32768) - 256) / 257) + 256).round();
-    // }
-    // if (value >= 0) {
-    // y = (value * 32768).round();
-    // } else {
-    //   y = ((value * 32768) + 65536).round();
-    // }
     return y;
   }
 
   double reduce(int value) {
     double y;
-    // y = value/255;
     if (value < 128) {
       y = value/128;
     } else {
       y = (value - 256) / 128;
     }
-    // x = (value * 256) + value2;
-    // if (x < 32768) {
-    //   y = x / 32768;
-    // } else {
-    //   y = (x - 65536) / 32768;
-    // }
     return y;
   }
 

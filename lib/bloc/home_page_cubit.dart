@@ -55,33 +55,32 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.lpfCoeff!.getRange(0, 3).toList(),
       state.lpfCoeff!.getRange(3, 6).toList(),
       len,
-      state.lpfCoeff![6],
     );
-    //print(lpfCovolve);
-    // List<num> bpfConvolve = await convolve(
-    //   data,
-    //   state.bpfCoeff!.getRange(0, 3).toList(),
-    //   state.bpfCoeff!.getRange(3, 6).toList(),
-    //   len,
-    //   state.bpfCoeff![6],
-    // );
-    // //print(bpfCovolve);
-    // List<num> hpfConvolve = await convolve(
-    //   data,
-    //   state.hpfCoeff!.getRange(0, 3).toList(),
-    //   state.hpfCoeff!.getRange(3, 6).toList(),
-    //   len,
-    //   state.hpfCoeff![6],
-    // );
-    print('DONE');
-    return lpfConvolve;
+    List<num> bpfConvolve = await convolve(
+      data,
+      state.bpfCoeff!.getRange(0, 3).toList(),
+      state.bpfCoeff!.getRange(3, 6).toList(),
+      len,
+    );
+    //print(bpfCovolve);
+    List<num> hpfConvolve = await convolve(
+      data,
+      state.hpfCoeff!.getRange(0, 3).toList(),
+      state.hpfCoeff!.getRange(3, 6).toList(),
+      len,
+    );
+    List<num> x = [];
+    for (var i = 0; i < lpfConvolve.length; i++) {
+      x.add((lpfConvolve[i] * state.lpfCoeff![6]) +
+          (bpfConvolve[i] * state.bpfCoeff![6]) +
+          (hpfConvolve[i] * state.hpfCoeff![6]));
+    }
+    return x;
   }
 
-  List<num> convolve(List<num> data, List Num, List Den, int len, num g) {
+  List<num> convolve(List<num> data, List Num, List Den, int len) {
     List<num> y = List<num>.generate(len, (indexs) => 0);
     List<num> x = data;
-    print(Num);
-    print(Den);
     for (int n = 2; n < len; n++) {
       y[n] = (Num[0] * x[n]) +
           (Num[1] * x[n - 1]) +
@@ -105,8 +104,7 @@ class HomePageCubit extends Cubit<HomePageState> {
       y1[n] = (h[0] * x1[n]) +
           (h[1] * x1[n - 1]) +
           (h[2] * x1[n - 2]) +
-          (h[3] * x1[n - 3]) 
-          ;
+          (h[3] * x1[n - 3]);
     }
     return y1;
   }

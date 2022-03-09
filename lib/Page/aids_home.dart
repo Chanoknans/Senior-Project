@@ -16,6 +16,7 @@ import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
+const blockSize = 4096;
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
@@ -129,40 +130,23 @@ class _HearingAidssState extends State<HearingAidss> {
         recordingDataController.stream.listen((buffer) async {
       if (buffer is FoodData) {
         print('Input data uint8 type: ${buffer.data!}');
-        List<double> beforedata = [
-          for (var offset = 0; offset < buffer.data!.length; offset += 1)
-            (reduce(buffer.data![offset])/11),
-        ];
-        List<double> beforedataLeft = [
-          for (var offset = 0; offset < buffer.data!.length; offset += 2)
-            (reduce(buffer.data![offset])/11),
-        ];
-        List<double> beforedataRight = [
-          for (var offset = 1; offset < buffer.data!.length; offset += 2)
-            (reduce(buffer.data![offset])/11),
-        ];
-        print('Before data to double: ${beforedata}');
-        List<num> data = await homePageCubit.generateSampleRate(beforedataLeft, beforedataLeft.length);
-        List<num> data2 = await homePageCubit.generateSampleRate(beforedataRight, beforedataRight.length);
-        // List<num> data = [
-        //   for (var offset = 0; offset < beforedata3.length; offset += 1)
-        //     (beforedata3[offset] * 2),
-        // ];
-        // List<num> data2 = [
-        //   for (var offset = 0; offset < beforedata3.length; offset += 1)
-        //     (beforedata2[offset] * 2),
-        // ];
-        List<num> outputdouble = adding2(data,data2);
-        print('After filter is double: ${outputdouble}');
-        List<int> afterdata = [
-          for (var offset = 2; offset < data.length; offset += 1)
-            (scaling(data[offset])),
-        ];
-        List<int> afterdata3 = [
-          for (var offset = 2; offset < data.length; offset += 1)
-            (scaling(data2[offset])),
-        ];
-        List<int> afterdata0 = adding(afterdata,afterdata3);
+        List<double> beforedataLeft = [];
+        List<double> beforedataRight = [];
+        for (var i = 0; i < buffer.data!.length; i += 2) {
+          beforedataLeft.add((reduce(buffer.data![i]) / 11));
+          beforedataRight.add((reduce(buffer.data![i + 1]) / 11));
+        }
+        List<num> data = await homePageCubit.generateSampleRate(
+            beforedataLeft, beforedataLeft.length);
+        List<num> data2 = await homePageCubit.generateSampleRate(
+            beforedataRight, beforedataRight.length);
+        List<int> afterdataLeft = [];
+        List<int> afterdataRight = [];
+        for (var i = 2; i < data.length; i += 1) {
+          afterdataLeft.add(scaling(data[i]));
+          afterdataRight.add(scaling(data2[i]));
+        }
+        List<int> afterdata0 = adding(afterdataLeft, afterdataRight);
         Uint8List afterdata2 = Uint8List.fromList(afterdata0);
         print('Output data uint8 type: ${afterdata2}');
         sink.add(afterdata2); // xUint8 type
@@ -176,22 +160,23 @@ class _HearingAidssState extends State<HearingAidss> {
       sampleRate: tSampleRate,
       //toFile: '$fileName',
     );
+
     setState(() {});
   }
 
-  List<int> adding(List<int> data,List<int> data2) {
+  List<int> adding(List<int> data, List<int> data2) {
     List<int> op = [];
     for (int i = 0; i < data.length; i++) {
-      op.add(data[i]); 
+      op.add(data[i]);
       op.add(data2[i]);
     }
     return op;
   }
 
-   List<num> adding2(List<num> data,List<num> data2) {
+  List<num> adding2(List<num> data, List<num> data2) {
     List<num> op = [];
     for (int i = 0; i < data.length; i++) {
-      op.add(data[i]); 
+      op.add(data[i]);
       op.add(data2[i]);
     }
     return op;
@@ -200,7 +185,7 @@ class _HearingAidssState extends State<HearingAidss> {
   int scaling(num value) {
     int y;
     if (value >= 0) {
-    y = (value * 128).round();
+      y = (value * 128).round();
     } else {
       y = ((value * 128) + 256).floor();
     }
@@ -210,7 +195,7 @@ class _HearingAidssState extends State<HearingAidss> {
   double reduce(int value) {
     double y;
     if (value < 128) {
-      y = value/128;
+      y = value / 128;
     } else {
       y = (value - 256) / 128;
     }
@@ -273,13 +258,69 @@ class _HearingAidssState extends State<HearingAidss> {
           };
   }
 
+  Future<IOSink> createFile2() async {
+    var tempDir = await getTemporaryDirectory();
+    _mPath = '${tempDir.path}/${DateTime.now().toString()}.pcm';
+    var outputFile = File(_mPath!);
+    if (outputFile.existsSync()) {
+      await outputFile.delete(); // sent file to local storage
+    }
+    return outputFile.openWrite();
+  }
+
   void startPlayer() async {
-    //
-    await _mPlayer!.startPlayerFromMic(sampleRate: tSampleRate);
+    HomePageCubit homePageCubit = BlocProvider.of<HomePageCubit>(context);
+    assert(_mRecorderIsInited && _mPlayer2!.isStopped || _mPlayer!.isPlaying);
+    await _mPlayer!.startPlayerFromStream(
+      codec: Codec.pcm16,
+      numChannels: 1,
+      sampleRate: tSampleRate,
+    );
+    var sink = await createFile2();
+    var recordingDataController = StreamController<Food>();
+    _mRecordingDataSubscription =
+        recordingDataController.stream.listen((buffer) async {
+      if (buffer is FoodData) {
+        print('Input data uint8 type: ${buffer.data!}');
+        List<double> beforedataLeft = [];
+        List<double> beforedataRight = [];
+        for (var i = 0; i < buffer.data!.length; i += 2) {
+          beforedataLeft.add((reduce(buffer.data![i]) / 11));
+          beforedataRight.add((reduce(buffer.data![i + 1]) / 11));
+        }
+        List<num> data = await homePageCubit.generateSampleRate(
+            beforedataLeft, beforedataLeft.length);
+        List<num> data2 = await homePageCubit.generateSampleRate(
+            beforedataRight, beforedataRight.length);
+        List<int> afterdataLeft = [];
+        List<int> afterdataRight = [];
+        for (var i = 2; i < data.length; i += 1) {
+          afterdataLeft.add(scaling(data[i]));
+          afterdataRight.add(scaling(data2[i]));
+        }
+        List<int> afterdata0 = adding(afterdataLeft, afterdataRight);
+        Uint8List afterdata2 = Uint8List.fromList(afterdata0);
+        print('Output data uint8 type: ${afterdata2}');
+        sink.add(afterdata2); // xUint8 type
+        _mPlayer!.feedFromStream(afterdata2.sublist(0, afterdata2.length));
+      }
+    });
+    print('Recording...');
+    await _mRecorder!.startRecorder(
+      toStream: recordingDataController.sink,
+      codec: Codec.pcm16,
+      numChannels: 1,
+      sampleRate: tSampleRate,
+      //toFile: '$fileName',
+    );
+
     setState(() {});
   }
 
   Future<void> stopPlayer() async {
+    if (_mRecorder != null) {
+      await _mRecorder!.stopRecorder();
+    }
     if (_mPlayer != null) {
       await _mPlayer!.stopPlayer();
     }
@@ -524,34 +565,4 @@ class _HearingAidssState extends State<HearingAidss> {
       ),
     );
   }
-}
-
-Future<Uint8List> pcmToWaveBuffer({
-  required Uint8List inputBuffer,
-  int numChannels = 1,
-  int sampleRate = 44100,
-  //int bitsPerSample,
-}) async {
-  var size = inputBuffer.length;
-  var header = WaveHeader(
-    WaveHeader.formatPCM,
-    numChannels,
-    sampleRate,
-    16,
-    size, // total number of bytes
-  );
-
-  var buffer = <int>[];
-  StreamController controller = StreamController<List<int>>();
-  var sink = controller.sink as StreamSink<List<int>>;
-  var stream = controller.stream as Stream<List<int>>;
-  stream.listen((e) {
-    var x = e.toList();
-    buffer.addAll(x);
-  });
-  header.write(sink);
-  sink.add(inputBuffer);
-  await sink.close();
-  await controller.close();
-  return Uint8List.fromList(buffer);
 }

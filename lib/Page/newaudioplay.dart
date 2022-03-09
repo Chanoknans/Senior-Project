@@ -1,535 +1,197 @@
+/*
+ * Copyright 2018, 2019, 2020, 2021 Dooboolab.
+ *
+ * This file is part of Flutter-Sound.
+ *
+ * Flutter-Sound is free software: you can redistribute it and/or modify
+ * it under the terms of the Mozilla Public License version 2 (MPL2.0),
+ * as published by the Mozilla organization.
+ *
+ * Flutter-Sound is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MPL General Public License for more details.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/public/util/wave_header.dart';
-import 'package:hearing_aid/page/components/custom_app_bar.dart';
-import 'package:hearing_aid/constant.dart';
-import 'package:hearing_aid/page/components/bottom_app_bar.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:async';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hearing_aid/bloc/home_page_cubit.dart';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:flutter/services.dart' show rootBundle;
+/*
+ *
+ * 
+streamLoop()
+ is a very simple example which connect the FlutterSoundRecorder sink
+ * to the FlutterSoundPlayer Stream.
+ * Of course, we do not play to the loudspeaker to avoid a very unpleasant Larsen effect.
+ * This example does not use a new StreamController, but use directly foodStreamController
+ * from flutter_sound_player.dart.
+ *
+ */
 
-const int tSampleRate = 44100;
+const int _sampleRateRecorder = 44100;
+const int _sampleRatePlayer = 44100; // same speed than the recorder
+
+///
 typedef Fn = void Function();
 
-class HearingAidsss extends StatefulWidget {
-  HearingAidsss({Key? key}) : super(key: key);
-
+/// Example app.
+class StreamLoop extends StatefulWidget {
+    StreamLoop({Key? key}) : super(key: key);
   @override
-  _HearingAidsssState createState() => _HearingAidsssState();
+  _StreamLoopState createState() => _StreamLoopState();
 }
 
-class _HearingAidsssState extends State<HearingAidsss> {
+class _StreamLoopState extends State<StreamLoop> {
   FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
-  FlutterSoundPlayer? _mPlayer2 = FlutterSoundPlayer();
   FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
-  bool _mPlayerIsInited = false;
-  bool _mPlayerIsInited2 = false;
-  bool _mRecorderIsInited = false;
-  bool _mplaybackReady = false;
-  String? _mPath;
-  Uint8List? buffer2;
+  bool _isInited = false;
   StreamSubscription? _mRecordingDataSubscription;
-  String fileExtension = '.aac';
-  String fileName = 'Recording_';
-  String dirpath = "/assets/sound/";
 
-  Future<void> open() async {
-    var status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw RecordingPermissionException('Microphone permission not granted');
-    }
-
-    // Be careful : openAudioSession returns a Future.
-    // Do not access your FlutterSoundPlayer or FlutterSoundRecorder before the completion of the Future
+  Future<void> init() async {
+    await _mRecorder!.openAudioSession(
+      device: AudioDevice.blueToothA2DP,
+      audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
+      category: SessionCategory.playAndRecord,
+    );
     await _mPlayer!.openAudioSession(
       device: AudioDevice.blueToothA2DP,
       audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
       category: SessionCategory.playAndRecord,
     );
-    //   await _mRecorder!.openAudioSession();
-    //   setState(() {
-    //   _mRecorderIsInited = true;
-    //  });
   }
 
-  Future<void> _openRecorder() async {
-    var status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw RecordingPermissionException('Microphone permission not granted');
-    }
-    await _mRecorder!.openAudioSession();
-    setState(() {
-      _mRecorderIsInited = true;
-    });
-  }
-
-  
-
-  Future<Uint8List> _getAssetData(String path) async {
-    var asset = await rootBundle.load(path);
-    return asset.buffer.asUint8List();
-  }
-
-  //@override
+  @override
   void initState() {
     super.initState();
-    _getAssetData(
-      'assets/sound/2022-02-28 13_22_16.961722.pcm',
-    ).then((value) => setState(() {
-          buffer2 = value;
-          
-        }));
-    _mPlayer!.openAudioSession().then((value) {
+    // Be careful : openAudioSession return a Future.
+    // Do not access your FlutterSoundPlayer or FlutterSoundRecorder before the completion of the Future
+    init().then((value) {
       setState(() {
-        _mPlayerIsInited = true;
-        //_mPlayerIsInited2 = true;
+        _isInited = true;
       });
     });
-    open();
-    _mPlayer2!.openAudioSession().then((value) {
-      setState(() {
-        _mPlayerIsInited2 = true;
-      });
-    });
-    _openRecorder();
   }
 
-  //@override
-  void dispose() {
-    stopPlayer();
-    _mPlayer!.closeAudioSession();
+  Future<void> release() async {
+    await stopPlayer();
+    await _mPlayer!.closeAudioSession();
     _mPlayer = null;
-    //stopPlayer2();
-    // Be careful : you must `close` the audio session when you have finished with it.
 
-    stopRecorder();
-    _mRecorder!.closeAudioSession();
+    await stopRecorder();
+    await _mRecorder!.closeAudioSession();
     _mRecorder = null;
+  }
 
-    stopPlayer2();
-    _mPlayer2!.closeAudioSession();
-    _mPlayer2 = null;
+  @override
+  void dispose() {
+    release();
     super.dispose();
   }
 
-  // -------  Here is the code to play from the microphone -----------------------
-  Future<IOSink> createFile() async {
-    var tempDir = await getExternalStorageDirectory();
-    var testdir =
-        await Directory('${tempDir!.path}/filter ').create(recursive: true);
-    _mPath = '${testdir.path}/${DateTime.now().toString()}.pcm';
-    print(_mPath);
-    var outputFile = File(_mPath!);
-    // Uint8List bytes = await outputFile.readAsBytes();
-    // await outputFile.writeAsBytes(bytes);
-    if (outputFile.existsSync()) {
-      await outputFile.delete(); // sent file to local storage
+  Future<void>? stopRecorder() {
+    if (_mRecorder != null) {
+      return _mRecorder!.stopRecorder();
     }
-    return outputFile.openWrite();
+    return null;
   }
-  
+
+  Future<void>? stopPlayer() {
+    if (_mPlayer != null) {
+      return _mPlayer!.stopPlayer();
+    }
+    return null;
+  }
 
   Future<void> record() async {
-    HomePageCubit homePageCubit = BlocProvider.of<HomePageCubit>(context);
-    assert(_mRecorderIsInited && _mPlayer2!.isStopped || _mPlayer!.isPlaying);
-    var sink = await createFile();
-    var recordingDataController = StreamController<Food>();
-    print(buffer2!.getRange(30000, 300000));
-    _mRecordingDataSubscription =
-        recordingDataController.stream.listen((buffer) async {
-    if (buffer is FoodData) {
-        List<double> beforedata3 = [
-          for (var offset = 0; offset < buffer2!.length; offset += 1)
-            (reduce(buffer2![offset])),
-        ]; 
-        print('is : ${beforedata3.getRange(30000, 300000)}');    
-        List<num> data2 = homePageCubit.conv(beforedata3, beforedata3.length);
-        // List<num> data2 = await data; //float type
-        
-        List<int> afterdata4 = [
-          for (var offset = 2; offset < data2.length; offset += 1)
-            scaling(data2[offset]),
-        ];
-        print('Done'); 
-        Uint8List afterdata3 = Uint8List.fromList(afterdata4);
-        
-      sink.add(afterdata3); 
-    }
-    });
-    print('Recording...');
-    await _mRecorder!.startRecorder(
-      toStream: recordingDataController.sink,
+    await _mPlayer!.startPlayerFromStream(
       codec: Codec.pcm16,
       numChannels: 1,
-      sampleRate: tSampleRate,
-      //toFile: '$fileName',
+      sampleRate: _sampleRatePlayer,
     );
+
+    await _mRecorder!.startRecorder(
+      codec: Codec.pcm16,
+      toStream: _mPlayer!.foodSink, // ***** THIS IS THE LOOP !!! *****
+      sampleRate: _sampleRateRecorder,
+      numChannels: 1,
+    );
+
     setState(() {});
   }
 
-  int scaling(num value) {
-    int y;
-    if (value >= 0) {
-      y = (value * 128).round();
-    } else {
-      y = ((value * 128) + 256).round();
+  Future<void> stop() async {
+    if (_mRecorder != null) {
+      await _mRecorder!.stopRecorder();
     }
-    return y;
-  }
-
-  double reduce(int value) {
-    double y;
-    if (value < 128) {
-      y = ((value / 2).round() / 128);
-    } else {
-      y = ((((value + 256) / 2).round()) - 256) / 128;
-    }
-    return y;
-  }
-
-  Future<void> stopRecorder() async {
-    await _mRecorder!.stopRecorder();
-    // _writeFileToStorage();
-    if (_mRecordingDataSubscription != null) {
-      await _mRecordingDataSubscription!.cancel();
-      _mRecordingDataSubscription = null;
-    }
-    _mplaybackReady = true;
-  }
-
-  Fn? getRecorderFn() {
-    if (!_mRecorderIsInited || !_mPlayer2!.isStopped) {
-      return null;
-    }
-    return _mRecorder!.isStopped
-        ? record
-        : () {
-            stopRecorder().then((value) => setState(() {}));
-          };
-  }
-
-  void play() async {
-    assert(_mPlayerIsInited &&
-        _mPlayerIsInited2 &&
-        _mplaybackReady &&
-        _mRecorder!.isStopped &&
-        _mPlayer2!.isStopped);
-    await _mPlayer!.startPlayer(
-        fromURI: _mPath,
-        sampleRate: tSampleRate,
-        codec: Codec.pcm16,
-        numChannels: 1,
-        whenFinished: () {
-          setState(() {});
-        }); // The readability of Dart is very special :-(
-    setState(() {});
-  }
-
-  Future<void> stopPlayer2() async {
-    await _mPlayer2!.stopPlayer();
-  }
-
-  Fn? getPlaybackFn2() {
-    if (!_mPlayerIsInited ||
-        !_mPlayerIsInited2 ||
-        !_mplaybackReady ||
-        !_mRecorder!.isStopped) {
-      return null;
-    }
-    return _mPlayer2!.isStopped
-        ? play
-        : () {
-            stopPlayer2().then((value) => setState(() {}));
-          };
-  }
-
-  void startPlayer() async {
-    //
-    await _mPlayer!.startPlayerFromMic(sampleRate: tSampleRate);
-    setState(() {});
-  }
-
-  Future<void> stopPlayer() async {
     if (_mPlayer != null) {
       await _mPlayer!.stopPlayer();
     }
+    setState(() {});
   }
 
-  // ---------------------------------------
-
-  Fn? getPlaybackFn() {
-    if (!_mPlayerIsInited) {
+  Fn? getRecFn() {
+    if (!_isInited) {
       return null;
     }
-    return _mPlayer!.isStopped
-        ? startPlayer
-        : () {
-            stopPlayer().then((value) => setState(() {}));
-          };
+    return _mRecorder!.isRecording ? stop : record;
   }
 
-// void _createFile() async {
-//   var _completeFileName = await generateFileName();
-//   File(dirpath + '/' + _completeFileName)
-//       .create(recursive: true)
-//       .then((File file) async {
-//     //write to file
-//     Uint8List bytes = await file.readAsBytes();
-//     file.writeAsBytes(bytes);
-//     print(file.path);
-//   });
-// }
-
-// void _createDirectory() async {
-//   bool isDirectoryCreated = await Directory(dirpath).exists();
-//   if (!isDirectoryCreated) {
-//     Directory(dirpath).create()
-//         // The created directory is returned as a Future.
-//         .then((Directory directory) {
-//       print(directory.path);
-//     });
-//   }
-// }
-
-// void _writeFileToStorage() async {
-//   _createDirectory();
-//   _createFile();
-// }
+  // ----------------------------------------------------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: blackground,
-      body: Stack(
+    Widget makeBody() {
+      return Column(
         children: [
-          CustomAppBar(),
-          Padding(
-            padding: EdgeInsets.only(top: 145, left: 18),
-            child: Container(
-              height: 40,
-              width: 300,
-              decoration: BoxDecoration(color: blackground),
-              child: Text(
-                "For new users or those who want to use the value elsewhere, "
-                "please fill in your hearing level before using.",
-                style: TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 12,
-                  color: transgray,
-                ),
+          Container(
+            margin: const EdgeInsets.all(3),
+            padding: const EdgeInsets.all(3),
+            height: 80,
+            width: double.infinity,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Color(0xFFFAF0E6),
+              border: Border.all(
+                color: Colors.indigo,
+                width: 3,
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 135, left: 330),
-            child: CircleButton(),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 200, left: 18),
-            child: Container(width: 2, height: 54, color: light),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 200, left: 30),
-            child: RichText(
-              text: TextSpan(
-                text: 'การทดสอบวันที่ 2-11-2021\n',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Prompt',
-                  fontWeight: FontWeight.w600,
-                  color: gray,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: '00:36:21224236',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
+            child: Row(children: [
+              ElevatedButton(
+                onPressed: getRecFn(),
+                //color: Colors.white,
+                //disabledColor: Colors.grey,
+                child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 280),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                "Before you begin, put on your headphones.",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Nunito',
-                  fontWeight: FontWeight.w600,
-                  color: _mPlayer!.isPlaying ? redtext : green,
-                ),
+              SizedBox(
+                width: 20,
               ),
-            ),
+              Text(_mRecorder!.isRecording
+                  ? 'Playback to your headset!'
+                  : 'Recorder is stopped'),
+            ]),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 320),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: 185,
-                height: 185,
-                padding: EdgeInsets.only(top: 2),
-                child: FloatingActionButton(
-                  onPressed: getPlaybackFn(),
-                  elevation: 5,
-                  backgroundColor: _mPlayer!.isPlaying ? redtext : green,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Text(
-                          _mPlayer!.isPlaying ? "STOP" : "START",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Nunito',
-                            fontWeight: FontWeight.bold,
-                            color: white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                        height: 5,
-                      ),
-                      Image.asset(
-                        "assets/image/headphones.png",
-                        scale: 2.05,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text(
-                          "pressed here",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Nunito',
-                            fontWeight: FontWeight.w600,
-                            color: white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 530,
-            left: 105,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      fixedSize: const Size(180, 35),
-                      textStyle: TextStyle(),
-                      primary: Color.fromRGBO(240, 238, 233, 0.95),
-                    ),
-                    onPressed: getRecorderFn(),
-                    child: Row(
-                      children: [
-                        Icon(
-                          LineIcons.microphone,
-                          color: redtext,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 22),
-                          child: Text(
-                            _mRecorder!.isRecording ? 'Stop' : 'Record',
-                            style: TextStyle(
-                              color: blackground,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Nunito',
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      elevation: 2,
-                      fixedSize: const Size(180, 35),
-                      textStyle: TextStyle(),
-                      primary: Color.fromRGBO(240, 238, 233, 0.95),
-                    ),
-                    onPressed: getPlaybackFn2(),
-                    child: Row(
-                      children: [
-                        Icon(
-                          LineIcons.cog,
-                          color: grayy,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 28),
-                          child: Text(
-                            _mPlayer2!.isPlaying
-                                ? 'Stop'
-                                : 'Play' /*"Settings"*/,
-                            style: TextStyle(
-                              color: blackground,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Nunito',
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
         ],
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.blue,
+      appBar: AppBar(
+        title: const Text('Stream Loop'),
       ),
+      body: makeBody(),
     );
   }
 }
 
-Future<Uint8List> pcmToWaveBuffer({
-  required Uint8List inputBuffer,
-  int numChannels = 1,
-  int sampleRate = 44100,
-  //int bitsPerSample,
-}) async {
-  var size = inputBuffer.length;
-  var header = WaveHeader(
-    WaveHeader.formatPCM,
-    numChannels,
-    sampleRate,
-    16,
-    size, // total number of bytes
-  );
-
-  var buffer = <int>[];
-  StreamController controller = StreamController<List<int>>();
-  var sink = controller.sink as StreamSink<List<int>>;
-  var stream = controller.stream as Stream<List<int>>;
-  stream.listen((e) {
-    var x = e.toList();
-    buffer.addAll(x);
-  });
-  header.write(sink);
-  sink.add(inputBuffer);
-  await sink.close();
-  await controller.close();
-  return Uint8List.fromList(buffer);
-}
 

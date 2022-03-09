@@ -31,6 +31,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   final dayy = ['11-01-2022', '10-01-2022', '09-01-2022', '09-01-2022'];
   get _durationState => null;
   var files;
+  List file = [];
   // ignore: unused_field
   final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
   bool _pause = true;
@@ -41,29 +42,125 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
   Uint8List? datas;
   Codec codec = Codec.aacADTS;
   Future<Directory?>? _downloadDir;
+  Uint8List? buffer2;
+  FlutterSoundPlayer? _mPlayer2 = FlutterSoundPlayer();
+  bool _mPlayer2IsInited = false;
+  StreamSubscription? _playerSubscription2;
+  String? _mPath;
+  double _mSubscriptionDuration = 0;
+  Uint8List? _boumData;
+  StreamSubscription? _mPlayerSubscription;
+
+  Future<void> setSubscriptionDuration(
+      double d) async // v is between 0.0 and 2000 (milliseconds)
+  {
+    _mSubscriptionDuration = d;
+    setState(() {});
+    await _mPlayer2!.setSubscriptionDuration(
+      Duration(milliseconds: d.floor()),
+    );
+  }
+
+  Future<Uint8List> _getAssetData(String path) async {
+    var asset = await rootBundle.load(path);
+    return asset.buffer.asUint8List();
+  }
 
   Future<File> get _getStoragepermission async {
     if (await Permission.storage.request().isGranted) {
       String dir =
           (await getExternalStorageDirectory())!.absolute.path + "/sound";
-      print(dir);
       //List<HearingAidss> recording = [];
       final List<FileSystemEntity> files = Directory(dir).listSync();
       print(files[0]);
     }
-    return File('$path/2022-02-09 18:05:16.218546.pcm');
+    return File(files);
   }
 
-  // void initState() {
-  //   super.initState();
-  //   _getStoragepermission;
-  // }
-
-  void _requestDownload(){
-    setState(() {
-      _downloadDir = getDownloadsDirectory();
+  void initState() {
+    super.initState();
+    _getStoragepermission;
+    _getAssetData(
+      'assets/sound/2022-02-28 13_22_16.961722.pcm',
+    ).then((value) => setState(() {
+          buffer2 = value;
+        }));
+    _mPlayer2!.openAudioSession().then((value) {
+      setState(() {
+        _mPlayer2IsInited = true;
+      });
     });
   }
+
+  void dispose() {
+    // Be careful : you must `close` the audio session when you have finished with it.
+    cancelPlayerSubscriptions2();
+    _mPlayer2!.closeAudioSession();
+    _mPlayer2 = null;
+    super.dispose();
+  }
+
+  void play2() async {
+    await _mPlayer2!.setSubscriptionDuration(Duration(milliseconds: 10));
+    _addListener2();
+    await _mPlayer2!.startPlayer(
+        fromDataBuffer: buffer2,
+        codec: Codec.pcm16,
+        whenFinished: () {
+          setState(() {});
+        });
+    setState(() {});
+  }
+
+  void _addListener2() {
+    cancelPlayerSubscriptions2();
+  }
+
+  void cancelPlayerSubscriptions2() {
+    if (_playerSubscription2 != null) {
+      _playerSubscription2!.cancel();
+      _playerSubscription2 = null;
+    }
+  }
+
+  Future<void> stopPlayer2() async {
+    cancelPlayerSubscriptions2();
+    if (_mPlayer2 != null) {
+      await _mPlayer2!.stopPlayer();
+    }
+    setState(() {});
+  }
+
+  Future<void> pause2() async {
+    if (_mPlayer2 != null) {
+      await _mPlayer2!.pausePlayer();
+    }
+    setState(() {});
+  }
+
+  Future<void> resume2() async {
+    if (_mPlayer2 != null) {
+      await _mPlayer2!.resumePlayer();
+    }
+    setState(() {});
+  }
+
+  Fn? getPlaybackFn() {
+    if (!_mPlayer2IsInited || buffer2 == null) {
+      return null;
+    }
+    return _mPlayer2!.isStopped
+        ? play2
+        : () {
+            stopPlayer2().then((value) => setState(() {}));
+          };
+  }
+
+  // void _requestDownload(){
+  //   setState(() {
+  //     _downloadDir = getDownloadsDirectory();
+  //   });
+  // }
 
   // await flutterSoundHelper.pcmToWave(
   //   inputFile: dir,
@@ -350,59 +447,72 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                                   child: Container(
                                     decoration:
                                         BoxDecoration(color: blackground),
-                                    height: 78,
+                                    height: 100,
                                     width: 330,
                                     child: StreamBuilder<DurationState>(
                                       stream: _durationState,
                                       builder: (context, snapshot) {
-                                        final durationState = snapshot.data;
-                                        final progress =
-                                            durationState?.progress ??
-                                                Duration.zero;
-                                        final buffered =
-                                            durationState?.buffered ??
-                                                Duration.zero;
-                                        final total = durationState?.total ??
-                                            Duration.zero;
+                                        // final durationState = snapshot.data;
+                                        // final progress =
+                                        //     durationState?.progress ??
+                                        //         Duration.zero;
+                                        // final buffered =
+                                        //     durationState?.buffered ??
+                                        //         Duration.zero;
+                                        // final total = durationState?.total ??
+                                        //     Duration.zero;
                                         return Column(
                                           children: [
-                                            ProgressBar(
-                                              progress: progress,
-                                              buffered: buffered,
-                                              total: total,
-                                              onSeek: (duration) {
-                                                _player.seek(duration);
-                                              },
-                                              progressBarColor: white,
-                                              baseBarColor: Colors.white
-                                                  .withOpacity(0.24),
-                                              bufferedBarColor: Colors.white
-                                                  .withOpacity(0.24),
-                                              thumbColor: white,
-                                              barHeight: 3.5,
-                                              thumbRadius: 6.0,
-                                              timeLabelTextStyle: TextStyle(
-                                                  color: darkgray,
-                                                  fontFamily: 'Nunito',
-                                                  fontSize: 12),
+                                            Slider(
+                                              value: _mSubscriptionDuration,
+                                              min: 0.0,
+                                              max: 1000.0,
+                                              onChanged:
+                                                  setSubscriptionDuration,
+                                              //divisions: 100
                                             ),
+                                            // ProgressBar(
+                                            //   progress: progress,
+                                            //   buffered: buffer2,
+                                            //   total: total,
+                                            //   onSeek: (duration) {
+                                            //     _player.seek(duration);
+                                            //   },
+                                            //   progressBarColor: white,
+                                            //   baseBarColor: Colors.white
+                                            //       .withOpacity(0.24),
+                                            //   bufferedBarColor: Colors.white
+                                            //       .withOpacity(0.24),
+                                            //   thumbColor: white,
+                                            //   barHeight: 3.5,
+                                            //   thumbRadius: 6.0,
+                                            //   timeLabelTextStyle: TextStyle(
+                                            //       color: darkgray,
+                                            //       fontFamily: 'Nunito',
+                                            //       fontSize: 12),
+                                            // ),
                                             Row(
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       left: 140),
                                                   child: IconButton(
-                                                    icon: Icon(_pause
+                                                    icon: Icon(_mPlayer2!.isPlaying
                                                         ? Icons.play_arrow
                                                         : Icons.pause),
                                                     iconSize: 32.0,
                                                     color: white,
                                                     alignment: Alignment.center,
                                                     onPressed: () {
-                                                      setState(() {
-                                                        _pause = !_pause;
-                                                        
-                                                      });
+                                                      // for (int i = 0;
+                                                      //     i < files.length;
+                                                      //     i++) {
+                                                      //   files[i].playingstatus =
+                                                      //       0;
+                                                      // }
+                                                      // setState(() {
+                                                        getPlaybackFn();
+                                                      // });
                                                     },
                                                   ),
                                                 ),

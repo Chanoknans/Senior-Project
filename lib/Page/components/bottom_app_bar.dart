@@ -38,7 +38,7 @@ class _DashboardState extends State<Dashboard> {
     HomePage(
       key: PageStorageKey('Page2'),
     ),
-    HearingAidsss(
+    StreamLoop(
       key: PageStorageKey('Page3'),
     ),
     RecordingPrototype(

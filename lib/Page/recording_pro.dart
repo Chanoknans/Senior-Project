@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:hearing_aid/Page/aids_home.dart';
 import 'package:hearing_aid/Page/profile_page.dart';
 import 'package:hearing_aid/constant.dart';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:file_manager/file_manager.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
+typedef Fn = void Function();
 
 class RecordingPrototype extends StatefulWidget {
   RecordingPrototype({Key? key}) : super(key: key);
@@ -21,198 +22,140 @@ class RecordingPrototype extends StatefulWidget {
 }
 
 class _RecordingPrototypeState extends State<RecordingPrototype> {
-  final List<bool> _isVisible = List<bool>.generate(1000, (indexs) => false);
-  final datetimes = [
-    '21:01234',
-    '21:012345',
-    '21:01236',
-    '21:012378'
-  ]; //can be datetime length
-  final dayy = ['11-01-2022', '10-01-2022', '09-01-2022', '09-01-2022'];
+  List<bool> _isVisible = [];
   get _durationState => null;
   var files;
   List file = [];
-  // ignore: unused_field
-  final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
-  bool _pause = true;
   bool permissionGranted = true;
-  StreamSubscription? _mRecordingDataSubscription;
-  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
   var path;
   Uint8List? datas;
-  Codec codec = Codec.aacADTS;
-  Future<Directory?>? _downloadDir;
+
   Uint8List? buffer2;
-  FlutterSoundPlayer? _mPlayer2 = FlutterSoundPlayer();
-  bool _mPlayer2IsInited = false;
-  StreamSubscription? _playerSubscription2;
-  String? _mPath;
+  final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
+  bool _mPlayerIsInited = false;
   double _mSubscriptionDuration = 0;
-  Uint8List? _boumData;
+  Uint8List? _data;
+  Uint8List? _data2;
   StreamSubscription? _mPlayerSubscription;
+  int pos = 0;
+  Duration? dur;
+  String time = '--:--:--.------';
+  double a = 10000.0;
+  List<FileSystemEntity> Filemimi = [];
+  List<FileSystemEntity> name = [];
+  // Future<Directory?>? _downloadDir;
+  // StreamSubscription? _playerSubscription2;
+  // String? _mPath;
+  // final List<bool> _pauseplay = List<bool>.generate(100, (indexs) => true);
+
+  Future<List<FileSystemEntity>> get _getStoragepermission async {
+    if (await Permission.storage.request().isGranted) {
+      String dir =
+          (await getExternalStorageDirectory())!.absolute.path + "/sound";
+      //List<HearingAidss> recording = [];
+      final List<FileSystemEntity> files =
+          Directory(dir).listSync(recursive: true);
+      name = files;
+    }
+    return name;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init().then((value) {
+      setState(() {
+        _mPlayerIsInited = true;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    stopPlayer(_mPlayer);
+    cancelPlayerSubscriptions();
+    // Be careful : you must `close` the audio session when you have finished with it.
+    _mPlayer.closeAudioSession();
+
+    super.dispose();
+  }
+
+  void cancelPlayerSubscriptions() {
+    if (_mPlayerSubscription != null) {
+      _mPlayerSubscription!.cancel();
+      _mPlayerSubscription = null;
+    }
+  }
+
+  Future<void> init() async {
+    await _mPlayer.openAudioSession();
+    Filemimi = await _getStoragepermission;
+    print(Filemimi.length);
+    _isVisible = List<bool>.generate(Filemimi.length, (indexs) => false);
+
+    //dur = (await _mPlayer.getProgress())['duration'];
+    _mPlayerSubscription = _mPlayer.onProgress!.listen((e) {
+      setState(() {
+        pos = e.position.inMilliseconds;
+      });
+      dur = e.duration;
+    });
+  }
+
+  // -------  Here is the code to playback  -----------------------
+
+  void play(FlutterSoundPlayer? player, int x) async {
+    await player!.startPlayer(
+        // fromDataBuffer: _data,
+        fromURI: Filemimi[x].path,
+        codec: Codec.pcm16,
+        sampleRate: 44100,
+        whenFinished: () {
+          setState(() {});
+        });
+    setState(() {});
+    a = dur!.inMilliseconds.toDouble();
+    time = dur!.toString().split(':')[2];
+  }
+
+  Future<void> stopPlayer(FlutterSoundPlayer player) async {
+    await player.stopPlayer();
+  }
 
   Future<void> setSubscriptionDuration(
       double d) async // v is between 0.0 and 2000 (milliseconds)
   {
     _mSubscriptionDuration = d;
     setState(() {});
-    await _mPlayer2!.setSubscriptionDuration(
+    await _mPlayer.setSubscriptionDuration(
       Duration(milliseconds: d.floor()),
     );
   }
 
-  Future<Uint8List> _getAssetData(String path) async {
-    var asset = await rootBundle.load(path);
-    return asset.buffer.asUint8List();
-  }
-
-  Future<File> get _getStoragepermission async {
-    if (await Permission.storage.request().isGranted) {
-      String dir =
-          (await getExternalStorageDirectory())!.absolute.path + "/sound";
-      //List<HearingAidss> recording = [];
-      final List<FileSystemEntity> files = Directory(dir).listSync();
-      print(files[0]);
-    }
-    return File(files);
-  }
-
-  void initState() {
-    super.initState();
-    _getStoragepermission;
-    _getAssetData(
-      'assets/sound/2022-02-28 13_22_16.961722.pcm',
-    ).then((value) => setState(() {
-          buffer2 = value;
-        }));
-    _mPlayer2!.openAudioSession().then((value) {
-      setState(() {
-        _mPlayer2IsInited = true;
-      });
-    });
-  }
-
-  void dispose() {
-    // Be careful : you must `close` the audio session when you have finished with it.
-    cancelPlayerSubscriptions2();
-    _mPlayer2!.closeAudioSession();
-    _mPlayer2 = null;
-    super.dispose();
-  }
-
-  void play2() async {
-    await _mPlayer2!.setSubscriptionDuration(Duration(milliseconds: 10));
-    _addListener2();
-    await _mPlayer2!.startPlayer(
-        fromDataBuffer: buffer2,
-        codec: Codec.pcm16,
-        whenFinished: () {
-          setState(() {});
-        });
-    setState(() {});
-  }
-
-  void _addListener2() {
-    cancelPlayerSubscriptions2();
-  }
-
-  void cancelPlayerSubscriptions2() {
-    if (_playerSubscription2 != null) {
-      _playerSubscription2!.cancel();
-      _playerSubscription2 = null;
-    }
-  }
-
-  Future<void> stopPlayer2() async {
-    cancelPlayerSubscriptions2();
-    if (_mPlayer2 != null) {
-      await _mPlayer2!.stopPlayer();
-    }
-    setState(() {});
-  }
-
-  Future<void> pause2() async {
-    if (_mPlayer2 != null) {
-      await _mPlayer2!.pausePlayer();
-    }
-    setState(() {});
-  }
-
-  Future<void> resume2() async {
-    if (_mPlayer2 != null) {
-      await _mPlayer2!.resumePlayer();
-    }
-    setState(() {});
-  }
-
-  Fn? getPlaybackFn() {
-    if (!_mPlayer2IsInited || buffer2 == null) {
+  // --------------------- UI -------------------
+  Fn? getPlaybackFn(FlutterSoundPlayer? player, int x) {
+    if (!_mPlayerIsInited) {
       return null;
     }
-    return _mPlayer2!.isStopped
-        ? play2
+    return player!.isStopped
+        ? () {
+            setSubscriptionDuration(1);
+            play(player, x);
+          }
         : () {
-            stopPlayer2().then((value) => setState(() {}));
+            stopPlayer(player).then((value) => setState(() {}));
           };
   }
 
-  // void _requestDownload(){
-  //   setState(() {
-  //     _downloadDir = getDownloadsDirectory();
-  //   });
-  // }
-
-  // await flutterSoundHelper.pcmToWave(
-  //   inputFile: dir,
-  //   outputFile: dir,
-  //   numChannels: 1,
-  //   //bitsPerSample: 16,
-  //   sampleRate: 44100,
-  // );
-  // codec = Codec.pcm16WAV;
-  // void initState() {
-  //   super.initState();
-  //   init().then((value) {
-  //     setState(() {
-  //       _mPlayerIsInited = true;
-  //     });
-  //   });
-  // }
-
-  // void dispose() {
-  //   stopPlayer(_mPlayer!);
-
-  //   // Be careful : you must `close` the audio session when you have finished with it.
-  //   _mPlayer!.closePlayer();
-
-  //   super.dispose();
-  // }
-
-  // Future<void> init() async {
-  //   await _mPlayer!.openPlayer();
-  //   await _mPlayer!.setSpeed(
-  //       1.0); // This dummy instruction is MANDATORY on iOS, before the first `startRecorder()`.
-  //   datas = await getAssetData();
-  // }
-
-  // Future<Uint8List> getAssetData(String path) async {
-  //   var asset = await rootBundle.load(path);
-  //   return asset.buffer.asUint8List();
-  // }
-
-  // void play(FlutterSoundPlayer? player) async {
-  //   await player!.startPlayer(
-  //       fromDataBuffer: datas,
-  //       codec: Codec.pcm16,
-  //       whenFinished: () {
-  //         setState(() {});
-  //       });
-  //   setState(() {});
-  // }
-
-  // Future<void> stopPlayer(FlutterSoundPlayer player) async {
-  //   await player.stopPlayer();
-  // }
+  Future<void> delete(FileSystemEntity file) async {
+    try {
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +332,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
           Padding(
             padding: EdgeInsets.only(top: 100, left: 25, right: 30),
             child: ListView.builder(
-              itemCount: 4,
+              itemCount: Filemimi.length,
               itemBuilder: (context, index) {
                 return Column(
                   children: [
@@ -406,7 +349,7 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                             onTap: () {
                               setState(() {
                                 _isVisible[index] = !_isVisible[index];
-                                //_getStoragepermission();
+                                // _getStoragepermission();
                                 //_extractDirectory();
                               });
                             },
@@ -415,7 +358,8 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                               alignment:
                                   Alignment(-1.42, -1.5), //Alignment.topLeft,
                               child: Text(
-                                "บันทึกการใช้งานวันที่ " + "${dayy[index]}",
+                                "บันทึกการใช้งานวันที่ " +
+                                    "${(Filemimi[index].path.split('sound/')[1]).split('.')[0]}",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontFamily: 'Prompt',
@@ -423,18 +367,6 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                                   color: white,
                                 ),
                                 textAlign: TextAlign.start,
-                              ),
-                            ),
-                            subtitle: Align(
-                              alignment: Alignment(-1.12, -1.85),
-                              child: Text(
-                                datetimes[index],
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'Prompt',
-                                  fontWeight: FontWeight.w400,
-                                  color: darkgray,
-                                ),
                               ),
                             ),
                           ),
@@ -447,151 +379,120 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
                                   child: Container(
                                     decoration:
                                         BoxDecoration(color: blackground),
-                                    height: 100,
+                                    height: 55,
                                     width: 330,
-                                    child: StreamBuilder<DurationState>(
-                                      stream: _durationState,
-                                      builder: (context, snapshot) {
-                                        // final durationState = snapshot.data;
-                                        // final progress =
-                                        //     durationState?.progress ??
-                                        //         Duration.zero;
-                                        // final buffered =
-                                        //     durationState?.buffered ??
-                                        //         Duration.zero;
-                                        // final total = durationState?.total ??
-                                        //     Duration.zero;
-                                        return Column(
+                                    child: Column(
+                                      children: [
+                                        // Slider(
+                                        //   value: pos.toDouble(),
+                                        //   min: 0.0,
+                                        //   max: _mPlayer.isPlaying
+                                        //       ? dur!.inMilliseconds.toDouble()
+                                        //       : a,
+                                        //   onChanged: (double value) async {
+                                        //     _mPlayer.seekToPlayer(Duration(
+                                        //         milliseconds: value.round()));
+                                        //     print(value);
+                                        //     pos = value.round();
+                                        //     setState(() {});
+                                        //     await _mPlayer
+                                        //         .setSubscriptionDuration(
+                                        //             Duration(
+                                        //                 milliseconds:
+                                        //                     value.floor()));
+                                        //   },
+                                        //   inactiveColor:
+                                        //       Colors.white.withOpacity(0.24),
+                                        //   thumbColor: white,
+                                        //   activeColor: white,
+                                        // ),
+                                        Row(
                                           children: [
-                                            Slider(
-                                              value: _mSubscriptionDuration,
-                                              min: 0.0,
-                                              max: 1000.0,
-                                              onChanged:
-                                                  setSubscriptionDuration,
-                                              //divisions: 100
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 140),
+                                              child: IconButton(
+                                                  icon: Icon(_mPlayer.isPlaying
+                                                      ? Icons.pause
+                                                      : Icons.play_arrow),
+                                                  iconSize: 32.0,
+                                                  color: white,
+                                                  alignment: Alignment.center,
+                                                  onPressed: getPlaybackFn(
+                                                      _mPlayer, index)),
                                             ),
-                                            // ProgressBar(
-                                            //   progress: progress,
-                                            //   buffered: buffer2,
-                                            //   total: total,
-                                            //   onSeek: (duration) {
-                                            //     _player.seek(duration);
-                                            //   },
-                                            //   progressBarColor: white,
-                                            //   baseBarColor: Colors.white
-                                            //       .withOpacity(0.24),
-                                            //   bufferedBarColor: Colors.white
-                                            //       .withOpacity(0.24),
-                                            //   thumbColor: white,
-                                            //   barHeight: 3.5,
-                                            //   thumbRadius: 6.0,
-                                            //   timeLabelTextStyle: TextStyle(
-                                            //       color: darkgray,
-                                            //       fontFamily: 'Nunito',
-                                            //       fontSize: 12),
-                                            // ),
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 140),
-                                                  child: IconButton(
-                                                    icon: Icon(_mPlayer2!.isPlaying
-                                                        ? Icons.play_arrow
-                                                        : Icons.pause),
-                                                    iconSize: 32.0,
-                                                    color: white,
-                                                    alignment: Alignment.center,
-                                                    onPressed: () {
-                                                      // for (int i = 0;
-                                                      //     i < files.length;
-                                                      //     i++) {
-                                                      //   files[i].playingstatus =
-                                                      //       0;
-                                                      // }
-                                                      // setState(() {
-                                                        getPlaybackFn();
-                                                      // });
-                                                    },
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 94),
-                                                  child: IconButton(
-                                                    icon: const Icon(
-                                                        LineIcons.trash),
-                                                    iconSize: 30.0,
-                                                    color: white,
-                                                    alignment: Alignment.center,
-                                                    onPressed: () => showDialog(
-                                                      context: context,
-                                                      builder: (context) =>
-                                                          AlertDialog(
-                                                        title: Text(
-                                                          "Are you sure you want to delete this record ?",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Nunito',
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        ),
-                                                        content: Text(
-                                                          "คุณแน่ใจที่ต้องการจะลบไฟล์บันทึกเสียงนี้ ? ",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Prompt',
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
-                                                        ),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: Text(
-                                                              "CANCEL",
-                                                              style: TextStyle(
-                                                                color: redtext,
-                                                                fontFamily:
-                                                                    'Nunito',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                          TextButton(
-                                                            child: Text(
-                                                              "OK",
-                                                              style: TextStyle(
-                                                                color: dgreen,
-                                                                fontFamily:
-                                                                    'Nunito',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                              ),
-                                                            ),
-                                                            onPressed: () {},
-                                                          ),
-                                                        ],
-                                                      ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 94),
+                                              child: IconButton(
+                                                icon:
+                                                    const Icon(LineIcons.trash),
+                                                iconSize: 30.0,
+                                                color: white,
+                                                alignment: Alignment.center,
+                                                onPressed: () => showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: Text(
+                                                      "Are you sure you want to delete this record ?",
+                                                      style: TextStyle(
+                                                          fontFamily: 'Nunito',
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
+                                                    content: Text(
+                                                      "คุณแน่ใจที่ต้องการจะลบไฟล์บันทึกเสียงนี้ ? ",
+                                                      style: TextStyle(
+                                                          fontFamily: 'Prompt',
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        child: Text(
+                                                          "CANCEL",
+                                                          style: TextStyle(
+                                                            color: redtext,
+                                                            fontFamily:
+                                                                'Nunito',
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      TextButton(
+                                                        child: Text(
+                                                          "OK",
+                                                          style: TextStyle(
+                                                            color: dgreen,
+                                                            fontFamily:
+                                                                'Nunito',
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          delete(
+                                                              Filemimi[index]);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            )
+                                              ),
+                                            ),
                                           ],
-                                        );
-                                      },
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -611,21 +512,3 @@ class _RecordingPrototypeState extends State<RecordingPrototype> {
     );
   }
 }
-
-class _player {
-  static void seek(Duration duration) {}
-}
-
-class DurationState {
-  const DurationState(
-      {required this.progress, required this.buffered, required this.total});
-  final Duration progress;
-  final Duration buffered;
-  final Duration total;
-}
-
-// _FileExtraction() async {
-//   var root = await getExternalStorageDirectory();
-//   var files = await FileManager(root: root).walk().toList();
-//   return files;
-// }

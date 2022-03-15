@@ -20,178 +20,177 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'dart:async';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 /*
  *
- * 
-streamLoop()
- is a very simple example which connect the FlutterSoundRecorder sink
- * to the FlutterSoundPlayer Stream.
- * Of course, we do not play to the loudspeaker to avoid a very unpleasant Larsen effect.
- * This example does not use a new StreamController, but use directly foodStreamController
- * from flutter_sound_player.dart.
+ * This is a very simple example for Flutter Sound beginners,
+ * that show how to record, and then playback a file.
+ *
+ * This example is really basic.
  *
  */
 
-const int _sampleRateRecorder = 44100;
-const int _sampleRatePlayer = 44100; // same speed than the recorder
+const _boum = 'assets/sound/sample2.aac';
 
 ///
 typedef Fn = void Function();
 
 /// Example app.
-class StreamLoop extends StatefulWidget {
-    StreamLoop({Key? key}) : super(key: key);
+class PlayerOnProgress extends StatefulWidget {
+  PlayerOnProgress({Key? key}) : super(key: key);
   @override
-  _StreamLoopState createState() => _StreamLoopState();
+  _PlayerOnProgressState createState() => _PlayerOnProgressState();
 }
 
-class _StreamLoopState extends State<StreamLoop> {
-  FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
-  FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
-  bool _isInited = false;
-  StreamSubscription? _mRecordingDataSubscription;
-
-  Future<void> init() async {
-    await _mRecorder!.openAudioSession(
-      device: AudioDevice.blueToothA2DP,
-      audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
-      category: SessionCategory.playAndRecord,
-    );
-    await _mPlayer!.openAudioSession(
-      device: AudioDevice.blueToothA2DP,
-      audioFlags: allowHeadset | allowEarPiece | allowBlueToothA2DP,
-      category: SessionCategory.playAndRecord,
-    );
-  }
+class _PlayerOnProgressState extends State<PlayerOnProgress> {
+  final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
+  bool _mPlayerIsInited = false;
+  double _mSubscriptionDuration = 0;
+  Uint8List? _boumData;
+  StreamSubscription? _mPlayerSubscription;
+  int pos = 0;
 
   @override
   void initState() {
     super.initState();
-    // Be careful : openAudioSession return a Future.
-    // Do not access your FlutterSoundPlayer or FlutterSoundRecorder before the completion of the Future
     init().then((value) {
       setState(() {
-        _isInited = true;
+        _mPlayerIsInited = true;
       });
     });
   }
 
-  Future<void> release() async {
-    await stopPlayer();
-    await _mPlayer!.closeAudioSession();
-    _mPlayer = null;
-
-    await stopRecorder();
-    await _mRecorder!.closeAudioSession();
-    _mRecorder = null;
-  }
-
   @override
   void dispose() {
-    release();
+    stopPlayer(_mPlayer);
+    cancelPlayerSubscriptions();
+
+    // Be careful : you must `close` the audio session when you have finished with it.
+    _mPlayer.closeAudioSession();
+
     super.dispose();
   }
 
-  Future<void>? stopRecorder() {
-    if (_mRecorder != null) {
-      return _mRecorder!.stopRecorder();
+  void cancelPlayerSubscriptions() {
+    if (_mPlayerSubscription != null) {
+      _mPlayerSubscription!.cancel();
+      _mPlayerSubscription = null;
     }
-    return null;
   }
 
-  Future<void>? stopPlayer() {
-    if (_mPlayer != null) {
-      return _mPlayer!.stopPlayer();
-    }
-    return null;
+  Future<void> init() async {
+    await _mPlayer.openAudioSession();
+    _boumData = await getAssetData(_boum);
+    _mPlayerSubscription = _mPlayer.onProgress!.listen((e) {
+      setState(() {
+        pos = e.position.inMilliseconds;
+      });
+    });
   }
 
-  Future<void> record() async {
-    await _mPlayer!.startPlayerFromStream(
-      codec: Codec.pcm16,
-      numChannels: 1,
-      sampleRate: _sampleRatePlayer,
-    );
+  Future<Uint8List> getAssetData(String path) async {
+    var asset = await rootBundle.load(path);
+    return asset.buffer.asUint8List();
+  }
 
-    await _mRecorder!.startRecorder(
-      codec: Codec.pcm16,
-      toStream: _mPlayer!.foodSink, // ***** THIS IS THE LOOP !!! *****
-      sampleRate: _sampleRateRecorder,
-      numChannels: 1,
-    );
+  // -------  Here is the code to playback  -----------------------
 
+  void play(FlutterSoundPlayer? player) async {
+    await player!.startPlayer(
+        fromDataBuffer: _boumData,
+        codec: Codec.aacADTS,
+        whenFinished: () {
+          setState(() {});
+        });
     setState(() {});
   }
 
-  Future<void> stop() async {
-    if (_mRecorder != null) {
-      await _mRecorder!.stopRecorder();
-    }
-    if (_mPlayer != null) {
-      await _mPlayer!.stopPlayer();
-    }
-    setState(() {});
+  Future<void> stopPlayer(FlutterSoundPlayer player) async {
+    await player.stopPlayer();
   }
 
-  Fn? getRecFn() {
-    if (!_isInited) {
+  Future<void> setSubscriptionDuration(
+      double d) async // v is between 0.0 and 2000 (milliseconds)
+  {
+    _mSubscriptionDuration = d;
+    setState(() {});
+    await _mPlayer.setSubscriptionDuration(
+      Duration(milliseconds: d.floor()),
+    );
+  }
+
+  // --------------------- UI -------------------
+
+  Fn? getPlaybackFn(FlutterSoundPlayer? player) {
+    if (!_mPlayerIsInited) {
       return null;
     }
-    return _mRecorder!.isRecording ? stop : record;
+    return player!.isStopped
+        ? () {
+            play(player);
+          }
+        : () {
+            stopPlayer(player).then((value) => setState(() {}));
+          };
   }
-
-  // ----------------------------------------------------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     Widget makeBody() {
-      return Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(3),
-            padding: const EdgeInsets.all(3),
-            height: 80,
-            width: double.infinity,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Color(0xFFFAF0E6),
-              border: Border.all(
-                color: Colors.indigo,
-                width: 3,
-              ),
-            ),
-            child: Row(children: [
-              ElevatedButton(
-                onPressed: getRecFn(),
-                //color: Colors.white,
-                //disabledColor: Colors.grey,
-                child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(_mRecorder!.isRecording
-                  ? 'Playback to your headset!'
-                  : 'Recorder is stopped'),
-            ]),
+      //return Column(
+      //children: [
+      return Container(
+        margin: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(3),
+        height: 140,
+        width: double.infinity,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Color(0xFFFAF0E6),
+          border: Border.all(
+            color: Colors.indigo,
+            width: 3,
           ),
-        ],
+        ),
+        child: Column(children: [
+          Row(children: [
+            ElevatedButton(
+              onPressed: getPlaybackFn(_mPlayer),
+              child: Text(_mPlayer.isPlaying ? 'Stop' : 'Play'),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Text(_mPlayer.isPlaying
+                ? 'Playback in progress'
+                : 'Player is stopped'),
+            SizedBox(
+              width: 20,
+            ),
+            Text('Pos: $pos'),
+          ]),
+          Text('Subscription Duration:'),
+          Slider(
+            value: _mSubscriptionDuration,
+            min: 0.0,
+            max: 10000.0,
+            onChanged: setSubscriptionDuration,
+            //divisions: 100
+          ),
+        ]),
+        //),
+        //],
       );
     }
 
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
-        title: const Text('Stream Loop'),
+        title: const Text('Player onProgress'),
       ),
       body: makeBody(),
     );
   }
 }
-
-

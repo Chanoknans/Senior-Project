@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/application_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
 import 'dart:typed_data';
+
+import '../Page/aids_home.dart';
 
 class HomePageCubit extends Cubit<HomePageState> {
   ApplicationCubit appCubit;
@@ -16,8 +19,39 @@ class HomePageCubit extends Cubit<HomePageState> {
   }
 
   Future<bool> checkdata() async {
-    print(state.bpfCoeff!);
-    return state.bpfCoeff! != null;
+    print(state.bpfCoeffL!);
+    return state.bpfCoeffL! != null;
+  }
+
+  Future<dynamic> chooseData(BuildContext context, String name) async {
+    List x;
+    List y;
+    List z;
+    if (name == 'R') {
+      x = state.lpfCoeffR!;
+      y = state.bpfCoeffR!;
+      z = state.hpfCoeffR!;
+    } else {
+      x = state.lpfCoeffL!;
+      y = state.bpfCoeffL!;
+      z = state.hpfCoeffL!;
+    }
+    emit(state.copyWith(lpfCoeff: x));
+    emit(state.copyWith(bpfCoeff: y));
+    emit(state.copyWith(hpfCoeff: z));
+    if (x[6] >= y[6] && x[6] >= z[6]) {
+      emit(state.copyWith(maxGain: x[6]));
+    } else if (y[6] >= x[6] && y[6] >= z[6]) {
+      emit(state.copyWith(maxGain: y[6]));
+    } else {
+      emit(state.copyWith(maxGain: z[6]));
+    }
+
+    return Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HearingAidss(),
+        ));
   }
 
   Future<void> getHearingResult(String docID) async {
@@ -30,16 +64,21 @@ class HomePageCubit extends Cubit<HomePageState> {
         .then((value) {
       if (value.exists) {
         emit(state.copyWith(currentDoc: docID));
+        emit(state.copyWith(Date: value.data()!['created_date']));
         emit(state.copyWith(leftEar: value.data()!['Left']));
         emit(state.copyWith(rightEar: value.data()!['Right']));
-        var lpfCoeff = value.data()!['LPFcoeff_Left'];
-        var bpfCoeff = value.data()!['BPFcoeff_Left'];
-        var hpfCoeff = value.data()!['HPFcoeff_Left'];
-        emit(state.copyWith(lpfCoeff: lpfCoeff));
-        emit(state.copyWith(bpfCoeff: bpfCoeff));
-        emit(state.copyWith(hpfCoeff: hpfCoeff));
-
-        print(bpfCoeff);
+        var lpfCoeffL = value.data()!['LPFcoeff_Left'];
+        var bpfCoeffL = value.data()!['BPFcoeff_Left'];
+        var hpfCoeffL = value.data()!['HPFcoeff_Left'];
+        var lpfCoeffR = value.data()!['LPFcoeff_Right'];
+        var bpfCoeffR = value.data()!['BPFcoeff_Right'];
+        var hpfCoeffR = value.data()!['HPFcoeff_Right'];
+        emit(state.copyWith(lpfCoeffL: lpfCoeffL));
+        emit(state.copyWith(bpfCoeffL: bpfCoeffL));
+        emit(state.copyWith(hpfCoeffL: hpfCoeffL));
+        emit(state.copyWith(lpfCoeffR: lpfCoeffR));
+        emit(state.copyWith(bpfCoeffR: bpfCoeffR));
+        emit(state.copyWith(hpfCoeffR: hpfCoeffR));
       }
     }).whenComplete(() {
       print('success');

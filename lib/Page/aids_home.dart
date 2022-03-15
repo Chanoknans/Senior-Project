@@ -12,11 +12,11 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
+import 'package:hearing_aid/bloc/home_page_state.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
-const blockSize = 4096;
 
 class HearingAidss extends StatefulWidget {
   HearingAidss({Key? key}) : super(key: key);
@@ -113,8 +113,6 @@ class _HearingAidssState extends State<HearingAidss> {
     _mPath = '${testdir.path}/${DateTime.now().toString()}.pcm';
     print(_mPath);
     var outputFile = File(_mPath!);
-    // Uint8List bytes = await outputFile.readAsBytes();
-    // await outputFile.writeAsBytes(bytes);
     if (outputFile.existsSync()) {
       await outputFile.delete(); // sent file to local storage
     }
@@ -133,8 +131,10 @@ class _HearingAidssState extends State<HearingAidss> {
         List<double> beforedataLeft = [];
         List<double> beforedataRight = [];
         for (var i = 0; i < buffer.data!.length; i += 2) {
-          beforedataLeft.add((reduce(buffer.data![i]) / 11));
-          beforedataRight.add((reduce(buffer.data![i + 1]) / 11));
+          beforedataLeft.add(
+              (reduce(buffer.data![i]) / homePageCubit.state.maxGain!.floor()));
+          beforedataRight.add((reduce(buffer.data![i + 1]) /
+              homePageCubit.state.maxGain!.floor()));
         }
         List<num> data = await homePageCubit.generateSampleRate(
             beforedataLeft, beforedataLeft.length);
@@ -173,21 +173,18 @@ class _HearingAidssState extends State<HearingAidss> {
     return op;
   }
 
-  List<num> adding2(List<num> data, List<num> data2) {
-    List<num> op = [];
-    for (int i = 0; i < data.length; i++) {
-      op.add(data[i]);
-      op.add(data2[i]);
-    }
-    return op;
-  }
-
   int scaling(num value) {
     int y;
-    if (value >= 0) {
+    if (value >= 0 && value <= 1) {
       y = (value * 128).round();
-    } else {
+    } else if (value < 0 && value >= -1) {
       y = ((value * 128) + 256).floor();
+    } else if (value < -1) {
+      y = 128;
+    } else if (value > 1) {
+      y = 127;
+    } else {
+      y = 0;
     }
     return y;
   }
@@ -285,8 +282,10 @@ class _HearingAidssState extends State<HearingAidss> {
         List<double> beforedataLeft = [];
         List<double> beforedataRight = [];
         for (var i = 0; i < buffer.data!.length; i += 2) {
-          beforedataLeft.add((reduce(buffer.data![i]) / 11));
-          beforedataRight.add((reduce(buffer.data![i + 1]) / 11));
+          beforedataLeft.add(
+              (reduce(buffer.data![i]) / homePageCubit.state.maxGain!.floor()));
+          beforedataRight.add((reduce(buffer.data![i + 1]) /
+              homePageCubit.state.maxGain!.floor()));
         }
         List<num> data = await homePageCubit.generateSampleRate(
             beforedataLeft, beforedataLeft.length);
@@ -339,71 +338,24 @@ class _HearingAidssState extends State<HearingAidss> {
           };
   }
 
-// void _createFile() async {
-//   var _completeFileName = await generateFileName();
-//   File(dirpath + '/' + _completeFileName)
-//       .create(recursive: true)
-//       .then((File file) async {
-//     //write to file
-//     Uint8List bytes = await file.readAsBytes();
-//     file.writeAsBytes(bytes);
-//     print(file.path);
-//   });
-// }
-
-// void _createDirectory() async {
-//   bool isDirectoryCreated = await Directory(dirpath).exists();
-//   if (!isDirectoryCreated) {
-//     Directory(dirpath).create()
-//         // The created directory is returned as a Future.
-//         .then((Directory directory) {
-//       print(directory.path);
-//     });
-//   }
-// }
-
-// void _writeFileToStorage() async {
-//   _createDirectory();
-//   _createFile();
-// }
-
   @override
   Widget build(BuildContext context) {
+    HomePageCubit homePageCubit = BlocProvider.of<HomePageCubit>(context);
     return Scaffold(
       backgroundColor: blackground,
       body: Stack(
         children: [
           CustomAppBar(),
           Padding(
-            padding: EdgeInsets.only(top: 145, left: 18),
-            child: Container(
-              height: 40,
-              width: 300,
-              decoration: BoxDecoration(color: blackground),
-              child: Text(
-                "For new users or those who want to use the value elsewhere, "
-                "please fill in your hearing level before using.",
-                style: TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 12,
-                  color: transgray,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 135, left: 330),
-            child: CircleButton(),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 200, left: 18),
+            padding: EdgeInsets.only(top: 100, left: 18),
             child: Container(width: 2, height: 54, color: light),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 200, left: 30),
+            padding: EdgeInsets.only(top: 100, left: 30),
             child: RichText(
               text: TextSpan(
-                text: 'การทดสอบวันที่ 2-11-2021\n',
+                text:
+                    'การทดสอบวันที่ ${homePageCubit.state.Date!.toDate().toString().split(' ')[0]}\n',
                 style: TextStyle(
                   fontSize: 18,
                   fontFamily: 'Prompt',
@@ -412,7 +364,8 @@ class _HearingAidssState extends State<HearingAidss> {
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: '00:36:21224236',
+                    text:
+                        '${homePageCubit.state.Date!.toDate().toString().split(' ')[1]}',
                     style: TextStyle(fontSize: 14),
                   ),
                 ],
@@ -420,7 +373,7 @@ class _HearingAidssState extends State<HearingAidss> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 280),
+            padding: EdgeInsets.only(top: 230),
             child: Align(
               alignment: Alignment.topCenter,
               child: Text(
@@ -435,7 +388,7 @@ class _HearingAidssState extends State<HearingAidss> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 320),
+            padding: EdgeInsets.only(top: 270),
             child: Align(
               alignment: Alignment.topCenter,
               child: Container(
@@ -487,7 +440,7 @@ class _HearingAidssState extends State<HearingAidss> {
             ),
           ),
           Positioned(
-            top: 530,
+            top: 480,
             left: 105,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

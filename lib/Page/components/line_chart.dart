@@ -244,11 +244,230 @@ class AudiogramLineChart extends StatelessWidget {
                               await homepage.checkdata().then(
                                 (complete) {
                                   if (complete == true) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => HearingAidss(),
-                                      ),
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          backgroundColor: light2,
+                                          insetPadding: EdgeInsets.all(10),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: <Widget>[
+                                              Container(
+                                                  height: 400,
+                                                  child: Column(children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 25),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: const Text(
+                                                        'Instruction',
+                                                        style: TextStyle(
+                                                          color: blue,
+                                                          fontSize: 25,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontFamily: 'Nunito',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20),
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: const Text(
+                                                        'วิธีใช้งานแอปพลิเคชั่นเครื่องช่วยฟัง',
+                                                        style: TextStyle(
+                                                          color: greendialog2,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontFamily: 'Prompt',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              left: 20),
+                                                      child: const Text(
+                                                        '1. เลือกผลการทดสอบที่จะใช้งานในการชดเชย \n    การได้ยิน',
+                                                        style: TextStyle(
+                                                          color: greendialog2,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontFamily: 'Prompt',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              left: 20),
+                                                      child: const Text(
+                                                        '2. เลือกหูซ้ายหรือหูขวาเพียงหนึ่งข้างที่จะทำการชดเชย\n    การได้ยิน',
+                                                        style: TextStyle(
+                                                          color: greendialog2,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontFamily: 'Prompt',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 20,
+                                                              left: 20),
+                                                      child: const Text(
+                                                        '3. กดปุ่มวงกลมสีเขียว เพื่อเริ่มใช้งานเครื่องช่วยฟัง',
+                                                        style: TextStyle(
+                                                          color: greendialog2,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontFamily: 'Prompt',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          top: 30),
+                                                      width: 300,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 5),
+                                                            child: TextButton(
+                                                              // ignore: sort_child_properties_last
+                                                              child: Text(
+                                                                '  หูซ้าย  ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: white,
+                                                                  fontSize: 30,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontFamily:
+                                                                      'Prompt',
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                homepage
+                                                                    .chooseData(
+                                                                        context,
+                                                                        'L');
+                                                              },
+                                                              style:
+                                                                  ButtonStyle(
+                                                                foregroundColor:
+                                                                    MaterialStateProperty
+                                                                        .all<Color>(
+                                                                            white),
+                                                                backgroundColor:
+                                                                    MaterialStateProperty.all<
+                                                                            Color>(
+                                                                        Color.fromARGB(
+                                                                            255,
+                                                                            214,
+                                                                            198,
+                                                                            52)),
+                                                                shape: MaterialStateProperty
+                                                                    .all<
+                                                                        RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(6),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 30),
+                                                            child: TextButton(
+                                                              // ignore: sort_child_properties_last
+                                                              child: Text(
+                                                                '  หูขวา  ',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: white,
+                                                                  fontSize: 30,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                  fontFamily:
+                                                                      'Prompt',
+                                                                ),
+                                                              ),
+                                                              onPressed: () {
+                                                                homepage
+                                                                    .chooseData(
+                                                                        context,
+                                                                        'R');
+                                                              },
+                                                              style:
+                                                                  ButtonStyle(
+                                                                foregroundColor:
+                                                                    MaterialStateProperty
+                                                                        .all<Color>(
+                                                                            white),
+                                                                backgroundColor:
+                                                                    MaterialStateProperty
+                                                                        .all<Color>(
+                                                                            green),
+                                                                shape: MaterialStateProperty
+                                                                    .all<
+                                                                        RoundedRectangleBorder>(
+                                                                  RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(6),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ])),
+                                              Positioned(
+                                                  right: 0,
+                                                  top: 10,
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    icon: Icon(Icons.close),
+                                                    color: red,
+                                                  ))
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     );
                                   }
                                 },

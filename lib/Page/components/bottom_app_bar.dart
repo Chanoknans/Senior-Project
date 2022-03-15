@@ -32,17 +32,11 @@ class _DashboardState extends State<Dashboard> {
     historyhomePage(
       key: PageStorageKey('Page1'),
     ),
-    /*AudiogramPage(
-      key: PageStorageKey('Page2'),
-    ),*/
     HomePage(
       key: PageStorageKey('Page2'),
     ),
-    StreamLoop(
-      key: PageStorageKey('Page3'),
-    ),
     RecordingPrototype(
-      key: PageStorageKey('Page4'),
+      key: PageStorageKey('Page3'),
     )
   ];
   final FirebaseAuth auth = FirebaseAuth.instance;
@@ -57,8 +51,7 @@ class _DashboardState extends State<Dashboard> {
     Text('Index 0: History', style: optionStyle),
     //Text('Index 1: Audiogram', style: optionStyle),
     Text('Index 1: Home', style: optionStyle),
-    Text('Index 2: Mode', style: optionStyle),
-    Text('Index 3: Recording', style: optionStyle),
+    Text('Index 2: Recording', style: optionStyle),
   ];
 
   void _onItemTapped(int index) {
@@ -100,7 +93,6 @@ class _DashboardState extends State<Dashboard> {
           label: 'History',
         ),
         BottomNavigationBarItem(icon: Icon(LineIcons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(LineIcons.headset), label: 'Mode'),
         BottomNavigationBarItem(
           icon: Icon(LineIcons.microphone),
           label: 'Recording',

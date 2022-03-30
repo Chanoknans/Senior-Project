@@ -13,7 +13,6 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hearing_aid/bloc/home_page_cubit.dart';
 import 'package:hearing_aid/bloc/home_page_state.dart';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
 const int tSampleRate = 44100;
 typedef Fn = void Function();
@@ -136,16 +135,19 @@ class _HearingAidssState extends State<HearingAidss> {
           beforedataRight.add((reduce(buffer.data![i + 1]) /
               homePageCubit.state.maxGain!.floor()));
         }
+        print('double : ${beforedataLeft}');
         List<num> data = await homePageCubit.generateSampleRate(
             beforedataLeft, beforedataLeft.length);
         List<num> data2 = await homePageCubit.generateSampleRate(
             beforedataRight, beforedataRight.length);
         List<int> afterdataLeft = [];
         List<int> afterdataRight = [];
+        print('DSP: ${data}');
         for (var i = 2; i < data.length; i += 1) {
           afterdataLeft.add(scaling(data[i]));
           afterdataRight.add(scaling(data2[i]));
         }
+
         List<int> afterdata0 = adding(afterdataLeft, afterdataRight);
         Uint8List afterdata2 = Uint8List.fromList(afterdata0);
         print('Output data uint8 type: ${afterdata2}');
@@ -166,7 +168,7 @@ class _HearingAidssState extends State<HearingAidss> {
 
   List<int> adding(List<int> data, List<int> data2) {
     List<int> op = [];
-    for (int i = 0; i < data.length; i++) {
+    for (int i = 0; i < data.length; i += 1) {
       op.add(data[i]);
       op.add(data2[i]);
     }
@@ -312,9 +314,9 @@ class _HearingAidssState extends State<HearingAidss> {
       sampleRate: tSampleRate,
       //toFile: '$fileName',
     );
-
     setState(() {});
   }
+
 
   Future<void> stopPlayer() async {
     if (_mRecorder != null) {
@@ -489,13 +491,15 @@ class _HearingAidssState extends State<HearingAidss> {
                     child: Row(
                       children: [
                         Icon(
-                          LineIcons.cog,
+                          _mPlayer!.isPlaying
+                              ? LineIcons.pause
+                              : LineIcons.play,
                           color: grayy,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 28),
                           child: Text(
-                            _mPlayer2!.isPlaying
+                            _mPlayer!.isPlaying
                                 ? 'Stop'
                                 : 'Play' /*"Settings"*/,
                             style: TextStyle(

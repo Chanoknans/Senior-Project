@@ -101,7 +101,6 @@ class HomePageCubit extends Cubit<HomePageState> {
       state.bpfCoeff!.getRange(3, 6).toList(),
       len,
     );
-    //print(bpfCovolve);
     List<num> hpfConvolve = await convolve(
       data,
       state.hpfCoeff!.getRange(0, 3).toList(),

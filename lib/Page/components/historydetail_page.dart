@@ -74,6 +74,11 @@ class _AudiogramState extends State<Audiogram> {
                                               left: 12,
                                               right: 2,
                                             ),
+                                            child: Image.asset(
+                                              'assets/image/ear2.png',
+                                              height: 24,
+                                              width: 24,
+                                            ),
                                           ),
                                           Text(
                                             "Audiogram",

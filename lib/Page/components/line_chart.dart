@@ -68,6 +68,11 @@ class AudiogramLineChart extends StatelessWidget {
                                         left: 12,
                                         right: 2,
                                       ),
+                                      child: Image.asset(
+                                        'assets/image/ear2.png',
+                                        height: 24,
+                                        width: 24,
+                                      ),
                                     ),
                                     Text(
                                       "Audiogram",
@@ -254,7 +259,7 @@ class AudiogramLineChart extends StatelessWidget {
                                             alignment: Alignment.center,
                                             children: <Widget>[
                                               Container(
-                                                  height: 400,
+                                                  height: 500,
                                                   child: Column(children: [
                                                     Container(
                                                       width: double.infinity,
@@ -278,7 +283,7 @@ class AudiogramLineChart extends StatelessWidget {
                                                       width: double.infinity,
                                                       margin:
                                                           const EdgeInsets.only(
-                                                              top: 20),
+                                                              top: 10),
                                                       alignment:
                                                           Alignment.center,
                                                       child: const Text(
@@ -296,10 +301,11 @@ class AudiogramLineChart extends StatelessWidget {
                                                       width: double.infinity,
                                                       margin:
                                                           const EdgeInsets.only(
-                                                              top: 20,
-                                                              left: 20),
+                                                              top: 15,
+                                                              left: 20,
+                                                              right: 20),
                                                       child: const Text(
-                                                        '1. เลือกผลการทดสอบที่จะใช้งานในการชดเชย \n    การได้ยิน',
+                                                        '1. เลือกผลการทดสอบที่จะใช้งานในการชดเชยการสูญเสีย\n การได้ยิน',
                                                         style: TextStyle(
                                                           color: greendialog2,
                                                           fontSize: 15,
@@ -313,10 +319,11 @@ class AudiogramLineChart extends StatelessWidget {
                                                       width: double.infinity,
                                                       margin:
                                                           const EdgeInsets.only(
-                                                              top: 20,
-                                                              left: 20),
+                                                              top: 15,
+                                                              left: 20,
+                                                              right: 20),
                                                       child: const Text(
-                                                        '2. เลือกหูซ้ายหรือหูขวาเพียงหนึ่งข้างที่จะทำการชดเชย\n    การได้ยิน',
+                                                        '2. เลือกหูซ้ายหรือหูขวาเพียงหนึ่งข้างที่จะทำการชดเชยการสูญเสียการได้ยิน โดยใส่หูฟังข้างที่เลือกเพียงข้างเดียว',
                                                         style: TextStyle(
                                                           color: greendialog2,
                                                           fontSize: 15,
@@ -330,10 +337,29 @@ class AudiogramLineChart extends StatelessWidget {
                                                       width: double.infinity,
                                                       margin:
                                                           const EdgeInsets.only(
-                                                              top: 20,
-                                                              left: 20),
+                                                              top: 15,
+                                                              left: 20,
+                                                              right: 20),
                                                       child: const Text(
                                                         '3. กดปุ่มวงกลมสีเขียว เพื่อเริ่มใช้งานเครื่องช่วยฟัง',
+                                                        style: TextStyle(
+                                                          color: greendialog2,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontFamily: 'Prompt',
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width: double.infinity,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              top: 15,
+                                                              left: 20,
+                                                              right: 20),
+                                                      child: const Text(
+                                                        '4. สามารถกดปุ่ม Recording ในกรณีที่ผู้ใช้งานต้องการบันทึกเสียง',
                                                         style: TextStyle(
                                                           color: greendialog2,
                                                           fontSize: 15,
